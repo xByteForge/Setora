@@ -1,0 +1,14 @@
+{
+  "NAV": {
+    "APPOINTMENTS": "Programări",
+    "SERVICES": "Servicii",
+    "EMPLOYEES": "Angajați",
+    "CLIENTS": "Clienți",
+    "LOCATIONS": "Locații",
+    "SCHEDULE": "Program de lucru",
+    "SETTINGS": "Setări"
+  },
+  "HEADER": {
+    "SEARCH": "Caută un client sau un serviciu..."
+  }
+}

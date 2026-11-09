@@ -1,0 +1,14 @@
+{
+  "NAV": {
+    "APPOINTMENTS": "Appointments",
+    "SERVICES": "Services",
+    "EMPLOYEES": "Employees",
+    "CLIENTS": "Clients",
+    "LOCATIONS": "Locations",
+    "SCHEDULE": "Working Hours",
+    "SETTINGS": "Settings"
+  },
+  "HEADER": {
+    "SEARCH": "Search for a client or service..."
+  }
+}
