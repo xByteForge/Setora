@@ -5,7 +5,7 @@
     "EMPLOYEES": "Angajați",
     "CLIENTS": "Clienți",
     "LOCATIONS": "Locații",
-    "SCHEDULE": "Program de lucru",
+    "WORKING_HOURS": "Program de lucru",
     "SETTINGS": "Setări"
   },
   "HEADER": {
@@ -15,6 +15,10 @@
     "THEME_TO_LIGHT": "Comută la tema luminoasă",
     "NOTIFICATIONS": "Notificări",
     "LANGUAGE": "Limba"
+  },
+  "HINT": {
+    "PHONE_BOOKINGS": "Programările telefonice pot fi adăugate direct în calendar.",
+    "MANAGE_AVAILABILITY": "Gestionează disponibilitatea"
   },
   "APPOINTMENTS": {
     "SUMMARY": {

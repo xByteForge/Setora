@@ -1,8 +1,13 @@
-<app-topbar />
-<div style="padding: 24px 32px;">
-    <app-appointments-header
-            [summary]="summary()"
-            (addClicked)="openAddAppointment()"
-    />
+<div class="app-layout">
+    <app-sidebar></app-sidebar>
+    <main class="main-content">
+        <app-topbar></app-topbar>
+        <div class="page-content">
+            <app-appointments-header
+                    [summary]="summary()"
+                    (addClicked)="openAddAppointment()"
+            />
+            <router-outlet></router-outlet>
+        </div>
+    </main>
 </div>
-<router-outlet />

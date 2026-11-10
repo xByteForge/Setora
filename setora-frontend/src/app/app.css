@@ -1,9 +1,20 @@
-:host {
-  display: block;
-  min-height: 100dvh;
-  background: var(--bg-canvas);
+.app-layout {
+  min-height: 100vh;
 }
 
-.content {
+.main-content {
+  margin-left: 260px; 
+  min-height: 100vh;
+  min-width: 0;
+  background-color: var(--canvas);
+}
+
+app-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.page-content {
   padding: 32px;
 }

@@ -1,0 +1,48 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo-plaque">
+      <img src="assets/logo.jpg" alt="SETORA" class="logo" />
+    </div>
+  </div>
+
+
+  <div class="business-info">
+    <p class="business-name">{{ businessName }}</p>
+    <p class="business-subtitle">{{ businessSubtitle }}</p>
+  </div>
+
+  <nav class="sidebar-nav">
+    @for (item of navItems; track item.path) {
+      <a
+        [routerLink]="item.path"
+        routerLinkActive="active"
+        class="nav-link">
+        <i [class]="item.iconClass" aria-hidden="true"></i>
+        <span class="nav-label">{{ item.labelKey | transloco }}</span>
+        @if (item.badge !== undefined) {
+          <span class="nav-badge">{{ item.badge }}</span>
+        }
+      </a>
+    }
+  </nav>
+
+  <div class="sidebar-hint">    
+    <p>{{ 'HINT.PHONE_BOOKINGS' | transloco }}</p>
+    <a routerLink="/working-hours">{{ 'HINT.MANAGE_AVAILABILITY' | transloco }}</a>
+  </div>
+
+  <div class="sidebar-footer">
+    <a routerLink="/settings" routerLinkActive="active" class="nav-link">
+      <i class="fa-solid fa-gear" aria-hidden="true"></i>
+      <span class="nav-label">{{ 'NAV.SETTINGS' | transloco }}</span>
+    </a>
+
+    <div class="user-card">
+      <div class="avatar">{{ userInitials }}</div>
+      <div class="user-info">
+        <span class="user-name">{{ userName }}</span>
+        <span class="user-role">{{ userRole }}</span>
+      </div>
+    </div>
+  </div>
+</aside>
