@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TopbarComponent } from './core/layout/topbar/topbar.component';
 import { AppointmentSummaryComponent } from './core/layout/appointment-summary/appointment-summary.component';
@@ -14,6 +14,13 @@ import { BusinessService } from './core/services/business.service';
 export class App {
   private readonly businessService = inject(BusinessService);
 
+  readonly summary = signal<AppointmentSummary>({
+    total: 9,
+    confirmed: 7,
+    pending: 1,
+    cancelled: 1,
+  });
+
   constructor() {
     this.businessService.setCurrent({
       id: '1',
@@ -23,5 +30,9 @@ export class App {
       phone: '',
       email: '',
     });
+  }
+
+  openAddAppointment(): void {
+    // TODO: deschide formularul de adaugare
   }
 }

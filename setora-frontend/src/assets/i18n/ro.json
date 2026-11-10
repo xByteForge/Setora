@@ -24,5 +24,8 @@
       "PENDING": "În așteptare",
       "CANCELLED": "Anulate"
     }
-  }
+  },
+  "TITLE": "Programări",
+  "SUBTITLE": "O zi bine organizată începe cu o imagine clară.",
+  "ADD": "Adaugă programare"
 }

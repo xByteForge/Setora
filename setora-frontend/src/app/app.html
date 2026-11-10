@@ -1,5 +1,8 @@
 <app-topbar />
 <div style="padding: 24px 32px;">
-    <app-appointment-summary [summary]="{ total: 9, confirmed: 7, pending: 1, cancelled: 1 }" />
+    <app-appointments-header
+            [summary]="summary()"
+            (addClicked)="openAddAppointment()"
+    />
 </div>
 <router-outlet />
