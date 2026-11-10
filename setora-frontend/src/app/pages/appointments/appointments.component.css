@@ -1,0 +1,11 @@
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--canvas);
+}
+
+.main-content {
+  margin-left: 260px; /* Offsets the 260px width of the fixed sidebar */
+  flex-grow: 1;
+  box-sizing: border-box;
+}

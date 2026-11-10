@@ -1,0 +1,9 @@
+.app-layout {
+  min-height: 100vh;
+}
+
+.main-content {
+  margin-left: 260px; /* same as sidebar width */
+  min-height: 100vh;
+  min-width: 0;
+}
