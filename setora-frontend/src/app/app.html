@@ -3,10 +3,6 @@
     <main class="main-content">
         <app-topbar></app-topbar>
         <div class="page-content">
-            <app-appointments-header
-                    [summary]="summary()"
-                    (addClicked)="openAddAppointment()"
-            />
             <router-outlet></router-outlet>
         </div>
     </main>

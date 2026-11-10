@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { TranslocoDirective } from '@ngneat/transloco';
 import { LucidePlus } from '@lucide/angular';
-import { AppointmentSummary } from '../../models/appointment-summary.model';
+import { AppointmentSummary } from '../../../core/models/appointment-summary.model';
 import { AppointmentSummaryComponent } from '../appointment-summary/appointment-summary.component';
 
 @Component({

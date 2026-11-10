@@ -6,7 +6,7 @@ import {
     LucideClock,
     LucideCircleX,
 } from '@lucide/angular';
-import { AppointmentSummary } from '../../models/appointment-summary.model';
+import { AppointmentSummary } from '../../../core/models/appointment-summary.model';
 
 @Component({
     selector: 'app-appointment-summary',
