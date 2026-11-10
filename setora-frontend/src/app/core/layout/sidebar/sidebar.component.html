@@ -1,18 +1,16 @@
 <aside class="sidebar">
-  <!-- Logo lockup (use the supplied raster artwork, unchanged) -->
   <div class="sidebar-header">
     <div class="logo-plaque">
       <img src="assets/logo.jpg" alt="SETORA" class="logo" />
     </div>
   </div>
 
-  <!-- Business -->
+
   <div class="business-info">
     <p class="business-name">{{ businessName }}</p>
     <p class="business-subtitle">{{ businessSubtitle }}</p>
   </div>
 
-  <!-- Navigation -->
   <nav class="sidebar-nav">
     @for (item of navItems; track item.path) {
       <a
@@ -28,14 +26,11 @@
     }
   </nav>
 
-  <!-- Hint card -->
-  <div class="sidebar-hint">
-    
+  <div class="sidebar-hint">    
     <p>{{ 'HINT.PHONE_BOOKINGS' | transloco }}</p>
     <a routerLink="/working-hours">{{ 'HINT.MANAGE_AVAILABILITY' | transloco }}</a>
   </div>
 
-  <!-- Footer: settings + user -->
   <div class="sidebar-footer">
     <a routerLink="/settings" routerLinkActive="active" class="nav-link">
       <i class="fa-solid fa-gear" aria-hidden="true"></i>

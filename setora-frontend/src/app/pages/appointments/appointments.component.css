@@ -9,3 +9,8 @@
   flex-grow: 1;
   box-sizing: border-box;
 }
+
+.sidebar .nav-link:focus-visible {
+  outline: 2px solid var(--focus-ring, #087F6D);
+  outline-offset: 2px;
+}

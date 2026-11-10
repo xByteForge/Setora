@@ -3,7 +3,8 @@
 }
 
 .main-content {
-  margin-left: 260px; /* same as sidebar width */
+  margin-left: 260px; 
   min-height: 100vh;
   min-width: 0;
+  background-color: var(--canvas);
 }
