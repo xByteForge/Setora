@@ -8,7 +8,7 @@ import { AppointmentSummaryComponent } from '../appointment-summary/appointment-
     selector: 'app-appointments-header',
     standalone: true,
     imports: [TranslocoDirective, LucidePlus, AppointmentSummaryComponent],
-    styleUrl: './appointments-header.component.css',
+    styleUrl: './appointment-header.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
     <header class="page-header" *transloco="let t">

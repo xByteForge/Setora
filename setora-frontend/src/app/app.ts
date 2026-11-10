@@ -2,11 +2,12 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TopbarComponent } from './core/layout/topbar/topbar.component';
 import { AppointmentSummaryComponent } from './core/layout/appointment-summary/appointment-summary.component';
+import { AppointmentsHeaderComponent } from './core/layout/appointment-header/appointment-header.component';
 import { AppointmentSummary } from './core/models/appointment-summary.model';
 import { BusinessService } from './core/services/business.service';
 
 @Component({
-  imports: [RouterOutlet, TopbarComponent, AppointmentSummaryComponent],
+  imports: [RouterOutlet, TopbarComponent, AppointmentsHeaderComponent],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',

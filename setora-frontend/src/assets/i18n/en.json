@@ -23,9 +23,9 @@
       "CONFIRMED": "Confirmed",
       "PENDING": "Pending",
       "CANCELLED": "Cancelled"
-    }
-  },
-  "TITLE": "Appointments",
-  "SUBTITLE": "A well-organized day starts with a clear picture.",
-  "ADD": "Add appointment"
+    },
+    "TITLE": "Appointments",
+    "SUBTITLE": "A well-organized day starts with a clear picture.",
+    "ADD": "Add appointment"
+  }
 }
