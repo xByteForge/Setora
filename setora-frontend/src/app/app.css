@@ -8,3 +8,13 @@
   min-width: 0;
   background-color: var(--canvas);
 }
+
+app-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.page-content {
+  padding: 32px;
+}

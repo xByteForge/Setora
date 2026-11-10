@@ -9,7 +9,12 @@
     "SETTINGS": "Setări"
   },
   "HEADER": {
-    "SEARCH": "Caută un client sau un serviciu..."
+    "SEARCH": "Caută un client sau un serviciu...",
+    "BREADCRUMB": "Navigare",
+    "THEME_TO_DARK": "Comută la tema întunecată",
+    "THEME_TO_LIGHT": "Comută la tema luminoasă",
+    "NOTIFICATIONS": "Notificări",
+    "LANGUAGE": "Limba"
   },
   "HINT": {
     "PHONE_BOOKINGS": "Programările telefonice pot fi adăugate direct în calendar.",
