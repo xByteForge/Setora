@@ -5,8 +5,12 @@
     "EMPLOYEES": "Employees",
     "CLIENTS": "Clients",
     "LOCATIONS": "Locations",
-    "SCHEDULE": "Working Hours",
+    "WORKING_HOURS": "Working hours",
     "SETTINGS": "Settings"
+  },
+  "HINT": {
+    "PHONE_BOOKINGS": "Phone bookings can be added directly to the calendar.",
+    "MANAGE_AVAILABILITY": "Manage availability"
   },
   "HEADER": {
     "SEARCH": "Search for a client or service...",

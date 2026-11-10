@@ -1,2 +1,9 @@
-<app-topbar />
-<router-outlet />
+<div class="app-layout">
+  <app-sidebar></app-sidebar>
+  <main class="main-content">
+    <app-topbar></app-topbar>
+    <div class="page-content">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

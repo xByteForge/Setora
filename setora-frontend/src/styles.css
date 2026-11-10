@@ -42,6 +42,54 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  body { transition: none; }
+
+/* Default to light values so the page is styled before the theme class is applied */
+:root {
+  --paper: #FFFFFF;
+  --canvas: #F5F8F7;
+  --border-color: #DCE5E1;
+  --ink: #000000;
+  --text-secondary: #5B6B67;
+  --mint-wash: #E8F8F3;
+  --brand-mint: #43CDB6;
+  --accessible-green: #064E43;
+  --focus-ring: #087F6D;
+}
+
+body.light-theme {
+  color-scheme: light;
+  background-color: var(--canvas);
+  --paper: #FFFFFF;
+  --canvas: #F5F8F7;
+  --border-color: #DCE5E1;
+  --ink: #000000;
+  --text-secondary: #5B6B67;
+  --mint-wash: #E8F8F3;
+  --brand-mint: #43CDB6;
+  --accessible-green: #064E43;
+  --focus-ring: #087F6D;
+}
+
+body.dark-theme {
+  color-scheme: dark;
+  background-color: var(--canvas);
+  --paper: #1D2D44;          /* Deep blue: sidebar and card surfaces */
+  --canvas: #0D1321;         /* Midnight: page background and hint card */
+  --border-color: #3E5C76;   /* Slate: dividers and structure */
+  --ink: #F0EBD8;            /* Ivory: headings and primary text */
+  --text-secondary: #B6C6D8; /* Lighter blue-gray for supporting text */
+  --mint-wash: #163E3B;      /* Selected and hover background (derived) */
+  --brand-mint: #43CDB6;
+  --accessible-green: #43CDB6; /* Mint text on dark for links, badge, active label */
+  --focus-ring: #43CDB6;
+}
+
+.app-layout {
+  min-height: 100vh;
+}
+
+.main-content {
+  margin-left: 260px;
+  min-height: 100vh;
+  min-width: 0;
 }
