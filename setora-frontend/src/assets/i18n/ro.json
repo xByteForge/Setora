@@ -15,5 +15,14 @@
     "THEME_TO_LIGHT": "Comută la tema luminoasă",
     "NOTIFICATIONS": "Notificări",
     "LANGUAGE": "Limba"
+  },
+  "APPOINTMENTS": {
+    "SUMMARY": {
+      "TITLE": "Rezumatul programărilor de azi",
+      "TODAY": "Programări astăzi",
+      "CONFIRMED": "Confirmate",
+      "PENDING": "În așteptare",
+      "CANCELLED": "Anulate"
+    }
   }
 }

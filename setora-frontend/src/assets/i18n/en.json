@@ -15,5 +15,14 @@
     "THEME_TO_LIGHT": "Switch to light theme",
     "NOTIFICATIONS": "Notifications",
     "LANGUAGE": "Language"
+  },
+  "APPOINTMENTS": {
+    "SUMMARY": {
+      "TITLE": "Today's appointments summary",
+      "TODAY": "Appointments today",
+      "CONFIRMED": "Confirmed",
+      "PENDING": "Pending",
+      "CANCELLED": "Cancelled"
+    }
   }
 }
