@@ -5,10 +5,14 @@
     "EMPLOYEES": "Angajați",
     "CLIENTS": "Clienți",
     "LOCATIONS": "Locații",
-    "SCHEDULE": "Program de lucru",
+    "WORKING_HOURS": "Program de lucru",
     "SETTINGS": "Setări"
   },
   "HEADER": {
     "SEARCH": "Caută un client sau un serviciu..."
+  },
+  "HINT": {
+    "PHONE_BOOKINGS": "Programările telefonice pot fi adăugate direct în calendar.",
+    "MANAGE_AVAILABILITY": "Gestionează disponibilitatea"
   }
 }

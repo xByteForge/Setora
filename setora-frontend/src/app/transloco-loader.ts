@@ -10,6 +10,7 @@ export class TranslocoHttpLoader implements TranslocoLoader {
   private platformId = inject(PLATFORM_ID);
 
   getTranslation(lang: string): Observable<Translation> {
-    return this.http.get<Translation>(`/assets/i18n/${lang}.json`);
+    const baseUrl = isPlatformBrowser(this.platformId) ? '' : 'http://localhost:4200';
+    return this.http.get<Translation>(`${baseUrl}/assets/i18n/${lang}.json`);
   }
 }
