@@ -1,0 +1,33 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --brand-mint: #00C085;
+  --brand-mint-hover: #00B89A;
+  --paper: #FFFFFF;
+  --ink: #202020;
+  --canvas: #F8F9FA;
+  --mint-wash: #E6F4F1;
+  --border-color: #DCE3E1;
+  --text-secondary: #778A84;
+}
+
+body.dark-theme {
+  --brand-mint: #00C085;
+  --brand-mint-hover: #00B89A;
+  --paper: #121212;
+  --ink: #F8F9FA;
+  --canvas: #1A1A1A;
+  --mint-wash: #134E4A;
+  --border-color: #3E5C76;
+  --text-secondary: #9CA3AF;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--canvas);
+  color: var(--ink);
+  margin: 0;
+  transition: background-color 160ms ease, color 160ms ease;
+  -webkit-font-smoothing: antialiased;
+}
