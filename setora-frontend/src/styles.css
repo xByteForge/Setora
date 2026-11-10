@@ -16,6 +16,9 @@
   --mint-wash: #E8F8F3;
   --accent-text: #064E43;
   --focus: #087F6D;
+
+  --status-pending: #8A5A00;
+  --status-cancelled: #B42318;
 }
 
 body.dark-theme {
@@ -30,6 +33,9 @@ body.dark-theme {
   --mint-wash: #163E3B;
   --accent-text: #93E3CB;
   --focus: #43CDB6;
+
+  --status-pending: #F2C265;
+  --status-cancelled: #FF8A80;
 }
 
 body {

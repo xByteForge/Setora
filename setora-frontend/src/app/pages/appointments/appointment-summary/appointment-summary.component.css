@@ -1,0 +1,28 @@
+:host { display: block; }
+
+.summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    font-family: Arimo, Arial, Helvetica, sans-serif;
+}
+
+.card {
+    display: flex; align-items: center; gap: 12px;
+    height: 72px; padding: 0 20px;
+    background: var(--paper);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-secondary);
+}
+
+.value { font-size: 28px; font-weight: 700; color: var(--ink); line-height: 1; }
+.label { font-size: 14px; color: var(--text-secondary); }
+
+/* indicatori vizuali per status (doar culoarea iconiței) */
+.confirmed svg { color: var(--accent-text); }
+.pending svg   { color: var(--status-pending); }
+.cancelled svg { color: var(--status-cancelled); }
+
+@media (max-width: 1024px) { .summary { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px)  { .summary { grid-template-columns: 1fr; } }

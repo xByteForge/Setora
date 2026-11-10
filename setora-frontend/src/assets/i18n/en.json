@@ -19,5 +19,17 @@
     "THEME_TO_LIGHT": "Switch to light theme",
     "NOTIFICATIONS": "Notifications",
     "LANGUAGE": "Language"
+  },
+  "APPOINTMENTS": {
+    "SUMMARY": {
+      "TITLE": "Today's appointments summary",
+      "TODAY": "Appointments today",
+      "CONFIRMED": "Confirmed",
+      "PENDING": "Pending",
+      "CANCELLED": "Cancelled"
+    },
+    "TITLE": "Appointments",
+    "SUBTITLE": "A well-organized day starts with a clear picture.",
+    "ADD": "Add appointment"
   }
 }
