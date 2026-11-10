@@ -9,6 +9,11 @@
     "SETTINGS": "Settings"
   },
   "HEADER": {
-    "SEARCH": "Search for a client or service..."
+    "SEARCH": "Search for a client or service...",
+    "BREADCRUMB": "Breadcrumb",
+    "THEME_TO_DARK": "Switch to dark theme",
+    "THEME_TO_LIGHT": "Switch to light theme",
+    "NOTIFICATIONS": "Notifications",
+    "LANGUAGE": "Language"
   }
 }
