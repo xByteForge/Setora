@@ -5,7 +5,7 @@
 }
 
 .main-content {
-  margin-left: 260px; /* Offsets the 260px width of the fixed sidebar */
+  margin-left: 260px; 
   flex-grow: 1;
   box-sizing: border-box;
 }
