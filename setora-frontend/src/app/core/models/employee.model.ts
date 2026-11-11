@@ -3,4 +3,5 @@ export interface Employee {
     name: string;
     initials: string;
     role: string;
+    locationIds: string[];
 }

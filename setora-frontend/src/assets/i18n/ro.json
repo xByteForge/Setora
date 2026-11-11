@@ -28,6 +28,23 @@
       "PENDING": "În așteptare",
       "CANCELLED": "Anulate"
     },
+    "FILTERS": {
+      "TITLE": "Filtre programări",
+      "LOCATION": "Locație",
+      "EMPLOYEE": "Angajat",
+      "STATUS": "Stare",
+      "TIME_RANGE": "Interval orar",
+      "ALL_LOCATIONS": "Toate locațiile",
+      "ALL_EMPLOYEES": "Toți angajații",
+      "ALL_STATUSES": "Toate stările",
+      "STATUS_UNAVAILABLE": "Indisponibil",
+      "CUSTOM": "Personalizat…",
+      "FROM": "De la",
+      "TO": "Până la",
+      "ACTIVE": "Filtre active",
+      "REMOVE": "Elimină filtrul {{filter}}",
+      "RESET": "Resetează filtrele"
+    },
     "CALENDAR": {
       "APPOINTMENTS_COUNT": "programări",
       "TODAY": "Astăzi",
@@ -39,7 +56,7 @@
         "CONFIRMED": "Confirmată",
         "PENDING": "În așteptare",
         "CANCELLED": "Anulată",
-        "BLOCKED": "Indisponibil"
+        "UNAVAILABLE": "Indisponibil"
       },
       "EMPLOYEE": "Angajat"
     },

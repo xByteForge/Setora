@@ -1,19 +1,16 @@
 <section
         class="calendar"
         [class.calendar--week]="view() === 'week'"
-        [style.--columns]="columns().length"
+        [style.--columns]="columns().length || 1"
         [style.--hour-height.px]="hourHeight"
 >
     <app-calendar-toolbar
             [dateLabel]="dateLabel()"
             [view]="view()"
-            [employees]="employees()"
-            [selectedEmployeeId]="selectedEmployeeId()"
             (previous)="previous()"
             (next)="next()"
             (today)="goToToday()"
             (viewChange)="setView($event)"
-            (employeeChange)="setEmployee($event)"
     />
 
     <div class="calendar__header">
@@ -41,21 +38,21 @@
     </div>
 
     <div class="calendar__body">
-        <div class="calendar__time-axis" [style.height.px]="gridHeight">
-            @for (hour of hours; track hour) {
+        <div class="calendar__time-axis" [style.height.px]="gridHeight()">
+            @for (hour of hours(); track hour) {
                 <span class="calendar__time-label">{{ formatHour(hour) }}</span>
             }
         </div>
 
         @for (column of columns(); track column.id) {
-            <div class="calendar__column" [style.height.px]="gridHeight">
+            <div class="calendar__column" [style.height.px]="gridHeight()">
                 @for (item of column.appointments; track item.appointment.id) {
                     <app-calendar-appointment-block
                             [appointment]="item.appointment"
                             [lane]="item.lane"
                             [lanes]="item.lanes"
                             [compact]="view() === 'week'"
-                            [startHour]="startHour"
+                            [startHour]="startHour()"
                             [pxPerMinute]="pxPerMinute"
                     />
                 }

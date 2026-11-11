@@ -1,16 +1,18 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, model } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { CalendarService } from '../../../core/services/calendar.service';
+import type { CalendarService } from '../../../core/services/calendar.service';
 import { CalendarView } from '../../../core/models/calendar-view.type';
 import { CalendarAppointment } from '../../../core/models/calendar-appointment.model';
+import { TimeRange } from '../../../core/models/appointment-filters.model';
 import { CalendarAppointmentBlockComponent } from '../calendar-appointment-block/calendar-appointment-block.component';
 import { CalendarToolbarComponent } from '../calendar-toolbar/calendar-toolbar.component';
 import { layoutOverlaps, PositionedAppointment } from './calendar-layout';
 
-const START_HOUR = 9;
-const END_HOUR = 17;
 const PX_PER_MINUTE = 1;
+
+/** Tipul angajatului, luat direct din serviciu (nu trebuie să-l redefinim). */
+type CalendarEmployee = ReturnType<CalendarService['getEmployees']>[number];
 
 interface CalendarColumn {
     id: string;
@@ -27,7 +29,7 @@ const isSameDay = (a: Date, b: Date): boolean =>
     a.getDate() === b.getDate();
 
 const countReal = (items: CalendarAppointment[]): number =>
-    items.filter((a) => a.status !== 'blocked').length;
+    items.filter((a) => a.status !== 'unavailable').length;
 
 @Component({
     selector: 'app-appointment-calendar',
@@ -37,24 +39,34 @@ const countReal = (items: CalendarAppointment[]): number =>
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppointmentCalendarComponent {
-    private readonly calendarService = inject(CalendarService);
     private readonly transloco = inject(TranslocoService);
 
     private readonly lang = toSignal(this.transloco.langChanges$, {
         initialValue: this.transloco.getActiveLang(),
     });
 
-    readonly employees = signal(this.calendarService.getEmployees());
-    readonly selectedEmployeeId = signal(this.employees()[0]?.id ?? '');
-    readonly appointments = signal(this.calendarService.getAppointments());
-    readonly selectedDate = signal(new Date(2026, 10, 7));
-    readonly view = signal<CalendarView>('day');
+    /** Date deja filtrate de pagină. */
+    readonly employees = input.required<CalendarEmployee[]>();
+    readonly appointments = input.required<CalendarAppointment[]>();
+    readonly timeRange = input.required<TimeRange>();
 
-    readonly startHour = START_HOUR;
+    /** Vederea pe săptămână arată un singur angajat: primul din lista filtrată. */
+    readonly selectedEmployeeId = computed(() => this.employees()[0]?.id ?? '');
+
+    /** Two-way cu pagina, ca sumarul să numere ziua afișată. */
+    readonly selectedDate = model(new Date(2026, 10, 7));
+    /** Two-way cu pagina, ca filtrele să știe ce vedere e activă. */
+    readonly view = model<CalendarView>('day');
+
     readonly pxPerMinute = PX_PER_MINUTE;
     readonly hourHeight = 60 * PX_PER_MINUTE;
-    readonly gridHeight = (END_HOUR - START_HOUR) * this.hourHeight;
-    readonly hours = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => START_HOUR + i);
+
+    readonly startHour = computed(() => Math.floor(this.timeRange().from / 60));
+    readonly endHour = computed(() => Math.ceil(this.timeRange().to / 60));
+    readonly hours = computed(() =>
+        Array.from({ length: Math.max(this.endHour() - this.startHour(), 0) }, (_, i) => this.startHour() + i),
+    );
+    readonly gridHeight = computed(() => (this.endHour() - this.startHour()) * this.hourHeight);
 
     /** Luni–Duminica pentru saptamana datei selectate */
     readonly weekDays = computed(() => {
@@ -137,10 +149,6 @@ export class AppointmentCalendarComponent {
 
     setView(view: CalendarView): void {
         this.view.set(view);
-    }
-
-    setEmployee(id: string): void {
-        this.selectedEmployeeId.set(id);
     }
 
     formatHour(hour: number): string {

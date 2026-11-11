@@ -26,21 +26,6 @@
     </div>
 
     <div class="toolbar__right">
-        @if (view() === 'week') {
-            <select
-                #employeeSelect
-                class="toolbar__select"
-                [attr.aria-label]="'APPOINTMENTS.CALENDAR.EMPLOYEE' | transloco"
-                (change)="employeeChange.emit(employeeSelect.value)"
-            >
-                @for (employee of employees(); track employee.id) {
-                    <option [value]="employee.id" [selected]="employee.id === selectedEmployeeId()">
-                        {{ employee.name }}
-                    </option>
-                }
-            </select>
-        }
-
         <div class="toolbar__views" role="group">
             <button
                     type="button"

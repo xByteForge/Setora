@@ -19,6 +19,27 @@
 
   --status-pending: #8A5A00;
   --status-cancelled: #B42318;
+
+  /* Confirmată */
+  --appt-confirmed-bg: #ecfdf5;
+  --appt-confirmed-border: #10b981;
+  --appt-confirmed-text: #064e43;
+  /* În așteptare */
+  --appt-pending-bg: #fef3c7;
+  --appt-pending-border: #f59e0b;
+  --appt-pending-text: #8a5a00;
+  /* Anulată */
+  --appt-cancelled-bg: #fee2e2;
+  --appt-cancelled-border: #ef4444;
+  --appt-cancelled-text: #b42318;
+  /* Interval blocat (pauză) */
+  --appt-blocked-bg: #e5e7eb;
+  --appt-blocked-border: #6b7280;
+  --appt-blocked-text: #4b5563;
+  /* Selectată */
+  --appt-selected-bg: #d1fae5;
+  --appt-selected-border: #43cdb6;
+  --appt-selected-text: #064e43;
 }
 
 body.dark-theme {
@@ -88,6 +109,26 @@ body.dark-theme {
   --brand-mint: #43CDB6;
   --accessible-green: #43CDB6; /* Mint text on dark for links, badge, active label */
   --focus-ring: #43CDB6;
+  
+  --appt-confirmed-bg: #1d2d44;
+  --appt-confirmed-border: #3e5c76;
+  --appt-confirmed-text: #93e3cb;
+ 
+  --appt-pending-bg: #463b26;
+  --appt-pending-border: #ffd48a;
+  --appt-pending-text: #ffd48a;
+ 
+  --appt-cancelled-bg: #482b39;
+  --appt-cancelled-border: #ffa6ad;
+  --appt-cancelled-text: #ffa6ad;
+ 
+  --appt-blocked-bg: #2d4059;
+  --appt-blocked-border: #b6c6d8;
+  --appt-blocked-text: #b6c6d8;
+ 
+  --appt-selected-bg: #123e3c;
+  --appt-selected-border: #43cdb6;
+  --appt-selected-text: #93e3cb;
 }
 
 .app-layout {

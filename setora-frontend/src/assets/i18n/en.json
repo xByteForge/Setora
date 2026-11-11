@@ -28,6 +28,23 @@
       "PENDING": "Pending",
       "CANCELLED": "Cancelled"
     },
+    "FILTERS": {
+      "TITLE": "Appointment filters",
+      "LOCATION": "Location",
+      "EMPLOYEE": "Employee",
+      "STATUS": "Status",
+      "TIME_RANGE": "Time range",
+      "ALL_LOCATIONS": "All locations",
+      "ALL_EMPLOYEES": "All employees",
+      "ALL_STATUSES": "All statuses",
+      "STATUS_UNAVAILABLE": "Unavailable",
+      "CUSTOM": "Custom…",
+      "FROM": "From",
+      "TO": "To",
+      "ACTIVE": "Active filters",
+      "REMOVE": "Remove filter {{filter}}",
+      "RESET": "Reset filters"
+    },
     "CALENDAR": {
       "APPOINTMENTS_COUNT": "appointments",
       "TODAY": "Today",
@@ -39,7 +56,7 @@
         "CONFIRMED": "Confirmed",
         "PENDING": "Pending",
         "CANCELLED": "Cancelled",
-        "BLOCKED": "Unavailable"
+        "UNAVAILABLE": "Unavailable"
       },
       "EMPLOYEE": "Employee"
     },
