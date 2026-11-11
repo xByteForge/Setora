@@ -14,3 +14,10 @@
   outline: 2px solid var(--focus-ring, #087F6D);
   outline-offset: 2px;
 }
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}

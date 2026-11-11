@@ -1,0 +1,65 @@
+<section
+        class="calendar"
+        [class.calendar--week]="view() === 'week'"
+        [style.--columns]="columns().length"
+        [style.--hour-height.px]="hourHeight"
+>
+    <app-calendar-toolbar
+            [dateLabel]="dateLabel()"
+            [view]="view()"
+            [employees]="employees()"
+            [selectedEmployeeId]="selectedEmployeeId()"
+            (previous)="previous()"
+            (next)="next()"
+            (today)="goToToday()"
+            (viewChange)="setView($event)"
+            (employeeChange)="setEmployee($event)"
+    />
+
+    <div class="calendar__header">
+        <div class="calendar__corner">
+            @if (view() === 'day') {
+                <span class="calendar__weekday">{{ weekday() }}</span>
+                <span class="calendar__day">{{ day() }}</span>
+            }
+        </div>
+
+        @for (column of columns(); track column.id) {
+            <div class="calendar__employee">
+                <span class="calendar__avatar">{{ column.initials }}</span>
+                <div class="calendar__employee-info">
+                    <p class="calendar__employee-name">{{ column.title }}</p>
+                    <p class="calendar__employee-meta">
+                        @if (column.subtitle) {
+                            {{ column.subtitle }} ·
+                        }
+                        {{ column.count }} {{ 'APPOINTMENTS.CALENDAR.APPOINTMENTS_COUNT' | transloco }}
+                    </p>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="calendar__body">
+        <div class="calendar__time-axis" [style.height.px]="gridHeight">
+            @for (hour of hours; track hour) {
+                <span class="calendar__time-label">{{ formatHour(hour) }}</span>
+            }
+        </div>
+
+        @for (column of columns(); track column.id) {
+            <div class="calendar__column" [style.height.px]="gridHeight">
+                @for (item of column.appointments; track item.appointment.id) {
+                    <app-calendar-appointment-block
+                            [appointment]="item.appointment"
+                            [lane]="item.lane"
+                            [lanes]="item.lanes"
+                            [compact]="view() === 'week'"
+                            [startHour]="startHour"
+                            [pxPerMinute]="pxPerMinute"
+                    />
+                }
+            </div>
+        }
+    </div>
+</section>

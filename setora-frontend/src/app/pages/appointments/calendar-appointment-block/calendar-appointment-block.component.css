@@ -1,0 +1,50 @@
+:host {
+    position: absolute;
+    box-sizing: border-box;
+    min-width: 0;
+    padding: 4px 8px;
+    border: 1px solid;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+p {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+:host(.compact) {
+    padding: 3px 6px;
+    border-radius: 6px;
+}
+
+:host(.compact) p {
+    font-size: 11px;
+}
+
+:host(.compact) .block__client {
+    font-size: 12px;
+}
+
+.block__time {
+    font-weight: 600;
+}
+
+.block__client {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.block__meta {
+    color: #4b5563;
+}
+
+
+:host(.confirmed) { background: #ecfdf5; border-color: #10b981; }
+:host(.pending)   { background: #fef3c7; border-color: #f59e0b; }
+:host(.cancelled) { background: #fee2e2; border-color: #ef4444; }
+:host(.blocked)   { background: #e5e7eb; border-color: #6b7280; }
