@@ -61,4 +61,22 @@ public class Appointment {
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PaymentMethod paymentMethod = PaymentMethod.Physical;
+
+    @Column(nullable = false)
+    private boolean isPaid;
+
+    @Column(nullable = true)
+    private String clientNote;
+
+}
+
+enum PaymentMethod{
+    Free,
+    Physical,
+    Online,
+    PhysicalOrOnline
 }
