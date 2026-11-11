@@ -2,6 +2,11 @@
 
 REST API for Setora, built with Spring Boot 4.1.2, Java 25, Maven and PostgreSQL.
 
+## Api endpoints
+When we have the rest controllers, supposedly, these should generate documentation automatically to be used by frontend... I think. 
+- Swagger UI: `http://localhost:8080/swagger-ui.html`
+- OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+
 ## Requirements
 
 - JDK 25
