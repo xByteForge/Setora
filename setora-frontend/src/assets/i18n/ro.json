@@ -28,6 +28,21 @@
       "PENDING": "În așteptare",
       "CANCELLED": "Anulate"
     },
+    "CALENDAR": {
+      "APPOINTMENTS_COUNT": "programări",
+      "TODAY": "Astăzi",
+      "VIEW_DAY": "Zi",
+      "VIEW_WEEK": "Săptămână",
+      "PREVIOUS": "Precedenta",
+      "NEXT": "Următoarea",
+      "STATUS": {
+        "CONFIRMED": "Confirmată",
+        "PENDING": "În așteptare",
+        "CANCELLED": "Anulată",
+        "BLOCKED": "Indisponibil"
+      },
+      "EMPLOYEE": "Angajat"
+    },
     "TITLE": "Programări",
     "SUBTITLE": "O zi bine organizată începe cu o imagine clară.",
     "ADD": "Adaugă programare"
