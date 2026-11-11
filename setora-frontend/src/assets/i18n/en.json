@@ -37,13 +37,28 @@
       "ALL_LOCATIONS": "All locations",
       "ALL_EMPLOYEES": "All employees",
       "ALL_STATUSES": "All statuses",
-      "STATUS_BLOCKED": "Unavailable",
+      "STATUS_UNAVAILABLE": "Unavailable",
       "CUSTOM": "Custom…",
       "FROM": "From",
       "TO": "To",
       "ACTIVE": "Active filters",
       "REMOVE": "Remove filter {{filter}}",
       "RESET": "Reset filters"
+    },
+    "CALENDAR": {
+      "APPOINTMENTS_COUNT": "appointments",
+      "TODAY": "Today",
+      "VIEW_DAY": "Day",
+      "VIEW_WEEK": "Week",
+      "PREVIOUS": "Previous",
+      "NEXT": "Next",
+      "STATUS": {
+        "CONFIRMED": "Confirmed",
+        "PENDING": "Pending",
+        "CANCELLED": "Cancelled",
+        "UNAVAILABLE": "Unavailable"
+      },
+      "EMPLOYEE": "Employee"
     },
     "TITLE": "Appointments",
     "SUBTITLE": "A well-organized day starts with a clear picture.",

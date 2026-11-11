@@ -1,5 +1,20 @@
 import { AppointmentStatus } from './calendar-appointment.model';
 
+export type { AppointmentStatus };
+
+export interface FilterLocation {
+  id: string;
+  name: string;
+}
+
+/** Minimul de care au nevoie filtrele; modelul vostru de angajat poate avea și alte câmpuri. */
+export interface FilterEmployee {
+  id: string;
+  name: string;
+  /** Locațiile în care lucrează. Dacă lipsește, angajatul apare la orice locație. */
+  locationIds?: string[];
+}
+
 export interface TimeRange {
   /** minute de la miezul nopții, ex. 540 = 09:00 */
   from: number;
@@ -29,12 +44,11 @@ export const TIME_PRESETS: readonly TimeRange[] = [
   { from: 0, to: 24 * 60 },
 ];
 
-/** Cheile de traducere existente (SUMMARY) + una nouă pentru "blocked". */
 export const STATUS_I18N_KEYS: Record<AppointmentStatus, string> = {
   confirmed: 'APPOINTMENTS.SUMMARY.CONFIRMED',
   pending: 'APPOINTMENTS.SUMMARY.PENDING',
   cancelled: 'APPOINTMENTS.SUMMARY.CANCELLED',
-  blocked: 'APPOINTMENTS.FILTERS.STATUS_BLOCKED',
+  unavailable: 'APPOINTMENTS.FILTERS.STATUS_UNAVAILABLE',
 };
 
 export const minutesToLabel = (m: number): string =>

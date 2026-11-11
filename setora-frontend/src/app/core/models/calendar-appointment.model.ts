@@ -1,24 +1,11 @@
-export type AppointmentStatus = 'confirmed' | 'pending' | 'cancelled' | 'blocked';
-
-export interface SalonLocation {
-  id: string;
-  name: string;
-}
-
-export interface Employee {
-  id: string;
-  name: string;
-  role: string;
-  locationIds: string[];
-}
-
-export interface Appointment {
-  id: string;
-  clientName: string;
-  service: string;
-  employeeId: string;
-  locationId: string;
-  start: string;
-  end: string;
-  status: AppointmentStatus;
+export type AppointmentStatus = 'confirmed' | 'pending' | 'cancelled' | 'unavailable';
+export interface CalendarAppointment {
+    id: string;
+    employeeId: string;
+    locationId: string;
+    clientName: string;
+    service: string;
+    start: string; // ISO, ex. '2026-11-07T09:30:00'
+    end: string;
+    status: AppointmentStatus;
 }

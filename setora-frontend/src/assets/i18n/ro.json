@@ -37,13 +37,28 @@
       "ALL_LOCATIONS": "Toate locațiile",
       "ALL_EMPLOYEES": "Toți angajații",
       "ALL_STATUSES": "Toate stările",
-      "STATUS_BLOCKED": "Indisponibil",
+      "STATUS_UNAVAILABLE": "Indisponibil",
       "CUSTOM": "Personalizat…",
       "FROM": "De la",
       "TO": "Până la",
       "ACTIVE": "Filtre active",
       "REMOVE": "Elimină filtrul {{filter}}",
       "RESET": "Resetează filtrele"
+    },
+    "CALENDAR": {
+      "APPOINTMENTS_COUNT": "programări",
+      "TODAY": "Astăzi",
+      "VIEW_DAY": "Zi",
+      "VIEW_WEEK": "Săptămână",
+      "PREVIOUS": "Precedenta",
+      "NEXT": "Următoarea",
+      "STATUS": {
+        "CONFIRMED": "Confirmată",
+        "PENDING": "În așteptare",
+        "CANCELLED": "Anulată",
+        "UNAVAILABLE": "Indisponibil"
+      },
+      "EMPLOYEE": "Angajat"
     },
     "TITLE": "Programări",
     "SUBTITLE": "O zi bine organizată începe cu o imagine clară.",

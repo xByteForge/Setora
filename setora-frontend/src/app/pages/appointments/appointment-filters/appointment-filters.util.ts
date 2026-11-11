@@ -1,16 +1,24 @@
-import { Appointment, Employee } from '../../../core/models/calendar-appointment.model';
-import { AppointmentFilters } from '../../../core/models/appointment-filters.model';
+import { AppointmentFilters, FilterEmployee } from '../../../core/models/appointment-filters.model';
 
-const minutesOfDay = (iso: string): number => {
-  const d = new Date(iso);
+/** Câmpurile pe care se filtrează. CalendarAppointment trebuie să le aibă. */
+export interface FilterableAppointment {
+  employeeId: string;
+  locationId?: string;
+  status: string;
+  start: string | Date;
+  end: string | Date;
+}
+
+const minutesOfDay = (value: string | Date): number => {
+  const d = new Date(value);
   return d.getHours() * 60 + d.getMinutes();
 };
 
 /** Toate filtrele active se combină cu ȘI. `null` = fără restricție. */
-export function filterAppointments(
-  items: readonly Appointment[],
+export function filterAppointments<T extends FilterableAppointment>(
+  items: readonly T[],
   f: AppointmentFilters,
-): Appointment[] {
+): T[] {
   return items.filter((a) => {
     if (f.locationId && a.locationId !== f.locationId) return false;
     if (f.employeeId && a.employeeId !== f.employeeId) return false;
@@ -21,21 +29,19 @@ export function filterAppointments(
   });
 }
 
-/** Coloanele de angajați afișate în calendar. */
-export function filterEmployees(
-  all: readonly Employee[],
+/** Angajații afișați ca coloane în calendar. */
+export function filterEmployees<T extends Pick<FilterEmployee, 'id' | 'locationIds'>>(
+  all: readonly T[],
   f: AppointmentFilters,
-): Employee[] {
+): T[] {
   return all.filter(
     (e) =>
-      (!f.locationId || e.locationIds.includes(f.locationId)) &&
+      (!f.locationId || (e.locationIds?.includes(f.locationId) ?? true)) &&
       (!f.employeeId || e.id === f.employeeId),
   );
 }
 
-/** Orele de pe axa verticală a calendarului (9, 10, ...). */
-export function visibleHours(f: AppointmentFilters): number[] {
-  const first = Math.floor(f.timeRange.from / 60);
-  const last = Math.ceil(f.timeRange.to / 60);
-  return Array.from({ length: Math.max(last - first, 0) }, (_, i) => first + i);
-}
+export const isSameDay = (a: Date, b: Date): boolean =>
+  a.getFullYear() === b.getFullYear() &&
+  a.getMonth() === b.getMonth() &&
+  a.getDate() === b.getDate();

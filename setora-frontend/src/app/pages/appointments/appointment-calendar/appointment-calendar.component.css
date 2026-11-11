@@ -1,0 +1,157 @@
+:host {
+    display: block;
+    min-width: 0;
+}
+
+.calendar {
+    --line: var(--border-color);
+    --axis-width: 64px;
+    --hour-height: 60px;
+    --columns: 3;
+    --col-min: 180px;
+    max-width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--paper);
+    color: var(--ink);
+    overflow-x: auto;
+}
+
+.calendar--week {
+    --col-min: 150px;
+}
+
+.calendar__header,
+.calendar__body {
+    display: grid;
+    grid-template-columns: var(--axis-width) repeat(var(--columns), minmax(var(--col-min), 1fr));
+    min-width: calc(var(--axis-width) + var(--columns) * var(--col-min));
+}
+
+.calendar__header {
+    border-bottom: 1px solid var(--line);
+    background: var(--paper);
+}
+
+.calendar__corner {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 0;
+    background: var(--paper);
+}
+
+.calendar__weekday {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.calendar__day {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.calendar__employee {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 12px;
+    border-left: 1px solid var(--line);
+}
+
+.calendar__avatar {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--mint-wash);
+    color: var(--accessible-green);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.calendar__employee-info {
+    min-width: 0;
+}
+
+.calendar__employee-name {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.calendar__employee-meta {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.calendar__time-axis {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: var(--paper);
+}
+
+.calendar__time-label {
+    display: block;
+    height: var(--hour-height);
+    padding: 2px 8px 0 0;
+    text-align: right;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.calendar__column {
+    position: relative;
+    /* taie programările care încep înainte / se termină după intervalul orar filtrat */
+    overflow: hidden;
+    border-left: 1px solid var(--line);
+    background-image: linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+    background-size: 100% var(--hour-height);
+}
+
+/* ---------- tableta / mobil ---------- */
+@media (max-width: 640px) {
+    .calendar {
+        --axis-width: 48px;
+        --col-min: 150px;
+        border-radius: 8px;
+    }
+
+    .calendar--week {
+        --col-min: 130px;
+    }
+
+    .calendar__employee {
+        gap: 8px;
+        padding: 8px;
+    }
+
+    .calendar__avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 10px;
+    }
+
+    .calendar__employee-name {
+        font-size: 13px;
+    }
+
+    .calendar__employee-meta {
+        font-size: 11px;
+    }
+
+    .calendar__time-label {
+        padding-right: 4px;
+        font-size: 10px;
+    }
+}
