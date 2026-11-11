@@ -1,4 +1,4 @@
-package com.byteforge.setorabackend.booking;
+package com.byteforge.setorabackend.appointment;
 
 import com.byteforge.setorabackend.auth.User;
 import com.byteforge.setorabackend.common.DateTimeInterval;
@@ -29,7 +29,7 @@ import java.util.UUID;
 @Table(name = "bookings", check = @CheckConstraint(constraint = "ends_at > starts_at and price_at_booking >= 0"))
 @Getter
 @Setter
-public class Booking {
+public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -52,7 +52,7 @@ public class Booking {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private BookingStatus status = BookingStatus.PENDING;
+    private AppointmentStatus status = AppointmentStatus.PENDING;
 
     //the service price can change later
     @Column(name = "price_at_booking", nullable = false, precision = 10, scale = 2)

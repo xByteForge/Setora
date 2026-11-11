@@ -1,10 +1,10 @@
 package com.byteforge.setorabackend.config;
 
+import com.byteforge.setorabackend.appointment.Appointment;
 import com.byteforge.setorabackend.auth.User;
 import com.byteforge.setorabackend.auth.UserRepository;
-import com.byteforge.setorabackend.booking.Booking;
-import com.byteforge.setorabackend.booking.BookingRepository;
-import com.byteforge.setorabackend.booking.BookingStatus;
+import com.byteforge.setorabackend.appointment.AppointmentRepository;
+import com.byteforge.setorabackend.appointment.AppointmentStatus;
 import com.byteforge.setorabackend.business.Business;
 import com.byteforge.setorabackend.business.BusinessRepository;
 import com.byteforge.setorabackend.common.DateTimeInterval;
@@ -47,7 +47,7 @@ public class DataSeeder implements CommandLineRunner {
     private final ServiceItemRepository serviceItemRepository;
     private final EmployeeRepository employeeRepository;
     private final WorkScheduleRepository workScheduleRepository;
-    private final BookingRepository bookingRepository;
+    private final AppointmentRepository appointmentRepository;
 
     @Override
     @Transactional
@@ -139,13 +139,13 @@ public class DataSeeder implements CommandLineRunner {
                 .toInstant();
         Instant end = start.plus(Duration.ofMinutes(serviceItem.getDurationMinutes()));
 
-        Booking booking = new Booking();
-        booking.setClient(client);
-        booking.setEmployee(employee);
-        booking.setServiceItem(serviceItem);
-        booking.setInterval(new DateTimeInterval(start, end));
-        booking.setStatus(BookingStatus.CONFIRMED);
-        booking.setPriceAtBooking(serviceItem.getPrice());
-        bookingRepository.save(booking);
+        Appointment appointment = new Appointment();
+        appointment.setClient(client);
+        appointment.setEmployee(employee);
+        appointment.setServiceItem(serviceItem);
+        appointment.setInterval(new DateTimeInterval(start, end));
+        appointment.setStatus(AppointmentStatus.CONFIRMED);
+        appointment.setPriceAtBooking(serviceItem.getPrice());
+        appointmentRepository.save(appointment);
     }
 }
