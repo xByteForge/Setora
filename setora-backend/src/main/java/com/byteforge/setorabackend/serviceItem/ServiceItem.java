@@ -1,4 +1,4 @@
-package com.byteforge.setorabackend.offering;
+package com.byteforge.setorabackend.serviceItem;
 
 import com.byteforge.setorabackend.business.Business;
 import jakarta.persistence.CheckConstraint;
