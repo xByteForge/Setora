@@ -1,6 +1,6 @@
 # Setora backend
 
-REST API for Setora, built with Spring Boot 4.1.2, Java 25, Maven and PostgreSQL.
+REST API for Setora, built with Spring Boot 4.1.2, Java 25, Gradle and PostgreSQL.
 
 ## Api endpoints
 When we have the rest controllers, supposedly, these should generate documentation automatically to be used by frontend... I think. 
@@ -11,7 +11,7 @@ When we have the rest controllers, supposedly, these should generate documentati
 
 - JDK 25
 - PostgreSQL running on `localhost:5432`, with a database named `setoradb`
-- Maven is not needed, the project uses the Maven wrapper (`mvnw`)
+- Gradle is not needed, the project uses the Gradle wrapper (`gradlew`)
 
 Create the database once:
 
@@ -38,6 +38,14 @@ Start the app from this folder (`setora-backend`), otherwise `.env` is not found
 
 ## Run
 
+From this folder, in PowerShell (on Linux/macOS use `./gradlew`):
+
+```powershell
+.\gradlew.bat bootRun   # start the app
+.\gradlew.bat test      # run the tests
+.\gradlew.bat build     # tests + jar in build/libs
+```
+
 The app starts on `http://localhost:8080`.
 
 - Swagger UI: `http://localhost:8080/swagger-ui.html`
@@ -50,7 +58,10 @@ The app starts on `http://localhost:8080`.
 - `config/DataSeeder` inserts test data on every start. Add new test data there.
 
 
-TEST DEPENDENCIES need further configuration.
+## Tests
+
+Tests use JUnit (Jupiter). Besides JUnit, only `spring-boot-test` and `spring-test` are on the test classpath, so `@SpringBootTest` works.
+Mockito, AssertJ and the other libraries from `spring-boot-starter-test` are not included, add them to `build.gradle` when needed.
 
 ### Data is not persistent between runs
 
@@ -84,5 +95,5 @@ Pretty sure we'll get ServiceItemService later on, but oh well... At least it's 
 
 ## Dependencies
 
-Some versions in `pom.xml` are set by hand (logback, Jackson, json-smart, objenesis, org.json) because the ones managed by Spring Boot 4.1.2 have known vulnerabilities. 
+Some versions in `build.gradle` are set by hand (logback, Jackson) because the ones managed by Spring Boot 4.1.2 have known vulnerabilities. 
 Do not remove them until Spring Boot is upgraded to a version that manages fixed releases - bcs apparently that's a thing we are dealing with now.

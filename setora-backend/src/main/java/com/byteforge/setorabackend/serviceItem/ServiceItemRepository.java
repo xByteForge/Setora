@@ -1,4 +1,4 @@
-package com.byteforge.setorabackend.offering;
+package com.byteforge.setorabackend.serviceItem;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

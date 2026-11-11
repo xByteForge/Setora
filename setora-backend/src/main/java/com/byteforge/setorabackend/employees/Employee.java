@@ -2,7 +2,7 @@ package com.byteforge.setorabackend.employees;
 
 import com.byteforge.setorabackend.auth.User;
 import com.byteforge.setorabackend.business.Business;
-import com.byteforge.setorabackend.offering.ServiceItem;
+import com.byteforge.setorabackend.serviceItem.ServiceItem;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

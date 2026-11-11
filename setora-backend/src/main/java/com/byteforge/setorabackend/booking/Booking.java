@@ -3,7 +3,7 @@ package com.byteforge.setorabackend.booking;
 import com.byteforge.setorabackend.auth.User;
 import com.byteforge.setorabackend.common.DateTimeInterval;
 import com.byteforge.setorabackend.employees.Employee;
-import com.byteforge.setorabackend.offering.ServiceItem;
+import com.byteforge.setorabackend.serviceItem.ServiceItem;
 import jakarta.persistence.CheckConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
