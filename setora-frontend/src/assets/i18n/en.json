@@ -13,6 +13,55 @@
     "MANAGE_AVAILABILITY": "Manage availability"
   },
   "HEADER": {
-    "SEARCH": "Search for a client or service..."
+    "SEARCH": "Search for a client or service...",
+    "BREADCRUMB": "Breadcrumb",
+    "THEME_TO_DARK": "Switch to dark theme",
+    "THEME_TO_LIGHT": "Switch to light theme",
+    "NOTIFICATIONS": "Notifications",
+    "LANGUAGE": "Language"
+  },
+  "APPOINTMENTS": {
+    "SUMMARY": {
+      "TITLE": "Today's appointments summary",
+      "TODAY": "Appointments today",
+      "CONFIRMED": "Confirmed",
+      "PENDING": "Pending",
+      "CANCELLED": "Cancelled"
+    },
+    "FILTERS": {
+      "TITLE": "Appointment filters",
+      "LOCATION": "Location",
+      "EMPLOYEE": "Employee",
+      "STATUS": "Status",
+      "TIME_RANGE": "Time range",
+      "ALL_LOCATIONS": "All locations",
+      "ALL_EMPLOYEES": "All employees",
+      "ALL_STATUSES": "All statuses",
+      "STATUS_UNAVAILABLE": "Unavailable",
+      "CUSTOM": "Custom…",
+      "FROM": "From",
+      "TO": "To",
+      "ACTIVE": "Active filters",
+      "REMOVE": "Remove filter {{filter}}",
+      "RESET": "Reset filters"
+    },
+    "CALENDAR": {
+      "APPOINTMENTS_COUNT": "appointments",
+      "TODAY": "Today",
+      "VIEW_DAY": "Day",
+      "VIEW_WEEK": "Week",
+      "PREVIOUS": "Previous",
+      "NEXT": "Next",
+      "STATUS": {
+        "CONFIRMED": "Confirmed",
+        "PENDING": "Pending",
+        "CANCELLED": "Cancelled",
+        "UNAVAILABLE": "Unavailable"
+      },
+      "EMPLOYEE": "Employee"
+    },
+    "TITLE": "Appointments",
+    "SUBTITLE": "A well-organized day starts with a clear picture.",
+    "ADD": "Add appointment"
   }
 }

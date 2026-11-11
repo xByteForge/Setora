@@ -1,0 +1,94 @@
+<section class="filters" *transloco="let t" role="search" [attr.aria-label]="t('APPOINTMENTS.FILTERS.TITLE')">
+  <div class="row">
+    <label class="field">
+      <span class="sr-only">{{ t('APPOINTMENTS.FILTERS.LOCATION') }}</span>
+      <svg lucideMapPin [size]="16" class="icon" aria-hidden="true"></svg>
+      <select (change)="onLocation($event)">
+        <option value="" [selected]="!filters().locationId">{{ t('APPOINTMENTS.FILTERS.ALL_LOCATIONS') }}</option>
+        @for (l of locations(); track l.id) {
+          <option [value]="l.id" [selected]="l.id === filters().locationId">{{ l.name }}</option>
+        }
+      </select>
+      <svg lucideChevronDown [size]="16" class="chevron" aria-hidden="true"></svg>
+    </label>
+
+    <label class="field">
+      <span class="sr-only">{{ t('APPOINTMENTS.FILTERS.EMPLOYEE') }}</span>
+      <svg lucideUsers [size]="16" class="icon" aria-hidden="true"></svg>
+      <select (change)="onEmployee($event)">
+        <option value="" [selected]="!filters().employeeId">{{ t('APPOINTMENTS.FILTERS.ALL_EMPLOYEES') }}</option>
+        @for (e of availableEmployees(); track e.id) {
+          <option [value]="e.id" [selected]="e.id === filters().employeeId">{{ e.name }}</option>
+        }
+      </select>
+      <svg lucideChevronDown [size]="16" class="chevron" aria-hidden="true"></svg>
+    </label>
+
+    <label class="field">
+      <span class="sr-only">{{ t('APPOINTMENTS.FILTERS.STATUS') }}</span>
+      <svg lucideListFilter [size]="16" class="icon" aria-hidden="true"></svg>
+      <select (change)="onStatus($event)">
+        <option value="" [selected]="!filters().status">{{ t('APPOINTMENTS.FILTERS.ALL_STATUSES') }}</option>
+        @for (s of statuses; track s) {
+          <option [value]="s" [selected]="s === filters().status">{{ t(statusKeys[s]) }}</option>
+        }
+      </select>
+      <svg lucideChevronDown [size]="16" class="chevron" aria-hidden="true"></svg>
+    </label>
+
+    <label class="field">
+      <span class="sr-only">{{ t('APPOINTMENTS.FILTERS.TIME_RANGE') }}</span>
+      <svg lucideClock [size]="16" class="icon" aria-hidden="true"></svg>
+      <select (change)="onPreset($event)">
+        @for (p of presets; track $index) {
+          <option [value]="$index" [selected]="presetValue() === '' + $index">{{ rangeLabel(p) }}</option>
+        }
+        <option value="custom" [selected]="presetValue() === 'custom'">{{ t('APPOINTMENTS.FILTERS.CUSTOM') }}</option>
+      </select>
+      <svg lucideChevronDown [size]="16" class="chevron" aria-hidden="true"></svg>
+    </label>
+
+    @if (presetValue() === 'custom') {
+      <div class="custom-range" role="group" [attr.aria-label]="t('APPOINTMENTS.FILTERS.CUSTOM')">
+        <label class="field field--compact">
+          <span class="sr-only">{{ t('APPOINTMENTS.FILTERS.FROM') }}</span>
+          <select (change)="onCustom('from', $event)">
+            @for (m of fromSlots; track m) {
+              <option [value]="m" [selected]="m === filters().timeRange.from">{{ time(m) }}</option>
+            }
+          </select>
+        </label>
+        <span aria-hidden="true">–</span>
+        <label class="field field--compact">
+          <span class="sr-only">{{ t('APPOINTMENTS.FILTERS.TO') }}</span>
+          <select (change)="onCustom('to', $event)">
+            @for (m of toSlots; track m) {
+              <option [value]="m" [selected]="m === filters().timeRange.to">{{ time(m) }}</option>
+            }
+          </select>
+        </label>
+      </div>
+    }
+  </div>
+
+  @if (chips().length) {
+    <div class="active" aria-live="polite">
+      <span class="active-title">{{ t('APPOINTMENTS.FILTERS.ACTIVE') }}</span>
+      @for (c of chips(); track c.key) {
+        @let label = c.i18nKey ? t(c.i18nKey) : c.text;
+        <button
+          type="button"
+          class="chip"
+          (click)="clear(c.key)"
+          [attr.aria-label]="t('APPOINTMENTS.FILTERS.REMOVE', { filter: label })"
+        >
+          {{ label }}
+          <svg lucideX [size]="12" aria-hidden="true"></svg>
+        </button>
+      }
+      <button type="button" class="reset" (click)="resetAll()">
+        {{ t('APPOINTMENTS.FILTERS.RESET') }}
+      </button>
+    </div>
+  }
+</section>

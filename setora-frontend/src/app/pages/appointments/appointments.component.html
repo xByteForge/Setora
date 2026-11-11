@@ -1,1 +1,19 @@
-<p>Appointments works</p>
+<app-appointments-header
+  [summary]="summary()"
+  (addClicked)="openAddAppointment()"
+/>
+
+<app-appointment-filters
+  [locations]="locations()"
+  [employees]="employees()"
+  [(filters)]="filters"
+/>
+
+<app-appointment-calendar
+  [employees]="visibleEmployees()"
+  [appointments]="visibleAppointments()"
+  [timeRange]="filters().timeRange"
+  [(selectedDate)]="selectedDate"
+  [view]="view()"
+  (viewChange)="onViewChange($event)"
+/>
