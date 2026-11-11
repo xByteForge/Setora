@@ -28,6 +28,23 @@
       "PENDING": "Pending",
       "CANCELLED": "Cancelled"
     },
+    "FILTERS": {
+      "TITLE": "Appointment filters",
+      "LOCATION": "Location",
+      "EMPLOYEE": "Employee",
+      "STATUS": "Status",
+      "TIME_RANGE": "Time range",
+      "ALL_LOCATIONS": "All locations",
+      "ALL_EMPLOYEES": "All employees",
+      "ALL_STATUSES": "All statuses",
+      "STATUS_BLOCKED": "Unavailable",
+      "CUSTOM": "Custom…",
+      "FROM": "From",
+      "TO": "To",
+      "ACTIVE": "Active filters",
+      "REMOVE": "Remove filter {{filter}}",
+      "RESET": "Reset filters"
+    },
     "TITLE": "Appointments",
     "SUBTITLE": "A well-organized day starts with a clear picture.",
     "ADD": "Add appointment"

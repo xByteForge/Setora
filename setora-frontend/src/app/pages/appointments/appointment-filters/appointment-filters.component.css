@@ -1,0 +1,113 @@
+:host {
+  display: block;
+  margin-top: 24px;
+}
+
+.filters { margin-bottom: 16px; }
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.field {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.field select {
+  appearance: none;
+  min-width: 180px;
+  height: 40px;
+  padding: 0 36px 0 38px;
+  border: 1px solid var(--control-border);
+  border-radius: 10px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 160ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.field select:hover { border-color: var(--brand-mint); }
+
+.field select:focus-visible,
+.chip:focus-visible,
+.reset:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.icon,
+.chevron {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+.icon { left: 12px; }
+.chevron { right: 12px; }
+
+.field--compact select { min-width: 96px; padding-left: 14px; }
+
+.custom-range {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+}
+
+.active {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 13px;
+}
+.active-title { color: var(--text-secondary); }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--mint-wash);
+  color: var(--accessible-green);
+  font: inherit;
+  cursor: pointer;
+}
+.chip:hover { border-color: var(--brand-mint); }
+
+.reset {
+  border: 0;
+  background: none;
+  padding: 4px;
+  color: var(--text-secondary);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.reset:hover { color: var(--ink); }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .field,
+  .field select { width: 100%; }
+}
