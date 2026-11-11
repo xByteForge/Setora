@@ -26,7 +26,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "bookings", check = @CheckConstraint(constraint = "ends_at > starts_at and price_at_booking >= 0"))
+@Table(name = "appointments", check = @CheckConstraint(constraint = "ends_at > starts_at and price_at_appointment >= 0"))
 @Getter
 @Setter
 public class Appointment {
@@ -55,8 +55,8 @@ public class Appointment {
     private AppointmentStatus status = AppointmentStatus.PENDING;
 
     //the service price can change later
-    @Column(name = "price_at_booking", nullable = false, precision = 10, scale = 2)
-    private BigDecimal priceAtBooking;
+    @Column(name = "price_at_appointment", nullable = false, precision = 10, scale = 2)
+    private BigDecimal priceAtAppointment;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

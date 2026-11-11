@@ -76,7 +76,7 @@ The code is grouped by feature, under `com.byteforge.setorabackend`:
 | `business`  | `Business`                                                      |
 | `offering`  | `ServiceItem`, a service offered by a business (table `services`) |
 | `employees` | `Employee`, `WorkSchedule`                                      |
-| `appointment`   | `Booking`, `BookingStatus`                                      |
+| `appointment` | `Appointment`, `AppointmentStatus`                            |
 | `common`    | `TimeInterval`, `DateTimeInterval` (both have `overlaps`)       |
 | `config`    | `DataSeeder`                                                    |
 
@@ -90,7 +90,7 @@ Pretty sure we'll get ServiceItemService later on, but oh well... At least it's 
 - All ids are UUIDs.
 - Clients and employees are users: an appointment points to the `User` who made it, an employee is linked to a `User`.
 - The end of an interval is exclusive: 10:00-11:00 and 11:00-12:00 do not overlap.
-- An appointment/booking has no business column, the business is the one of the booked service.
+- An appointment has no business column, the business is the one of the booked service.
 - Emails are saved in lower case.
 
 ## Dependencies
