@@ -1,4 +1,4 @@
-package com.byteforge.setorabackend.employees;
+package com.byteforge.setorabackend.employees.model;
 
 import com.byteforge.setorabackend.auth.User;
 import com.byteforge.setorabackend.business.Business;
