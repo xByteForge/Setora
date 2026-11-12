@@ -65,4 +65,11 @@ public final class AvailabilityDtos {
             List<UnavailableOccurrence> slots
     ) {
     }
+
+    public record CreateSlotResponse(
+            UnavailableSlotResponse slot,
+            List<UUID> cancelledAppointmentIds
+    ) {
+
+    }
 }

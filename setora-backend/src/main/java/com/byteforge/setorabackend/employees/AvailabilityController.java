@@ -40,7 +40,7 @@ public class AvailabilityController {
 
     @PostMapping("/blocks")
     @ResponseStatus(HttpStatus.CREATED)
-    public UnavailableSlotResponse createUnavailableSlot(@RequestBody UnavailableSlotRequest request) {
+    public CreateSlotResponse createUnavailableSlot(@RequestBody UnavailableSlotRequest request) {
         return availabilityService.createUnavailableSlot(request);
     }
 

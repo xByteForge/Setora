@@ -1,5 +1,8 @@
 package com.byteforge.setorabackend.employees;
 
+import com.byteforge.setorabackend.appointment.Appointment;
+import com.byteforge.setorabackend.appointment.AppointmentRepository;
+import com.byteforge.setorabackend.appointment.AppointmentStatus;
 import com.byteforge.setorabackend.common.TimeInterval;
 import com.byteforge.setorabackend.employees.AvailabilityDtos.*;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,7 @@ public class AvailabilityService {
     private final EmployeeRepository employeeRepository;
     private final WorkScheduleRepository workScheduleRepository;
     private final UnavailableSlotRepository unavailableSlotRepository;
+    private final AppointmentRepository appointmentRepository;
 
     @Transactional(readOnly = true)
     public WorkingHours getWorkingHours(UUID employeeId) {
@@ -72,10 +76,11 @@ public class AvailabilityService {
     }
 
     @Transactional
-    public UnavailableSlotResponse createUnavailableSlot(UnavailableSlotRequest request) {
+    public CreateSlotResponse createUnavailableSlot(UnavailableSlotRequest request) {
         if (request.employeeId() == null || request.type() == null) {
             throw badRequest("employeeId and type are required");
         }
+
         boolean oneOff = request.date() != null;
         boolean recurring = request.dayOfWeek() != null;
         if (oneOff == recurring) {
@@ -84,6 +89,7 @@ public class AvailabilityService {
         TimeInterval interval = toInterval(request.start(), request.end());
 
         Employee employee = findEmployee(request.employeeId());
+        ZoneId zone = zoneOf(employee);
         LocalDate today = LocalDate.now(zoneOf(employee));
         if (oneOff && request.date().isBefore(today)) {
             throw badRequest("The date cannot be in the past");
@@ -103,7 +109,23 @@ public class AvailabilityService {
                         "The interval overlaps an existing unavailable interval");
             }
         }
-        return toResponse(unavailableSlotRepository.save(slot));
+        UnavailableSlot savedSlot = unavailableSlotRepository.save(slot);
+        List<Appointment> activeAppointments = appointmentRepository
+                .findByEmployeeIdAndStatusNot(request.employeeId(), AppointmentStatus.CANCELLED);
+        List<Appointment> affectedAppointments = activeAppointments.stream()
+                .filter(app -> isAppointmentAffected(app, savedSlot, zone, today))
+                .toList();
+        List<UUID> cancelledIds = new java.util.ArrayList<>();
+        for (Appointment app : affectedAppointments) {
+            app.setStatus(AppointmentStatus.CANCELLED);
+            // Dacă dorești să lași un mesaj: app.setClientNote("Anulat automat: Angajat indisponibil");
+            cancelledIds.add(app.getId());
+        }
+
+        if (!affectedAppointments.isEmpty()) {
+            appointmentRepository.saveAll(affectedAppointments);
+        }
+        return new CreateSlotResponse(toResponse(savedSlot), cancelledIds);
     }
 
     @Transactional
@@ -180,5 +202,29 @@ public class AvailabilityService {
 
     private ResponseStatusException badRequest(String message) {
         return new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
+    }
+
+    private boolean isAppointmentAffected(Appointment app, UnavailableSlot slot, ZoneId zone, LocalDate today) {
+        java.time.ZonedDateTime appZonedStart = app.getInterval().getStart().atZone(zone);
+        java.time.ZonedDateTime appZonedEnd = app.getInterval().getEnd().atZone(zone);
+
+        LocalDate appDate = appZonedStart.toLocalDate();
+        LocalTime appStartTime = appZonedStart.toLocalTime();
+        LocalTime appEndTime = appZonedEnd.toLocalTime();
+
+        if (appDate.isBefore(today)) {
+            return false;
+        }
+
+        boolean isSameDay = slot.isRecurring()
+                ? appDate.getDayOfWeek() == slot.getDayOfWeek()
+                : appDate.equals(slot.getSpecificDate());
+
+        if (!isSameDay) {
+            return false;
+        }
+
+        return appStartTime.isBefore(slot.getInterval().getEnd()) &&
+                slot.getInterval().getStart().isBefore(appEndTime);
     }
 }
