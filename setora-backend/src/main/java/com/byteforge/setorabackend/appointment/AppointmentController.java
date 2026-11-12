@@ -26,4 +26,7 @@ public class AppointmentController {
     ){
         return ResponseEntity.ok(appointmentService.getDailySummary(businessId, date));
     }
+
+
+
 }
