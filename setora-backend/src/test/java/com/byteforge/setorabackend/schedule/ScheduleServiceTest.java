@@ -1,13 +1,17 @@
 package com.byteforge.setorabackend.schedule;
 
 import com.byteforge.setorabackend.appointment.Appointment;
-import com.byteforge.setorabackend.appointment.AppointmentRepository;
-import com.byteforge.setorabackend.business.BusinessRepository;
+import com.byteforge.setorabackend.appointment.AppointmentService;
+import com.byteforge.setorabackend.business.Business;
+import com.byteforge.setorabackend.business.BusinessService;
+import com.byteforge.setorabackend.employees.model.UnavailableSlot;
+import com.byteforge.setorabackend.employees.repository.UnavailableSlotRepository;
 import com.byteforge.setorabackend.schedule.dtos.EmployeeScheduleDto;
-import com.byteforge.setorabackend.employees.Employee;
-import com.byteforge.setorabackend.employees.WorkSchedule;
+import com.byteforge.setorabackend.employees.model.Employee;
+import com.byteforge.setorabackend.employees.model.WorkSchedule;
 import com.byteforge.setorabackend.schedule.mapper.ScheduleMapper;
-import com.byteforge.setorabackend.employees.WorkScheduleRepository;
+import com.byteforge.setorabackend.employees.repository.WorkScheduleRepository;
+import com.byteforge.setorabackend.schedule.service.ScheduleService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +20,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,13 +33,16 @@ import static org.mockito.Mockito.*;
 class ScheduleServiceTest {
 
     @Mock
-    private BusinessRepository businessRepository;
-
-    @Mock
-    private AppointmentRepository appointmentRepository;
-
-    @Mock
     private WorkScheduleRepository workScheduleRepository;
+
+    @Mock
+    private AppointmentService appointmentService;
+
+    @Mock
+    private UnavailableSlotRepository unavailableSlotRepository;
+
+    @Mock
+    private BusinessService businessService;
 
     @Mock
     private ScheduleMapper mapper;
@@ -42,10 +51,17 @@ class ScheduleServiceTest {
     private ScheduleService scheduleService;
 
     @Test
-    void getBusinessSchedules_ReturnsEmployeeEvenWithZeroAppointments() {
+    void getBusinessSchedules_ReturnsEmployeeEvenWithZeroAppointmentsOrSlots() {
         UUID businessId = UUID.randomUUID();
         Instant start = Instant.parse("2026-11-12T00:00:00Z");
         Instant end = Instant.parse("2026-11-13T00:00:00Z");
+        ZoneId zoneId = ZoneId.of("Europe/Bucharest");
+        LocalDate startDate = LocalDate.ofInstant(start, zoneId);
+        LocalDate endDate = LocalDate.ofInstant(end, zoneId);
+
+        Business business = new Business();
+        business.setId(businessId);
+        business.setTimezone(zoneId);
 
         Employee employee = new Employee();
         employee.setId(UUID.randomUUID());
@@ -53,18 +69,22 @@ class ScheduleServiceTest {
         WorkSchedule schedule = new WorkSchedule();
         schedule.setEmployee(employee);
 
-        when(businessRepository.existsById(businessId)).thenReturn(true);
+        when(businessService.findById(businessId)).thenReturn(business);
         when(workScheduleRepository.findByBusinessId(businessId))
                 .thenReturn(List.of(schedule));
-        when(appointmentRepository.findByBusinessIdAndDateRange(businessId, start, end))
+        when(appointmentService.findByBusinessIdAndDateRange(businessId, start, end))
+                .thenReturn(List.of());
+        when(unavailableSlotRepository.findByBusinessIdAndDateRangeOrDayNotNull(businessId, startDate, endDate))
                 .thenReturn(List.of());
 
         EmployeeScheduleDto mockDto = new EmployeeScheduleDto(
                 employee.getId(), "John Doe", "JD", "Specialist",
-                "Location", List.of(), List.of()
+                "Location", List.of(), List.of(), List.of()
         );
-        when(mapper.toEmployeeScheduleDto(eq(employee), anyList(), anyList()))
-                .thenReturn(mockDto);
+
+        when(mapper.toEmployeeScheduleDto(
+                eq(employee), anyList(), anyList(), anyList(), eq(startDate), eq(endDate), eq(zoneId)
+        )).thenReturn(mockDto);
 
         List<EmployeeScheduleDto> result = scheduleService.getBusinessSchedules(businessId, start, end);
 
@@ -72,7 +92,9 @@ class ScheduleServiceTest {
         assertEquals(1, result.size(), "Should return exactly one employee schedule group");
         assertEquals(employee.getId(), result.getFirst().employeeId());
 
-        verify(mapper).toEmployeeScheduleDto(eq(employee), eq(List.of(schedule)), eq(List.of()));
+        verify(mapper).toEmployeeScheduleDto(
+                eq(employee), eq(List.of(schedule)), eq(List.of()), eq(List.of()), eq(startDate), eq(endDate), eq(zoneId)
+        );
     }
 
     @Test
@@ -80,6 +102,13 @@ class ScheduleServiceTest {
         UUID businessId = UUID.randomUUID();
         Instant start = Instant.parse("2026-11-12T00:00:00Z");
         Instant end = Instant.parse("2026-11-13T00:00:00Z");
+        ZoneId zoneId = ZoneId.of("Europe/Bucharest");
+        LocalDate startDate = LocalDate.ofInstant(start, zoneId);
+        LocalDate endDate = LocalDate.ofInstant(end, zoneId);
+
+        Business business = new Business();
+        business.setId(businessId);
+        business.setTimezone(zoneId);
 
         Employee emp1 = new Employee();
         emp1.setId(UUID.randomUUID());
@@ -100,6 +129,10 @@ class ScheduleServiceTest {
         appt2Emp1.setId(UUID.randomUUID());
         appt2Emp1.setEmployee(emp1);
 
+        UnavailableSlot slotEmp1 = new UnavailableSlot();
+        slotEmp1.setId(UUID.randomUUID());
+        slotEmp1.setEmployee(emp1);
+
         Employee emp2 = new Employee();
         emp2.setId(UUID.randomUUID());
 
@@ -107,21 +140,28 @@ class ScheduleServiceTest {
         ws1Emp2.setId(UUID.randomUUID());
         ws1Emp2.setEmployee(emp2);
 
-        when(businessRepository.existsById(businessId)).thenReturn(true);
+        when(businessService.findById(businessId)).thenReturn(business);
         when(workScheduleRepository.findByBusinessId(businessId))
                 .thenReturn(List.of(ws1Emp1, ws2Emp1, ws1Emp2));
-        when(appointmentRepository.findByBusinessIdAndDateRange(businessId, start, end))
+        when(appointmentService.findByBusinessIdAndDateRange(businessId, start, end))
                 .thenReturn(List.of(appt1Emp1, appt2Emp1));
+        when(unavailableSlotRepository.findByBusinessIdAndDateRangeOrDayNotNull(businessId, startDate, endDate))
+                .thenReturn(List.of(slotEmp1));
 
         EmployeeScheduleDto dto1 = new EmployeeScheduleDto(
-                emp1.getId(), "Emp 1", "E1", "Role", "Location", List.of(), List.of()
+                emp1.getId(), "Emp 1", "E1", "Role", "Location", List.of(), List.of(), List.of()
         );
         EmployeeScheduleDto dto2 = new EmployeeScheduleDto(
-                emp2.getId(), "Emp 2", "E2", "Role", "Location", List.of(), List.of()
+                emp2.getId(), "Emp 2", "E2", "Role", "Location", List.of(), List.of(), List.of()
         );
 
-        when(mapper.toEmployeeScheduleDto(eq(emp1), anyList(), anyList())).thenReturn(dto1);
-        when(mapper.toEmployeeScheduleDto(eq(emp2), anyList(), anyList())).thenReturn(dto2);
+        when(mapper.toEmployeeScheduleDto(
+                eq(emp1), anyList(), anyList(), anyList(), eq(startDate), eq(endDate), eq(zoneId)
+        )).thenReturn(dto1);
+
+        when(mapper.toEmployeeScheduleDto(
+                eq(emp2), anyList(), anyList(), anyList(), eq(startDate), eq(endDate), eq(zoneId)
+        )).thenReturn(dto2);
 
         List<EmployeeScheduleDto> result = scheduleService.getBusinessSchedules(businessId, start, end);
 
@@ -133,13 +173,21 @@ class ScheduleServiceTest {
         verify(mapper).toEmployeeScheduleDto(
                 eq(emp1),
                 eq(List.of(ws1Emp1, ws2Emp1)),
-                eq(List.of(appt1Emp1, appt2Emp1))
+                eq(List.of(appt1Emp1, appt2Emp1)),
+                eq(List.of(slotEmp1)),
+                eq(startDate),
+                eq(endDate),
+                eq(zoneId)
         );
 
         verify(mapper).toEmployeeScheduleDto(
                 eq(emp2),
                 eq(List.of(ws1Emp2)),
-                eq(List.of())
+                eq(List.of()),
+                eq(List.of()),
+                eq(startDate),
+                eq(endDate),
+                eq(zoneId)
         );
     }
 
@@ -149,13 +197,14 @@ class ScheduleServiceTest {
         Instant start = Instant.parse("2026-11-12T00:00:00Z");
         Instant end = Instant.parse("2026-11-13T00:00:00Z");
 
-        when(businessRepository.existsById(businessId)).thenReturn(false);
+        when(businessService.findById(businessId))
+                .thenThrow(new EntityNotFoundException("Business not found"));
 
         assertThrows(
                 EntityNotFoundException.class,
                 () -> scheduleService.getBusinessSchedules(businessId, start, end)
         );
 
-        verifyNoInteractions(workScheduleRepository, appointmentRepository, mapper);
+        verifyNoInteractions(workScheduleRepository, appointmentService, unavailableSlotRepository, mapper);
     }
 }

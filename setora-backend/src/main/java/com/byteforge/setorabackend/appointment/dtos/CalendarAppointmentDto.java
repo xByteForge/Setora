@@ -1,3 +1,4 @@
+
 package com.byteforge.setorabackend.appointment.dtos;
 
 import com.byteforge.setorabackend.appointment.Appointment;
@@ -8,6 +9,7 @@ import com.byteforge.setorabackend.serviceItem.ServiceItem;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Locale;
+import java.util.UUID;
 
 public record CalendarAppointmentDto(
         int id,

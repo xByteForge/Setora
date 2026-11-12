@@ -19,6 +19,7 @@ import lombok.Setter;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.UUID;
 
 
 //period when an employee cannot take appointments (lunch break, blocked time, time off)

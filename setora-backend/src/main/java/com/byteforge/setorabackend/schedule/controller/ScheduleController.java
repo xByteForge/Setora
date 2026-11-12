@@ -1,5 +1,6 @@
-package com.byteforge.setorabackend.schedule;
+package com.byteforge.setorabackend.schedule.controller;
 
+import com.byteforge.setorabackend.schedule.service.ScheduleService;
 import com.byteforge.setorabackend.schedule.dtos.BusinessScheduleRequest;
 import com.byteforge.setorabackend.schedule.dtos.EmployeeScheduleDto;
 import jakarta.validation.Valid;

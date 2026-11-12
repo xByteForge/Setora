@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.UUID;
 
 
 //request and response bodies of the availability endpoints
