@@ -1,14 +1,21 @@
+
 package com.byteforge.setorabackend.appointment;
 
 import com.byteforge.setorabackend.appointment.dtos.AppointmentsTodaySummaryProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
-public interface AppointmentRepository extends JpaRepository<Appointment, UUID> {
+public interface AppointmentRepository
+        extends JpaRepository<Appointment, UUID>,
+        JpaSpecificationExecutor<Appointment> {
+    List<Appointment> findByEmployeeIdAndStatusNot(UUID employeeId, AppointmentStatus status);
 
     @Query("""
         SELECT
