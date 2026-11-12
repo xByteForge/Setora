@@ -1,0 +1,26 @@
+@host = http://localhost:8080
+@businessId = 11111111-1111-1111-1111-111111111111
+
+### 1. Valid Request - Single Day View (UTC Instant format)
+GET {{host}}/api/businesses/{{businessId}}/schedules?startDate=2026-11-12T00:00:00Z&endDate=2026-11-12T23:59:59Z
+Accept: application/json
+
+### 2. Valid Request - Weekly View
+GET {{host}}/api/businesses/{{businessId}}/schedules?startDate=2026-11-09T00:00:00Z&endDate=2026-11-16T00:00:00Z
+Accept: application/json
+
+### 3. Validation Error - startDate is after endDate (Expects 400 Bad Request)
+GET {{host}}/api/businesses/{{businessId}}/schedules?startDate=2026-11-15T10:00:00Z&endDate=2026-11-12T10:00:00Z
+Accept: application/json
+
+### 4. Validation Error - Missing endDate parameter (Expects 400 Bad Request)
+GET {{host}}/api/businesses/{{businessId}}/schedules?startDate=2026-11-12T00:00:00Z
+Accept: application/json
+
+### 5. Validation Error - Invalid UUID format in path (Expects 400 Bad Request)
+GET {{host}}/api/businesses/not-a-valid-uuid/schedules?startDate=2026-11-12T00:00:00Z&endDate=2026-11-13T00:00:00Z
+Accept: application/json
+
+### 6. Not Found - Valid UUID for a non-existent Business (Expects 404 Not Found)
+GET {{host}}/api/businesses/99999999-9999-9999-9999-999999999999/schedules?startDate=2026-11-12T00:00:00Z&endDate=2026-11-13T00:00:00Z
+Accept: application/json

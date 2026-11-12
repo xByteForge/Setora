@@ -73,10 +73,3 @@ public class Appointment {
     private String clientNote;
 
 }
-
-enum PaymentMethod{
-    Free,
-    Physical,
-    Online,
-    PhysicalOrOnline
-}
