@@ -63,6 +63,28 @@ public class AppointmentService {
         return AppointmentMapper.toResponseDto(appointment);
     }
 
+
+    @Transactional
+    public AppointmentResponseDto cancelAppointment(UUID id) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Appointment not found"
+                ));
+
+        if (appointment.getStatus() == AppointmentStatus.CANCELLED) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Appointment is already cancelled"
+            );
+        }
+
+        appointment.setStatus(AppointmentStatus.CANCELLED);
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+        return AppointmentMapper.toResponseDto(savedAppointment);
+    }
+
+
     public Appointment createGuestAppointment(@Valid CreateAppointmentGhostClientRequestDto request) {
         return null;
     }
