@@ -87,14 +87,62 @@
         }
       }
     },
+    "FORM": {
+      "SUBTITLE": "Completează detaliile pentru o programare nouă.",
+      "CLIENT": "Client",
+      "CLIENT_PLACEHOLDER": "Nume și prenume",
+      "PHONE": "Telefon",
+      "EMAIL": "E-mail",
+      "SERVICE": "Serviciu",
+      "LOCATION": "Locație",
+      "EMPLOYEE": "Angajat (opțional)",
+      "ANY_EMPLOYEE": "Orice angajat disponibil",
+      "DATE": "Data",
+      "TIME": "Ora disponibilă",
+      "TIME_PLACEHOLDER": "Alege ora",
+      "NO_SLOTS": "Nu există ore libere pentru selecția curentă.",
+      "NOTE": "Notă (opțional)",
+      "NOTE_PLACEHOLDER": "Adaugă o notă pentru această programare",
+      "AVAILABILITY_NOTE": "Disponibilitatea va fi verificată înainte de confirmare.",
+      "CANCEL": "Renunță",
+      "SAVING": "Se salvează...",
+      "SUCCESS": "Programarea a fost adăugată.",
+      "ERRORS": {
+        "REQUIRED": "Câmp obligatoriu.",
+        "CLIENT_NAME": "Introdu numele clientului (minim 2 caractere).",
+        "PHONE": "Introdu un număr valid, ex. 0712 345 678.",
+        "EMAIL": "Introdu o adresă de e-mail validă.",
+        "NOTE_LENGTH": "Nota poate avea maximum 500 de caractere.",
+        "SLOT_TAKEN": "Intervalul ales nu mai este disponibil. Alege altă oră."
+      },
+      "EDIT_SUBTITLE": "Actualizează datele clientului și nota.",
+      "SAVE_CHANGES": "Salvează modificările",
+      "LOCKED_NOTE": "Serviciul, locația, angajatul, data și ora nu pot fi modificate. Pentru a le schimba, anulează programarea și creează una nouă.",
+      "UPDATED": "Programarea a fost actualizată."
+    },
     "TITLE": "Programări",
     "SUBTITLE": "O zi bine organizată începe cu o imagine clară.",
-    "ADD": "Adaugă programare"
+    "ADD": "Adaugă programare",
+    "EDIT": "Editează programarea",
+    "CANCEL": {
+      "TITLE": "Anulezi programarea?",
+      "QUESTION": "Sigur vrei să anulezi această programare?",
+      "NOTIFY": "Clienta va fi notificată prin e-mail, iar intervalul va deveni disponibil.",
+      "REFUND": "Orice rambursare se aplică potrivit politicii businessului.",
+      "KEEP": "Păstrează programarea",
+      "CONFIRM": "Da, anulează",
+      "CANCELLING": "Se anulează…",
+      "SUCCESS": "Programarea a fost anulată."
+    }
+    
   },
   "MENU": {
     "TITLE": "Meniu",
     "THEME": "Temă",
     "LIGHT": "Luminoasă",
     "DARK": "Întunecată"
+  },
+  "ERRORS": {
+    "GENERIC": "A apărut o eroare. Încearcă din nou."
   }
 }

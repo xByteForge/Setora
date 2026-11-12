@@ -10,10 +10,22 @@ import { CalendarService } from '../../core/services/calendar.service';
 import { filterAppointments, filterEmployees, isSameDay } from './appointment-filters/appointment-filters.util';
 import { AppointmentDetailsComponent } from './appointment-details/appointment-details.component';
 import { AppointmentAgendaComponent } from './appointment-agenda/appointment-agenda.component';
-import { MOCK_LOCATIONS } from './appointments.mock';
+import { CalendarAppointment } from '../../core/models/calendar-appointment.model';
+import { CatalogService } from '../../core/services/catalog.service';
+import { AppointmentFormDialogComponent } from './appointment-form-dialog/appointment-form-dialog.component';
+import { CancelAppointmentDialogComponent } from './cancel-appointment-dialog/cancel-appointment-dialog.component';
 
 @Component({
-  imports: [TranslocoModule, AppointmentsHeaderComponent, AppointmentCalendarComponent, AppointmentFiltersComponent, AppointmentDetailsComponent, AppointmentAgendaComponent, ],
+  imports: [
+    TranslocoModule,
+    AppointmentsHeaderComponent,
+    AppointmentCalendarComponent,
+    AppointmentFiltersComponent,
+    AppointmentDetailsComponent,
+    AppointmentAgendaComponent,
+    AppointmentFormDialogComponent,
+    CancelAppointmentDialogComponent,
+  ],
   selector: 'app-appointments',
   templateUrl: './appointments.component.html',
   styleUrl: './appointments.component.css',
@@ -23,9 +35,10 @@ export class AppointmentsComponent {
   private readonly calendarService = inject(CalendarService);
 
   // Pagina deține datele; calendarul doar le afișează.
-  readonly locations = signal(MOCK_LOCATIONS); // TODO: din serviciu
+  private readonly catalog = inject(CatalogService);
+  readonly locations = signal(this.catalog.getLocations());
   readonly employees = signal(this.calendarService.getEmployees());
-  readonly appointments = signal(this.calendarService.getAppointments());
+  readonly appointments = computed(() => this.calendarService.getAppointments());
 
   readonly filters = signal<AppointmentFilters>(DEFAULT_FILTERS);
   /** Ziua afișată în calendar (sincronizată cu acesta). */
@@ -56,7 +69,7 @@ export class AppointmentsComponent {
       total: items.length,
       confirmed,
       pending,
-      cancelled
+      cancelled,
     };
   });
 
@@ -69,8 +82,25 @@ export class AppointmentsComponent {
     }
   }
 
+  // Starea dialogului de adăugare
+  readonly addOpen = signal(false);
+
   openAddAppointment(): void {
-    // TODO: deschide formularul de adaugare
+    this.addOpen.set(true);
+  }
+
+  closeAddAppointment(): void {
+    this.addOpen.set(false);
+  }
+
+  readonly toast = signal<string | null>(null);
+
+  onAppointmentCreated(created: CalendarAppointment): void {
+    this.addOpen.set(false);
+    const [y, m, d] = created.start.slice(0, 10).split('-').map(Number);
+    this.selectedDate.set(new Date(y, m - 1, d));
+    this.selectedId.set(created.id);
+    this.showToast('APPOINTMENTS.FORM.SUCCESS');
   }
 
   readonly selectedId = signal<string | null>(null);
@@ -91,12 +121,83 @@ export class AppointmentsComponent {
     this.selectedId.set(null);
   }
 
-  editAppointment(id: string): void {
-    // TODO: open the edit form
+  // Editare
+readonly editingId = signal<string | null>(null);
+readonly editTarget = computed(() => {
+    const id = this.editingId();
+    const item = id ? this.appointments().find((a) => a.id === id) : undefined;
+    return item ? this.calendarService.getDetails(item) : null;
+});
+readonly editLocationId = computed(() => {
+    const id = this.editingId();
+    return this.appointments().find((a) => a.id === id)?.locationId ?? '';
+});
+
+editAppointment(id: string): void {
+    this.editingId.set(id);
+}
+
+closeEdit(): void {
+    this.editingId.set(null);
+}
+
+onAppointmentUpdated(updated: CalendarAppointment): void {
+    this.editingId.set(null);
+    this.selectedId.set(updated.id);
+    this.showToast('APPOINTMENTS.FORM.UPDATED');
+}
+
+// Anulare
+readonly cancelingId = signal<string | null>(null);
+readonly cancelTarget = computed(() => {
+    const id = this.cancelingId();
+    const item = id ? this.appointments().find((a) => a.id === id) : undefined;
+    return item ? this.calendarService.getDetails(item) : null;
+});
+readonly cancelLocationName = computed(() => {
+    const id = this.cancelingId();
+    const locationId = this.appointments().find((a) => a.id === id)?.locationId;
+    return this.locations().find((l) => l.id === locationId)?.name ?? '';
+});
+readonly cancelBusy = signal(false);
+readonly cancelFailed = signal(false);
+
+cancelAppointment(id: string): void {
+    this.cancelFailed.set(false);
+    this.cancelingId.set(id);
+}
+
+closeCancel(): void {
+    if (!this.cancelBusy()) this.cancelingId.set(null);
+}
+
+confirmCancel(): void {
+    const id = this.cancelingId();
+    if (!id) return;
+
+    this.cancelBusy.set(true);
+    this.cancelFailed.set(false);
+
+    this.calendarService.cancel(id).subscribe({
+        next: () => {
+            this.cancelBusy.set(false);
+            this.cancelingId.set(null);
+            this.showToast('APPOINTMENTS.CANCEL.SUCCESS');
+        },
+        error: () => {
+            this.cancelBusy.set(false);
+            this.cancelFailed.set(true);
+        },
+    });
+}
+
+  locationName(locationId: string): string {
+    return this.locations().find((l) => l.id === locationId)?.name ?? '';
   }
 
-  cancelAppointment(id: string): void {
-    // TODO: call API; optimistic local update for now
+  private showToast(key: string): void {
+    this.toast.set(key);
+    setTimeout(() => this.toast.set(null), 4000);
   }
 
   private readonly mql = window.matchMedia('(max-width: 900px)');

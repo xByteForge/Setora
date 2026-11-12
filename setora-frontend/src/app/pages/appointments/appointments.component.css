@@ -20,6 +20,17 @@ app-appointment-details {
   align-self: start;
 }
 
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 12px 20px;
+  border-radius: 8px;
+  z-index: 200;
+}
+
 .mobile-search {
   position: relative;
   display: block;

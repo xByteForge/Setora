@@ -1,0 +1,5 @@
+### Daily summary
+GET http://localhost:8080/api/appointments/summary?businessId=c6c8e088-50e1-4d69-8de9-793ce6cd0046&date=2026-11-12
+
+###
+GET http://localhost:8080/api/appointments/calendar?businessId=bde8a72d-fc49-46dc-b675-3dc917ea2efe&startDate=2026-11-01&endDate=2026-11-30&from=360&to=800

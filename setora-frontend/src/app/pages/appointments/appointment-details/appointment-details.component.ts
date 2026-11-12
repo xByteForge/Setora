@@ -16,7 +16,6 @@ const PAYMENT_KEYS: Record<PaymentMethod, string> = {
   templateUrl: './appointment-details.component.html',
   styleUrl: './appointment-details.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '(document:keydown.escape)': 'closed.emit()' },
 })
 export class AppointmentDetailsComponent {
   private readonly transloco = inject(TranslocoService);
@@ -29,9 +28,9 @@ export class AppointmentDetailsComponent {
 
   readonly closed = output<void>();
   readonly edit = output<string>();
-  readonly cancelConfirmed = output<string>();
+  readonly cancelRequested = output<string>();
 
-  readonly canModify = computed(() => this.appointment().status !== 'Cancelled');
+  readonly canModify = computed(() => this.appointment().status !== 'cancelled');
 
   readonly dateLabel = computed(() => {
     const text = new Date(`${this.appointment().date}T00:00:00`).toLocaleDateString(this.lang(), {

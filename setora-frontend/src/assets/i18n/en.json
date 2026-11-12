@@ -87,14 +87,61 @@
         }
       }
     },
+    "FORM": {
+      "SUBTITLE": "Fill in the details for a new appointment.",
+      "CLIENT": "Client",
+      "CLIENT_PLACEHOLDER": "Full name",
+      "PHONE": "Phone",
+      "EMAIL": "Email",
+      "SERVICE": "Service",
+      "LOCATION": "Location",
+      "EMPLOYEE": "Employee (optional)",
+      "ANY_EMPLOYEE": "Any available employee",
+      "DATE": "Date",
+      "TIME": "Available time",
+      "TIME_PLACEHOLDER": "Choose a time",
+      "NO_SLOTS": "No free slots for the current selection.",
+      "NOTE": "Note (optional)",
+      "NOTE_PLACEHOLDER": "Add a note for this appointment",
+      "AVAILABILITY_NOTE": "Availability will be checked before confirmation.",
+      "CANCEL": "Cancel",
+      "SAVING": "Saving...",
+      "SUCCESS": "The appointment was added.",
+      "ERRORS": {
+        "REQUIRED": "Required field.",
+        "CLIENT_NAME": "Enter the client's name (at least 2 characters).",
+        "PHONE": "Enter a valid number, e.g. 0712 345 678.",
+        "EMAIL": "Enter a valid email address.",
+        "NOTE_LENGTH": "The note can have at most 500 characters.",
+        "SLOT_TAKEN": "The selected slot is no longer available. Choose another time."
+      },
+      "EDIT_SUBTITLE": "Update the client details and note.",
+      "SAVE_CHANGES": "Save changes",
+      "LOCKED_NOTE": "Service, location, employee, date and time can't be changed. To change them, cancel the appointment and create a new one.",
+      "UPDATED": "Appointment updated."
+    },
     "TITLE": "Appointments",
     "SUBTITLE": "A well-organized day starts with a clear picture.",
-    "ADD": "Add appointment"
+    "ADD": "Add appointment",
+    "EDIT": "Edit appointment",
+    "CANCEL": {
+      "TITLE": "Cancel appointment?",
+      "QUESTION": "Are you sure you want to cancel this appointment?",
+      "NOTIFY": "The client will be notified by email, and the time slot will become available.",
+      "REFUND": "Any refund follows the business's policy.",
+      "KEEP": "Keep appointment",
+      "CONFIRM": "Yes, cancel",
+      "CANCELLING": "Cancelling…",
+      "SUCCESS": "Appointment cancelled."
+    }
   },
   "MENU": {
     "TITLE": "Menu",
     "THEME": "Theme",
     "LIGHT": "Light",
     "DARK": "Dark"
+  },
+  "ERRORS": {
+    "GENERIC": "Something went wrong. Please try again."
   }
 }

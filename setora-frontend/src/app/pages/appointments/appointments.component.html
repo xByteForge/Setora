@@ -44,6 +44,41 @@
       [locationName]="selectedLocationName()"
       (closed)="closeDetails()"
       (edit)="editAppointment($event)"
-      (cancelConfirmed)="cancelAppointment($event)" />
+      (cancelRequested)="cancelAppointment($event)" />
   }
 </div>
+
+<!-- Dialog de adăugare -->
+@if (addOpen()) {
+  <app-appointment-form-dialog
+    [selectedDate]="selectedDate()"
+    [locations]="locations()"
+    (closed)="closeAddAppointment()"
+    (created)="onAppointmentCreated($event)" />
+}
+
+<!-- Dialog de editare -->
+@if (editTarget(); as appt) {
+  <app-appointment-form-dialog
+    [appointment]="appt"
+    [locationId]="editLocationId()"
+    [selectedDate]="selectedDate()"
+    [locations]="locations()"
+    (closed)="closeEdit()"
+    (updated)="onAppointmentUpdated($event)" />
+}
+
+<!-- Confirmare anulare -->
+@if (cancelTarget(); as appt) {
+  <app-cancel-appointment-dialog
+    [appointment]="appt"
+    [locationName]="cancelLocationName()"
+    [busy]="cancelBusy()"
+    [failed]="cancelFailed()"
+    (closed)="closeCancel()"
+    (confirmed)="confirmCancel()" />
+}
+
+@if (toast(); as key) {
+  <div class="toast" role="status">{{ key | transloco }}</div>
+}

@@ -16,4 +16,6 @@ public class BusinessService {
                 .orElseThrow(() -> new EntityNotFoundException("Business not found"));
 
     }
+
+
 }

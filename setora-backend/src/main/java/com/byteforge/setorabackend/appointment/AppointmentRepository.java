@@ -1,3 +1,4 @@
+
 package com.byteforge.setorabackend.appointment;
 
 import com.byteforge.setorabackend.appointment.dtos.AppointmentsTodaySummaryProjection;

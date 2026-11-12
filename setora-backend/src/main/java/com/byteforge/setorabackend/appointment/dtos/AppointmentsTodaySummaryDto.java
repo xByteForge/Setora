@@ -7,3 +7,4 @@ public record AppointmentsTodaySummaryDto(
         int cancelled
 ) {
 }
+

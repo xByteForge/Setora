@@ -10,8 +10,11 @@ import com.byteforge.setorabackend.business.BusinessRepository;
 import com.byteforge.setorabackend.common.DateTimeInterval;
 import com.byteforge.setorabackend.common.TimeInterval;
 import com.byteforge.setorabackend.employees.model.Employee;
-import com.byteforge.setorabackend.employees.repository.EmployeeRepository;
+import com.byteforge.setorabackend.employees.model.UnavailableSlot;
+import com.byteforge.setorabackend.employees.model.UnavailableType;
 import com.byteforge.setorabackend.employees.model.WorkSchedule;
+import com.byteforge.setorabackend.employees.repository.EmployeeRepository;
+import com.byteforge.setorabackend.employees.repository.UnavailableSlotRepository;
 import com.byteforge.setorabackend.employees.repository.WorkScheduleRepository;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
 import com.byteforge.setorabackend.serviceItem.ServiceItemRepository;
@@ -48,6 +51,7 @@ public class DataSeeder implements CommandLineRunner {
     private final EmployeeRepository employeeRepository;
     private final WorkScheduleRepository workScheduleRepository;
     private final AppointmentRepository appointmentRepository;
+    private final UnavailableSlotRepository unavailableSlotRepository;
 
     @Override
     @Transactional
@@ -75,6 +79,7 @@ public class DataSeeder implements CommandLineRunner {
         seedAppointment(client, maria, haircut, LocalTime.of(10, 0));
         seedAppointment(client, andrei, manicure, LocalTime.of(14, 0));
 
+        seedUnavailableSlots();
         log.info("Seeded business {} with id {}", business.getName(), business.getId());
     }
 
@@ -145,6 +150,53 @@ public class DataSeeder implements CommandLineRunner {
         appointment.setServiceItem(serviceItem);
         appointment.setInterval(new DateTimeInterval(start, end));
         appointment.setStatus(AppointmentStatus.CONFIRMED);
+        appointment.setPriceAtAppointment(serviceItem.getPrice());
+        appointmentRepository.save(appointment);
+    }
+
+    private void seedUnavailableSlots() {
+        if (unavailableSlotRepository.count() > 0) {
+            return;
+        }
+        LocalDate nextWednesday = LocalDate.now(ZONE).with(TemporalAdjusters.next(DayOfWeek.WEDNESDAY));
+
+        for (Employee employee : employeeRepository.findAll()) {
+            for (DayOfWeek day : WORK_DAYS) {
+                seedUnavailableSlot(employee, UnavailableType.BREAK, "Lunch",
+                        null, day, LocalTime.of(13, 0), LocalTime.of(14, 0));
+            }
+            seedUnavailableSlot(employee, UnavailableType.BLOCKED, "Doctor",
+                    nextWednesday, null, LocalTime.of(15, 0), LocalTime.of(16, 0));
+        }
+        log.info("Seeded unavailable slots for next wednesday {}", nextWednesday);
+    }
+
+    //exactly one of date and dayOfWeek is set
+    private void seedUnavailableSlot(Employee employee, UnavailableType type, String reason,
+                                     LocalDate date, DayOfWeek dayOfWeek, LocalTime from, LocalTime to) {
+        UnavailableSlot slot = new UnavailableSlot();
+        slot.setEmployee(employee);
+        slot.setType(type);
+        slot.setReason(reason);
+        slot.setSpecificDate(date);
+        slot.setDayOfWeek(dayOfWeek);
+        slot.setInterval(new TimeInterval(from, to));
+        unavailableSlotRepository.save(slot);
+    }
+
+    private void seedAppointment(User client, Employee employee, ServiceItem serviceItem, LocalTime at, AppointmentStatus appointmentStatus) {
+        Instant start = LocalDate.now(ZONE)
+                .atTime(at)
+                .atZone(ZONE)
+                .toInstant();
+        Instant end = start.plus(Duration.ofMinutes(serviceItem.getDurationMinutes()));
+
+        Appointment appointment = new Appointment();
+        appointment.setClient(client);
+        appointment.setEmployee(employee);
+        appointment.setServiceItem(serviceItem);
+        appointment.setInterval(new DateTimeInterval(start, end));
+        appointment.setStatus(appointmentStatus);
         appointment.setPriceAtAppointment(serviceItem.getPrice());
         appointmentRepository.save(appointment);
     }

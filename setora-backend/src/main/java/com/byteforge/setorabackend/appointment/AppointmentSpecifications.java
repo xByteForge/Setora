@@ -21,9 +21,9 @@ public class AppointmentSpecifications {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(cb.equal(root.get("serviceItem")
-                            .get("business")
-                            .get("id"),
-                    businessId));
+                                        .get("business")
+                                        .get("id"),
+                                        businessId));
 
             if (employeeId != null)
                 predicates.add(cb.equal(root.get("employee").get("id"), employeeId));
