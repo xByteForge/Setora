@@ -1,0 +1,58 @@
+@baseUrl = http://localhost:8080/api
+@businessId = 00000000-0000-0000-0000-000000000000
+
+### 1. Get employees belonging to a business
+GET {{baseUrl}}/businesses/{{businessId}}/employees
+Accept: application/json
+
+### 1b. Get employees belonging to a business (query param)
+GET {{baseUrl}}/employees?businessId={{businessId}}
+Accept: application/json
+
+### 2. Get business locations
+GET {{baseUrl}}/businesses/{{businessId}}/locations
+Accept: application/json
+
+### 2b. Get business locations (query param)
+GET {{baseUrl}}/locations?businessId={{businessId}}
+Accept: application/json
+
+### 2c. Get single business location
+GET {{baseUrl}}/businesses/{{businessId}}/location
+Accept: application/json
+
+### 3. Get services offered by a business
+GET {{baseUrl}}/businesses/{{businessId}}/services
+Accept: application/json
+
+### 3b. Get services offered by a business (query param)
+GET {{baseUrl}}/services?businessId={{businessId}}
+Accept: application/json
+
+### 4. Search services by name (partial match)
+GET {{baseUrl}}/businesses/{{businessId}}/services/search?name=haircut
+Accept: application/json
+
+### 4b. Search services by name (via services endpoint with filter)
+GET {{baseUrl}}/businesses/{{businessId}}/services?name=color
+Accept: application/json
+
+### 5. Get all clients associated with a business
+GET {{baseUrl}}/businesses/{{businessId}}/clients
+Accept: application/json
+
+### 6. Search clients by name (partial match)
+GET {{baseUrl}}/businesses/{{businessId}}/clients/search?name=John
+Accept: application/json
+
+### 6b. Search clients by name (via clients endpoint with query)
+GET {{baseUrl}}/businesses/{{businessId}}/clients?name=Doe
+Accept: application/json
+
+### 7. Get appointment reference data (locations, employees, services)
+GET {{baseUrl}}/businesses/{{businessId}}/reference-data
+Accept: application/json
+
+### 7b. Get appointment reference data via appointments route
+GET {{baseUrl}}/appointments/reference-data?businessId={{businessId}}
+Accept: application/json
