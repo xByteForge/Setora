@@ -13,7 +13,10 @@ import com.byteforge.setorabackend.serviceItem.ServiceItemService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -57,6 +60,39 @@ public class AppointmentService {
                 Math.toIntExact(summary.getCancelled())
         );
     }
+
+    @Transactional(readOnly = true)
+    public AppointmentResponseDto getAppointmentById(UUID id) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Appointment not found"
+                ));
+
+        return AppointmentMapper.toResponseDto(appointment);
+    }
+
+
+    @Transactional
+    public AppointmentResponseDto cancelAppointment(UUID id) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Appointment not found"
+                ));
+
+        if (appointment.getStatus() == AppointmentStatus.CANCELLED) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Appointment is already cancelled"
+            );
+        }
+
+        appointment.setStatus(AppointmentStatus.CANCELLED);
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+        return AppointmentMapper.toResponseDto(savedAppointment);
+    }
+
 
     public Appointment createGuestAppointment(@Valid CreateAppointmentGhostClientRequestDto request) {
         ServiceItem service = serviceItemService.findById(request.serviceId());
