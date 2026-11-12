@@ -4,6 +4,7 @@ import com.byteforge.setorabackend.appointment.dtos.AppointmentsTodaySummaryDto;
 import com.byteforge.setorabackend.appointment.dtos.AppointmentsTodaySummaryProjection;
 import com.byteforge.setorabackend.business.Business;
 import com.byteforge.setorabackend.business.BusinessRepository;
+import com.byteforge.setorabackend.business.BusinessService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,14 +18,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AppointmentService {
     final private AppointmentRepository appointmentRepository;
-    final private BusinessRepository businessRepository;
+    final private BusinessService businessService;
 
     public AppointmentsTodaySummaryDto getDailySummary(
             UUID businessId,
             LocalDate date
     ) {
-        Business business = businessRepository.findById(businessId)
-                .orElseThrow(() -> new EntityNotFoundException("Business not found"));
+        Business business = businessService.findById(businessId);
 
         ZoneId zone = business.getTimezone();
 
