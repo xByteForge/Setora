@@ -26,16 +26,26 @@ h1 {
 .btn-primary {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
+    min-height: 44px;
     padding: 10px 16px;
     border: 0;
     border-radius: 8px;
-    background: var(--color-primary, #2a9d8f);
-    color: #fff;
-    font-weight: 600;
+    background: var(--brand-mint);
+    color: #032b25;
+    font-weight: 700;
     cursor: pointer;
 }
 
 .btn-primary:hover {
-    filter: brightness(0.95);
+    background: var(--brand-mint-hover);
+    filter: none;
+}
+
+@media (max-width: 640px) {
+    .top {
+        flex-direction: column;
+        align-items: stretch;
+    }
 }

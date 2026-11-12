@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Employee } from '../models/employee.model';
 import { CalendarAppointment } from '../models/calendar-appointment.model';
+import { Appointment, AppointmentStatus } from '../models/appointment.model';
 
 const DAY = '2026-11-07';
 const at = (time: string) => `${DAY}T${time}:00`;
@@ -41,5 +42,47 @@ export class CalendarService {
 
     getAppointments(): CalendarAppointment[] {
         return this.appointments;
+    }
+
+    private readonly extras: Record<string, Partial<Appointment>> = {
+        '1': {
+            clientPhone: '0700 000 123',
+            clientEmail: 'irina@example.com',
+            price: 150,
+            paymentMethod: 'Physical',
+            isPaid: false,
+            clientNote: 'Aș dori să păstrez lungimea.',
+        },
+    };
+
+    /** Maps a calendar item to the full details shape (mock until the API exists). */
+    getDetails(a: CalendarAppointment): Appointment {
+        const employee = this.employees.find((e) => e.id === a.employeeId);
+        const minutes = (iso: string) => +iso.slice(11, 13) * 60 + +iso.slice(14, 16);
+        const status = (a.status.charAt(0).toUpperCase() + a.status.slice(1)) as AppointmentStatus;
+
+        return {
+            id: a.id,
+            businessId: 'studio-armonia',
+            serviceId: a.service,
+            serviceName: a.service,
+            durationMinutes: minutes(a.end) - minutes(a.start),
+            clientId: a.id,
+             clientName: a.clientName,
+             clientPhone: '0700 000 000',
+             clientEmail: 'client@example.com',
+             employeeId: a.employeeId,
+             employeeName: employee?.name ?? '',
+             date: a.start.slice(0, 10),
+             startTime: a.start.slice(11, 16),
+             endTime: a.end.slice(11, 16),
+             status,
+             price: 150,
+             currency: 'lei',
+             paymentMethod: 'Physical',
+             isPaid: false,
+             ...this.extras[a.id],
+            
+        };
     }
 }

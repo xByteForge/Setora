@@ -45,6 +45,10 @@
       "REMOVE": "Remove filter {{filter}}",
       "RESET": "Reset filters"
     },
+    "AGENDA": {
+      "META": "Agenda · {{count}} employees · 30 min intervals",
+      "EMPTY": "No appointments on this day."
+    },
     "CALENDAR": {
       "APPOINTMENTS_COUNT": "appointments",
       "TODAY": "Today",
@@ -60,8 +64,37 @@
       },
       "EMPLOYEE": "Employee"
     },
+    "DETAILS": {
+      "TITLE": "Appointment details",
+      "CLOSE": "Close",
+      "CLIENT": "Client",
+      "DATE": "Date",
+      "TIME": "Time",
+      "EMPLOYEE": "Employee",
+      "LOCATION": "Location",
+      "NOTE": "Client note",
+      "EDIT": "Edit appointment",
+      "CANCEL": "Cancel appointment",
+      "CANCEL_HINT": "Cancelling requires confirmation. The business policy applies; the client will be notified by email.",
+      "PAYMENT": {
+        "PAID": "Marked as paid",
+        "UNPAID": "Not marked as paid",
+        "METHOD": {
+          "FREE": "Free",
+          "PHYSICAL": "Pay on site",
+          "ONLINE": "Pay online",
+          "PHYSICAL_OR_ONLINE": "Pay on site or online"
+        }
+      }
+    },
     "TITLE": "Appointments",
     "SUBTITLE": "A well-organized day starts with a clear picture.",
     "ADD": "Add appointment"
+  },
+  "MENU": {
+    "TITLE": "Menu",
+    "THEME": "Theme",
+    "LIGHT": "Light",
+    "DARK": "Dark"
   }
 }

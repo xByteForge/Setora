@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
+import { ThemeService } from '../../services/theme.service';
+import { MobileMenuService } from '../../services/mobile-menu.service';
 
 interface NavItem {
   path: string;
@@ -15,8 +17,12 @@ interface NavItem {
   imports: [RouterLink, RouterLinkActive, TranslocoModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarComponent {
+  readonly menu = inject(MobileMenuService);
+  readonly theme = inject(ThemeService);
+
   businessName = 'Studio Armonia';
   businessSubtitle = 'Spațiu business · București';
   userName = 'Emma Pavel';
@@ -31,4 +37,9 @@ export class SidebarComponent {
     { path: '/locations', labelKey: 'NAV.LOCATIONS', iconClass: 'fa-solid fa-location-dot' },
     { path: '/working-hours', labelKey: 'NAV.WORKING_HOURS', iconClass: 'fa-regular fa-clock' },
   ];
+
+  @HostListener('document:keydown.escape')
+  onEsc(): void {
+    this.menu.close();
+  }
 }

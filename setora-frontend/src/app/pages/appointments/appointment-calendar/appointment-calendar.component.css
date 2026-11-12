@@ -1,5 +1,6 @@
 :host {
-    display: block;
+    display: flex;
+    flex-direction: column;
     min-width: 0;
 }
 
@@ -9,6 +10,9 @@
     --hour-height: 60px;
     --columns: 3;
     --col-min: 180px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     max-width: 100%;
     border: 1px solid var(--line);
     border-radius: 12px;
@@ -29,8 +33,14 @@
 }
 
 .calendar__header {
+    flex: none;
     border-bottom: 1px solid var(--line);
     background: var(--paper);
+}
+
+.calendar__body {
+    flex: 1;
+    align-items: stretch;
 }
 
 .calendar__corner {

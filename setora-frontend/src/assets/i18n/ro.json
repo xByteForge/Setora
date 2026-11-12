@@ -45,6 +45,10 @@
       "REMOVE": "Elimină filtrul {{filter}}",
       "RESET": "Resetează filtrele"
     },
+    "AGENDA": {
+      "META": "Agendă · {{count}} angajați · intervale de 30 min",
+      "EMPTY": "Nicio programare în această zi."
+    },
     "CALENDAR": {
       "APPOINTMENTS_COUNT": "programări",
       "TODAY": "Astăzi",
@@ -60,8 +64,37 @@
       },
       "EMPLOYEE": "Angajat"
     },
+    "DETAILS": {
+      "TITLE": "Detalii programare",
+      "CLOSE": "Închide",
+      "CLIENT": "Client",
+      "DATE": "Data",
+      "TIME": "Ora",
+      "EMPLOYEE": "Angajat",
+      "LOCATION": "Locație",
+      "NOTE": "Notă client",
+      "EDIT": "Editează programarea",
+      "CANCEL": "Anulează programarea",
+      "CANCEL_HINT": "Anularea necesită confirmare. Se aplică politica afacerii; clientul va fi notificat prin e-mail.",
+      "PAYMENT": {
+        "PAID": "Marcată ca plătită",
+        "UNPAID": "Nu este marcată ca plătită",
+        "METHOD": {
+          "FREE": "Gratuit",
+          "PHYSICAL": "Plată la sediu",
+          "ONLINE": "Plată online",
+          "PHYSICAL_OR_ONLINE": "Plată la sediu sau online"
+        }
+      }
+    },
     "TITLE": "Programări",
     "SUBTITLE": "O zi bine organizată începe cu o imagine clară.",
     "ADD": "Adaugă programare"
+  },
+  "MENU": {
+    "TITLE": "Meniu",
+    "THEME": "Temă",
+    "LIGHT": "Luminoasă",
+    "DARK": "Întunecată"
   }
 }

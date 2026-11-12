@@ -1,0 +1,35 @@
+<section class="agenda">
+  <div class="agenda__nav">
+    <button type="button" class="agenda__arrow" (click)="shift(-1)"
+            [attr.aria-label]="'APPOINTMENTS.CALENDAR.PREVIOUS' | transloco">‹</button>
+    <h2 class="agenda__date">{{ dateLabel() }}</h2>
+    <button type="button" class="agenda__arrow" (click)="shift(1)"
+            [attr.aria-label]="'APPOINTMENTS.CALENDAR.NEXT' | transloco">›</button>
+  </div>
+
+  <button type="button" class="agenda__today" (click)="goToToday()">
+    {{ 'APPOINTMENTS.CALENDAR.TODAY' | transloco }}
+  </button>
+
+  <p class="agenda__meta">{{ 'APPOINTMENTS.AGENDA.META' | transloco: { count: employees().length } }}</p>
+
+  <ul class="agenda__list">
+    @for (item of items(); track item.id) {
+      <li>
+        <button type="button" class="card"
+                [attr.data-status]="item.status"
+                [class.card--selected]="selectedId() === item.id"
+                [disabled]="item.status === 'unavailable'"
+                (click)="select(item)">
+          <span class="card__time">{{ item.start.slice(11, 16) }}–{{ item.end.slice(11, 16) }}</span>
+          <span class="card__client">{{ item.clientName }}</span>
+          <span class="card__meta">{{ item.service }} · {{ employeeName(item.employeeId) }}</span>
+          <span class="card__status">{{ 'APPOINTMENTS.CALENDAR.STATUS.' + item.status.toUpperCase() | transloco }}</span>
+          <span class="card__chevron" aria-hidden="true">›</span>
+        </button>
+      </li>
+    } @empty {
+      <li class="agenda__empty">{{ 'APPOINTMENTS.AGENDA.EMPTY' | transloco }}</li>
+    }
+  </ul>
+</section>
