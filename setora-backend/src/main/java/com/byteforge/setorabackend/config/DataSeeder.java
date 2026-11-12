@@ -72,8 +72,13 @@ public class DataSeeder implements CommandLineRunner {
                 seedUser("Dumitru", "Andrei", "andrei.dumitru@setora.test", "0700000004"),
                 Set.of(haircut, manicure), LocalTime.of(12, 0), LocalTime.of(20, 0));
 
-        seedAppointment(client, maria, haircut, LocalTime.of(10, 0));
-        seedAppointment(client, andrei, manicure, LocalTime.of(14, 0));
+        seedAppointmentInFuture(client, maria, haircut, LocalTime.of(10, 0));
+        seedAppointmentInFuture(client, andrei, manicure, LocalTime.of(14, 0));
+        seedAppointment(client, andrei, manicure, LocalTime.of(15, 0), AppointmentStatus.PENDING);
+        seedAppointment(client, maria, haircut, LocalTime.of(16, 30), AppointmentStatus.CONFIRMED);
+        seedAppointment(client, andrei, manicure, LocalTime.of(11, 30), AppointmentStatus.CONFIRMED);
+        //seedAppointment(client, andrei, manicure, LocalTime.of(9, 00), AppointmentStatus.CANCELLED);
+
 
         log.info("Seeded business {} with id {}", business.getName(), business.getId());
     }
@@ -91,8 +96,8 @@ public class DataSeeder implements CommandLineRunner {
     private Business seedBusiness(User owner) {
         Business business = new Business();
         business.setOwner(owner);
-        business.setName("Studio Coafura");
-        business.setSlug("studio-coafura");
+        business.setName("Studio Armonia");
+        business.setSlug("studio-armonia");
         business.setDescription("Salon de infrumusetare");
         business.setAddress("Str. Memorandumului 10, Cluj-Napoca");
         business.setLatitude(46.7694);
@@ -131,7 +136,7 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     //booked for next monday, so it is always in the future
-    private void seedAppointment(User client, Employee employee, ServiceItem serviceItem, LocalTime at) {
+    private void seedAppointmentInFuture(User client, Employee employee, ServiceItem serviceItem, LocalTime at) {
         Instant start = LocalDate.now(ZONE)
                 .with(TemporalAdjusters.next(DayOfWeek.MONDAY))
                 .atTime(at)
@@ -145,6 +150,23 @@ public class DataSeeder implements CommandLineRunner {
         appointment.setServiceItem(serviceItem);
         appointment.setInterval(new DateTimeInterval(start, end));
         appointment.setStatus(AppointmentStatus.CONFIRMED);
+        appointment.setPriceAtAppointment(serviceItem.getPrice());
+        appointmentRepository.save(appointment);
+    }
+
+    private void seedAppointment(User client, Employee employee, ServiceItem serviceItem, LocalTime at, AppointmentStatus appointmentStatus) {
+        Instant start = LocalDate.now(ZONE)
+                .atTime(at)
+                .atZone(ZONE)
+                .toInstant();
+        Instant end = start.plus(Duration.ofMinutes(serviceItem.getDurationMinutes()));
+
+        Appointment appointment = new Appointment();
+        appointment.setClient(client);
+        appointment.setEmployee(employee);
+        appointment.setServiceItem(serviceItem);
+        appointment.setInterval(new DateTimeInterval(start, end));
+        appointment.setStatus(appointmentStatus);
         appointment.setPriceAtAppointment(serviceItem.getPrice());
         appointmentRepository.save(appointment);
     }
