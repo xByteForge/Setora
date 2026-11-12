@@ -1,0 +1,31 @@
+@baseUrl = http://localhost:8080/api/employees
+@employeeId = 26916c2b-0265-4585-b23d-33d212a44ebb
+@slotId = 72b68891-a188-47d5-82dd-9b2117dfe9d2
+
+### 1. Obține orele de lucru pentru un angajat
+GET {{baseUrl}}/{{employeeId}}/working-hours
+Accept: application/json
+
+### 2. Obține sloturile indisponibile (pentru o dată specifică)
+GET {{baseUrl}}/{{employeeId}}/unavailable-slots?date=2026-11-20
+Accept: application/json
+
+### 3. Obține sloturile indisponibile (pentru un interval from-to)
+GET {{baseUrl}}/{{employeeId}}/unavailable-slots?from=2026-11-16&to=2026-11-22
+Accept: application/json
+
+### 4. Creează un nou slot indisponibil (ex: concediu one-off)
+POST {{baseUrl}}/{{employeeId}}/unavailable-slots
+Content-Type: application/json
+
+{
+  "employeeId": "{{employeeId}}",
+  "type": "TIME_OFF",
+  "reason": "Concediu medical",
+  "date": "2026-11-15",
+  "start": "09:00:00",
+  "end": "17:00:00"
+}
+
+### 5. Șterge un slot indisponibil
+DELETE {{baseUrl}}/{{employeeId}}/unvavailable-slots/{{slotId}}
