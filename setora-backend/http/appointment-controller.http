@@ -1,0 +1,20 @@
+### Daily summary
+GET http://localhost:8080/api/appointments/summary?businessId=c6c8e088-50e1-4d69-8de9-793ce6cd0046&date=2026-11-12
+
+
+### Add appointment
+POST http://localhost:8080/api/appointments/ghost
+Content-Type: application/json
+
+{
+  "businessId": "0c9e19bf-9d7c-4298-8f5a-c690b971e266",
+  "serviceId": "190e8500-94df-46c4-b7c2-ce763e88a4ae",
+  "employeeId": "b3b5a03f-be06-48ee-b351-18e3d01e51ef",
+  "clientName": "Ava Maria",
+  "clientPhone": "+40712345678",
+  "clientEmail": "ava.maria@example.com",
+  "date": "2026-11-13",
+  "startTime": "10:00",
+  "paymentMethod": "Physical",
+  "clientNote": "First appointment. Hello"
+}

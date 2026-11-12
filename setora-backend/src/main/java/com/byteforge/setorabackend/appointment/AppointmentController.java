@@ -1,7 +1,6 @@
 
 package com.byteforge.setorabackend.appointment;
 
-import com.byteforge.setorabackend.appointment.dtos.AppointmentMapper;
 import com.byteforge.setorabackend.appointment.dtos.AppointmentResponseDto;
 import com.byteforge.setorabackend.appointment.dtos.AppointmentsTodaySummaryDto;
 import com.byteforge.setorabackend.appointment.dtos.CalendarAppointmentDto;
@@ -78,8 +77,7 @@ public class AppointmentController {
     public ResponseEntity<AppointmentResponseDto> createGuestAppointment(
             @Valid @RequestBody CreateAppointmentGhostClientRequestDto request
     ) {
-        var appointment = appointmentService.createGuestAppointment(request);
-        var response = AppointmentMapper.toResponseDto(appointment);
+        var response = appointmentService.createGuestAppointment(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);
