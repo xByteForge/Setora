@@ -21,4 +21,17 @@ public interface UnavailableSlotRepository extends JpaRepository<UnavailableSlot
     List<UnavailableSlot> findForRange(@Param("employeeId") UUID employeeId,
                                        @Param("startDate") LocalDate startDate,
                                        @Param("endDate") LocalDate endDate);
+
+    @Query("""
+        SELECT u FROM UnavailableSlot u
+        JOIN FETCH u.employee e
+        WHERE e.business.id = :businessId
+          AND (u.dayOfWeek IS NOT NULL
+               OR (u.specificDate >= :startDate AND u.specificDate <= :endDate))
+   \s""")
+    List<UnavailableSlot> findByBusinessIdAndDateRangeOrDayNotNull(
+            @Param("businessId") UUID businessId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
 }

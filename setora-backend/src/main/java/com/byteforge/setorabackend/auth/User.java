@@ -40,4 +40,25 @@ public class User {
     public void setEmail(String email) {
         this.email = email == null ? null : email.trim().toLowerCase();
     }
+
+    public String getFullName() {
+        return surname + " " + firstname;
+    }
+
+    public String getNameInitials() {
+        String name = getFullName();
+        if (name == null || name.isBlank()) {
+            return "";
+        }
+
+        String[] parts = name.trim().split("[\\s\\-]+");
+        if (parts.length == 0 || parts[0].isEmpty()) {
+            return "";
+        }
+        if (parts.length == 1) {
+            return parts[0].substring(0, 1).toUpperCase();
+        }
+
+        return (parts[0].substring(0, 1) + parts[parts.length - 1].charAt(0)).toUpperCase();
+    }
 }

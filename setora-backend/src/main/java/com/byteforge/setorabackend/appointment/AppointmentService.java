@@ -5,9 +5,7 @@ import com.byteforge.setorabackend.appointment.dtos.AppointmentsTodaySummaryDto;
 import com.byteforge.setorabackend.appointment.dtos.AppointmentsTodaySummaryProjection;
 import com.byteforge.setorabackend.appointment.dtos.CalendarAppointmentDto;
 import com.byteforge.setorabackend.business.Business;
-import com.byteforge.setorabackend.business.BusinessRepository;
 import com.byteforge.setorabackend.business.BusinessService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -176,5 +174,9 @@ public class AppointmentService {
         return appointments.stream()
                 .map(CalendarAppointmentDto::from)
                 .toList();
+    }
+
+    public List<Appointment> findByBusinessIdAndDateRange(UUID businessId, Instant start, Instant end) {
+        return appointmentRepository.findByBusinessIdAndDateRange(businessId, start, end);
     }
 }
