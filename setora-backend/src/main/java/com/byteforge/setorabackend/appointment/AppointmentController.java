@@ -1,8 +1,14 @@
 package com.byteforge.setorabackend.appointment;
 
+import com.byteforge.setorabackend.appointment.dtos.AppointmentMapper;
+import com.byteforge.setorabackend.appointment.dtos.AppointmentResponseDto;
 import com.byteforge.setorabackend.appointment.dtos.AppointmentsTodaySummaryDto;
+import com.byteforge.setorabackend.appointment.dtos.CreateAppointmentGhostClientRequestDto;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +33,15 @@ public class AppointmentController {
         return ResponseEntity.ok(appointmentService.getDailySummary(businessId, date));
     }
 
-
+    @PostMapping("/ghost")
+    public ResponseEntity<AppointmentResponseDto> createGuestAppointment(
+            @Valid @RequestBody CreateAppointmentGhostClientRequestDto request
+    ) {
+        var appointment = appointmentService.createGuestAppointment(request);
+        var response = AppointmentMapper.toResponseDto(appointment);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
+    }
 
 }

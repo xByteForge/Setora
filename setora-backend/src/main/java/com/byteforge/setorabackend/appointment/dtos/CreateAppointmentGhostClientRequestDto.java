@@ -13,7 +13,7 @@ import java.util.UUID;
 public record CreateAppointmentGhostClientRequestDto (
     @NotNull UUID businessId,//TODO remove later on when we have sessions
     @NotNull UUID serviceId,
-    @NotNull UUID employeeId,
+    UUID employeeId,
 
     @NotBlank String clientName,
     @NotBlank String clientPhone,

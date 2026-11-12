@@ -1,11 +1,14 @@
 package com.byteforge.setorabackend.appointment;
 
+import com.byteforge.setorabackend.appointment.dtos.AppointmentResponseDto;
 import com.byteforge.setorabackend.appointment.dtos.AppointmentsTodaySummaryDto;
 import com.byteforge.setorabackend.appointment.dtos.AppointmentsTodaySummaryProjection;
+import com.byteforge.setorabackend.appointment.dtos.CreateAppointmentGhostClientRequestDto;
 import com.byteforge.setorabackend.business.Business;
 import com.byteforge.setorabackend.business.BusinessRepository;
 import com.byteforge.setorabackend.business.BusinessService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -47,5 +50,9 @@ public class AppointmentService {
                 Math.toIntExact(summary.getPending()),
                 Math.toIntExact(summary.getCancelled())
         );
+    }
+
+    public Appointment createGuestAppointment(@Valid CreateAppointmentGhostClientRequestDto request) {
+        return null;
     }
 }
