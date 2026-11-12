@@ -1,6 +1,10 @@
 package com.byteforge.setorabackend.employees;
 
+import com.byteforge.setorabackend.appointment.Appointment;
+import com.byteforge.setorabackend.appointment.AppointmentRepository;
+import com.byteforge.setorabackend.appointment.AppointmentStatus;
 import com.byteforge.setorabackend.business.Business;
+import com.byteforge.setorabackend.common.DateTimeInterval;
 import com.byteforge.setorabackend.common.TimeInterval;
 import com.byteforge.setorabackend.employees.AvailabilityDtos.*;
 import org.junit.jupiter.api.Test;
@@ -24,6 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,12 +40,14 @@ class AvailabilityServiceTest {
     private WorkScheduleRepository workScheduleRepository;
     @Mock
     private UnavailableSlotRepository unavailableSlotRepository;
+    @Mock
+    private AppointmentRepository appointmentRepository; // <--- Adăugat mock-ul nou
 
     @InjectMocks
     private AvailabilityService service;
 
     private final UUID employeeId = UUID.randomUUID();
-    //business timezone is not set in these tests, so the service uses UTC
+    // business timezone is not set in these tests, so the service uses UTC
     private final LocalDate nextWeek = LocalDate.now(ZoneOffset.UTC).plusDays(7);
 
     @Test
@@ -48,13 +56,51 @@ class AvailabilityServiceTest {
         when(unavailableSlotRepository.findByEmployeeId(employeeId)).thenReturn(List.of());
         when(unavailableSlotRepository.save(any(UnavailableSlot.class))).thenAnswer(call -> call.getArgument(0));
 
-        UnavailableSlotResponse response = service.createUnavailableSlot(oneOffRequest(nextWeek, 12, 13));
+        // Când se caută programări, returnăm o listă goală (nu există suprapuneri)
+        when(appointmentRepository.findByEmployeeIdAndStatusNot(eq(employeeId), eq(AppointmentStatus.CANCELLED)))
+                .thenReturn(List.of());
 
-        assertEquals(employeeId, response.employeeId());
-        assertEquals(nextWeek, response.date());
-        assertEquals(LocalTime.of(12, 0), response.start());
-        assertEquals(LocalTime.of(13, 0), response.end());
-        assertFalse(response.recurring());
+        // Actualizat pentru a folosi noul DTO (CreateSlotResponse)
+        CreateSlotResponse response = service.createUnavailableSlot(oneOffRequest(nextWeek, 12, 13));
+
+        // Actualizat pentru a verifica valorile din interiorul .slot()
+        assertEquals(employeeId, response.slot().employeeId());
+        assertEquals(nextWeek, response.slot().date());
+        assertEquals(LocalTime.of(12, 0), response.slot().start());
+        assertEquals(LocalTime.of(13, 0), response.slot().end());
+        assertFalse(response.slot().recurring());
+        assertTrue(response.cancelledAppointmentIds().isEmpty()); // Lista de anulări e goală
+    }
+
+    @Test
+    void cancelsOverlappingAppointments() {
+        stubEmployee();
+        when(unavailableSlotRepository.findByEmployeeId(employeeId)).thenReturn(List.of());
+        when(unavailableSlotRepository.save(any(UnavailableSlot.class))).thenAnswer(call -> call.getArgument(0));
+
+        // Creăm un mock pentru o programare care se va suprapune cu slotul (12:00 - 13:00)
+        UUID appId = UUID.randomUUID();
+        Appointment overlappingApp = mock(Appointment.class);
+        when(overlappingApp.getId()).thenReturn(appId);
+
+        // Simulăm un interval orar de la 12:30 la 13:30 (suprapunere de 30 de minute)
+        DateTimeInterval mockInterval = mock(DateTimeInterval.class);
+        when(mockInterval.getStart()).thenReturn(nextWeek.atTime(12, 30).toInstant(ZoneOffset.UTC));
+        when(mockInterval.getEnd()).thenReturn(nextWeek.atTime(13, 30).toInstant(ZoneOffset.UTC));
+        when(overlappingApp.getInterval()).thenReturn(mockInterval);
+
+        when(appointmentRepository.findByEmployeeIdAndStatusNot(eq(employeeId), eq(AppointmentStatus.CANCELLED)))
+                .thenReturn(List.of(overlappingApp));
+
+        CreateSlotResponse response = service.createUnavailableSlot(oneOffRequest(nextWeek, 12, 13));
+
+        // Verificăm dacă programarea a fost mutată pe statusul CANCELLED
+        verify(overlappingApp).setStatus(AppointmentStatus.CANCELLED);
+        // Verificăm dacă s-a dat saveAll pentru ea
+        verify(appointmentRepository).saveAll(List.of(overlappingApp));
+        // Ne asigurăm că frontend-ul primește ID-ul anulat
+        assertEquals(1, response.cancelledAppointmentIds().size());
+        assertTrue(response.cancelledAppointmentIds().contains(appId));
     }
 
     @Test
@@ -94,7 +140,6 @@ class AvailabilityServiceTest {
         assertEquals(409, e.getStatusCode().value());
     }
 
-    //end is exclusive, 12:00-13:00 and 13:00-14:00 do not overlap
     @Test
     void allowsTouchingIntervals() {
         stubEmployee();
@@ -102,9 +147,12 @@ class AvailabilityServiceTest {
                 .thenReturn(List.of(oneOffSlot(nextWeek, 12, 13)));
         when(unavailableSlotRepository.save(any(UnavailableSlot.class))).thenAnswer(call -> call.getArgument(0));
 
-        UnavailableSlotResponse response = service.createUnavailableSlot(oneOffRequest(nextWeek, 13, 14));
+        when(appointmentRepository.findByEmployeeIdAndStatusNot(eq(employeeId), eq(AppointmentStatus.CANCELLED)))
+                .thenReturn(List.of());
 
-        assertEquals(LocalTime.of(13, 0), response.start());
+        CreateSlotResponse response = service.createUnavailableSlot(oneOffRequest(nextWeek, 13, 14));
+
+        assertEquals(LocalTime.of(13, 0), response.slot().start());
     }
 
     @Test
@@ -134,7 +182,6 @@ class AvailabilityServiceTest {
 
         UnavailableSlots result = service.getUnavailableSlots(employeeId, null, nextWeek, to);
 
-        //the recurring slot on day 0 and day 7, plus the one-off slot on day 1
         assertEquals(3, result.slots().size());
         assertEquals(nextWeek, result.slots().get(0).date());
         assertTrue(result.slots().get(0).recurring());
