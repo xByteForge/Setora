@@ -1,10 +1,12 @@
-package com.byteforge.setorabackend.employees;
+package com.byteforge.setorabackend.employees.service;
 
 import com.byteforge.setorabackend.appointment.Appointment;
 import com.byteforge.setorabackend.appointment.AppointmentRepository;
 import com.byteforge.setorabackend.appointment.AppointmentStatus;
 import com.byteforge.setorabackend.common.TimeInterval;
-import com.byteforge.setorabackend.employees.AvailabilityDtos.*;
+import com.byteforge.setorabackend.employees.model.*;
+import com.byteforge.setorabackend.employees.model.AvailabilityDtos.*;
+import com.byteforge.setorabackend.employees.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,15 +17,16 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class AvailabilityService {
-    //longest range that can be requested at once
+public class EmployeeService {
     private static final long MAX_RANGE_DAYS = 366;
 
     private final EmployeeRepository employeeRepository;
@@ -44,7 +47,6 @@ public class AvailabilityService {
         return new WorkingHours(employeeId, zoneOf(employee), days);
     }
 
-    //pass either a single date or a from/to range
     @Transactional(readOnly = true)
     public UnavailableSlots getUnavailableSlots(UUID employeeId, LocalDate date, LocalDate from, LocalDate to) {
         Employee employee = findEmployee(employeeId);
@@ -76,11 +78,10 @@ public class AvailabilityService {
     }
 
     @Transactional
-    public CreateSlotResponse createUnavailableSlot(UnavailableSlotRequest request) {
-        if (request.employeeId() == null || request.type() == null) {
+    public CreateSlotResponse createUnavailableSlot(UUID employeeId, UnavailableSlotRequest request) {
+        if (employeeId == null || request == null || request.type() == null) {
             throw badRequest("employeeId and type are required");
         }
-
         boolean oneOff = request.date() != null;
         boolean recurring = request.dayOfWeek() != null;
         if (oneOff == recurring) {
@@ -88,9 +89,9 @@ public class AvailabilityService {
         }
         TimeInterval interval = toInterval(request.start(), request.end());
 
-        Employee employee = findEmployee(request.employeeId());
+        Employee employee = findEmployee(employeeId);
         ZoneId zone = zoneOf(employee);
-        LocalDate today = LocalDate.now(zoneOf(employee));
+        LocalDate today = LocalDate.now(zone);
         if (oneOff && request.date().isBefore(today)) {
             throw badRequest("The date cannot be in the past");
         }
@@ -103,40 +104,69 @@ public class AvailabilityService {
         slot.setDayOfWeek(request.dayOfWeek());
         slot.setInterval(interval);
 
-        for (UnavailableSlot existing : unavailableSlotRepository.findByEmployeeId(request.employeeId())) {
+        for (UnavailableSlot existing : unavailableSlotRepository.findByEmployeeId(employeeId)) {
             if (conflicts(slot, existing, today)) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT,
                         "The interval overlaps an existing unavailable interval");
             }
         }
+
         UnavailableSlot savedSlot = unavailableSlotRepository.save(slot);
+
         List<Appointment> activeAppointments = appointmentRepository
-                .findByEmployeeIdAndStatusNot(request.employeeId(), AppointmentStatus.CANCELLED);
+                .findByEmployeeIdAndStatusNot(employeeId, AppointmentStatus.CANCELLED);
+
         List<Appointment> affectedAppointments = activeAppointments.stream()
                 .filter(app -> isAppointmentAffected(app, savedSlot, zone, today))
                 .toList();
-        List<UUID> cancelledIds = new java.util.ArrayList<>();
+
+        List<UUID> cancelledIds = new ArrayList<>();
         for (Appointment app : affectedAppointments) {
             app.setStatus(AppointmentStatus.CANCELLED);
-            // Dacă dorești să lași un mesaj: app.setClientNote("Anulat automat: Angajat indisponibil");
             cancelledIds.add(app.getId());
         }
 
         if (!affectedAppointments.isEmpty()) {
             appointmentRepository.saveAll(affectedAppointments);
         }
+
         return new CreateSlotResponse(toResponse(savedSlot), cancelledIds);
     }
 
     @Transactional
-    public void deleteUnavailableSlot(UUID slotId) {
+    public void deleteUnavailableSlot(UUID employeeId, UUID slotId) {
         UnavailableSlot slot = unavailableSlotRepository.findById(slotId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unavailable slot not found"));
+        if (!slot.getEmployee().getId().equals(employeeId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unavailable slot not found for this employee");
+        }
         unavailableSlotRepository.delete(slot);
     }
 
-    //two slots conflict when they can fall on the same day and their times overlap
-    //past one-off slots are ignored when compared with a recurring one
+    private boolean isAppointmentAffected(Appointment app, UnavailableSlot slot, ZoneId zone, LocalDate today) {
+        ZonedDateTime appZonedStart = app.getInterval().getStart().atZone(zone);
+        ZonedDateTime appZonedEnd = app.getInterval().getEnd().atZone(zone);
+
+        LocalDate appDate = appZonedStart.toLocalDate();
+        LocalTime appStartTime = appZonedStart.toLocalTime();
+        LocalTime appEndTime = appZonedEnd.toLocalTime();
+
+        if (appDate.isBefore(today)) {
+            return false;
+        }
+
+        boolean isSameDay = slot.isRecurring()
+                ? appDate.getDayOfWeek() == slot.getDayOfWeek()
+                : appDate.equals(slot.getSpecificDate());
+
+        if (!isSameDay) {
+            return false;
+        }
+
+        return appStartTime.isBefore(slot.getInterval().getEnd()) &&
+                slot.getInterval().getStart().isBefore(appEndTime);
+    }
+
     private boolean conflicts(UnavailableSlot candidate, UnavailableSlot existing, LocalDate today) {
         if (!candidate.getInterval().overlaps(existing.getInterval())) {
             return false;
@@ -166,7 +196,6 @@ public class AvailabilityService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found"));
     }
 
-    //the business timezone can be missing, UTC is used until it is set
     private ZoneId zoneOf(Employee employee) {
         ZoneId zone = employee.getBusiness().getTimezone();
         return zone != null ? zone : ZoneOffset.UTC;
@@ -202,29 +231,5 @@ public class AvailabilityService {
 
     private ResponseStatusException badRequest(String message) {
         return new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
-    }
-
-    private boolean isAppointmentAffected(Appointment app, UnavailableSlot slot, ZoneId zone, LocalDate today) {
-        java.time.ZonedDateTime appZonedStart = app.getInterval().getStart().atZone(zone);
-        java.time.ZonedDateTime appZonedEnd = app.getInterval().getEnd().atZone(zone);
-
-        LocalDate appDate = appZonedStart.toLocalDate();
-        LocalTime appStartTime = appZonedStart.toLocalTime();
-        LocalTime appEndTime = appZonedEnd.toLocalTime();
-
-        if (appDate.isBefore(today)) {
-            return false;
-        }
-
-        boolean isSameDay = slot.isRecurring()
-                ? appDate.getDayOfWeek() == slot.getDayOfWeek()
-                : appDate.equals(slot.getSpecificDate());
-
-        if (!isSameDay) {
-            return false;
-        }
-
-        return appStartTime.isBefore(slot.getInterval().getEnd()) &&
-                slot.getInterval().getStart().isBefore(appEndTime);
     }
 }

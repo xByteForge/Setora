@@ -1,4 +1,4 @@
-package com.byteforge.setorabackend.employees;
+package com.byteforge.setorabackend.employees.model;
 
 public enum UnavailableType {
     BREAK,

@@ -1,6 +1,7 @@
-package com.byteforge.setorabackend.employees;
+package com.byteforge.setorabackend.employees.controller;
 
-import com.byteforge.setorabackend.employees.AvailabilityDtos.*;
+import com.byteforge.setorabackend.employees.service.EmployeeService;
+import com.byteforge.setorabackend.employees.model.AvailabilityDtos.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -18,18 +19,18 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/schedules")
+@RequestMapping("/api/employees/{employeeId}")
 @RequiredArgsConstructor
-public class AvailabilityController {
-    private final AvailabilityService availabilityService;
+public class EmployeeController {
+    private final EmployeeService availabilityService;
 
-    @GetMapping("/employees/{employeeId}/working-hours")
+    @GetMapping("/working-hours")
     public WorkingHours getWorkingHours(@PathVariable("employeeId") UUID employeeId) {
         return availabilityService.getWorkingHours(employeeId);
     }
 
     //use ?date=2026-11-20 or ?from=2026-11-16&to=2026-11-22
-    @GetMapping("/employees/{employeeId}/unavailable-slots")
+    @GetMapping("/unavailable-slots")
     public UnavailableSlots getUnavailableSlots(
             @PathVariable("employeeId") UUID employeeId,
             @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
@@ -38,15 +39,15 @@ public class AvailabilityController {
         return availabilityService.getUnavailableSlots(employeeId, date, from, to);
     }
 
-    @PostMapping("/blocks")
+    @PostMapping("/unavailable-slots")
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateSlotResponse createUnavailableSlot(@RequestBody UnavailableSlotRequest request) {
-        return availabilityService.createUnavailableSlot(request);
+    public CreateSlotResponse createUnavailableSlot(@PathVariable("employeeId") UUID employeeId, @RequestBody UnavailableSlotRequest request) {
+        return availabilityService.createUnavailableSlot(employeeId, request);
     }
 
-    @DeleteMapping("/blocks/{slotId}")
+    @DeleteMapping("/unavailable-slots/{slotId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUnavailableSlot(@PathVariable("slotId") UUID slotId) {
-        availabilityService.deleteUnavailableSlot(slotId);
+    public void deleteUnavailableSlot(@PathVariable("employeeId") UUID employeeId, @PathVariable("slotId") UUID slotId) {
+        availabilityService.deleteUnavailableSlot(employeeId, slotId);
     }
 }

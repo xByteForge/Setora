@@ -1,5 +1,6 @@
-package com.byteforge.setorabackend.employees;
+package com.byteforge.setorabackend.employees.repository;
 
+import com.byteforge.setorabackend.employees.model.WorkSchedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

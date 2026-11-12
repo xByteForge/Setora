@@ -1,4 +1,4 @@
-package com.byteforge.setorabackend.employees;
+package com.byteforge.setorabackend.employees.model;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -21,7 +21,6 @@ public final class AvailabilityDtos {
 
     //send either date (one-off slot) or dayOfWeek (recurring weekly slot)
     public record UnavailableSlotRequest(
-            UUID employeeId,
             UnavailableType type,
             String reason,
             LocalDate date,
