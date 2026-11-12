@@ -60,10 +60,6 @@ p {
     border-radius: 4px;
 }
 
-:host(.compact.selected) {
-    /* No padding adjustment needed anymore since outline doesn't affect layout */
-}
-
 p {
     margin: 0;
     font-size: 12px;
