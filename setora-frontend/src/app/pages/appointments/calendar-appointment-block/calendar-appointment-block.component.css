@@ -42,11 +42,26 @@
 
 /* Programarea deschisă în panoul de detalii (se activează cu [class.selected]). */
 :host(.selected) {
-    --tone-bg: var(--appt-selected-bg);
-    --tone-border: var(--appt-selected-border);
-    --tone-text: var(--appt-selected-text);
-    border-width: 2px;
-    padding: 6px 9px; /* compensează bordura de 2px, ca blocul să nu "sară" */
+    outline: 2px solid black;
+    outline-offset: 2px;
+}
+
+p {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+:host(.compact) {
+    padding: 3px 6px;
+    border-radius: 4px;
+}
+
+:host(.compact.selected) {
+    /* No padding adjustment needed anymore since outline doesn't affect layout */
 }
 
 p {
