@@ -1,0 +1,129 @@
+<div class="backdrop" (click)="close()" (keydown.escape)="close()">
+    <form
+            class="dialog"
+            role="dialog"
+            aria-modal="true"
+            [formGroup]="form"
+            (ngSubmit)="submit()"
+            (click)="$event.stopPropagation()"
+    >
+        <header class="dialog-header">
+            <div>
+                <h2>{{ 'APPOINTMENTS.ADD' | transloco }}</h2>
+                <p class="subtitle">{{ 'APPOINTMENTS.FORM.SUBTITLE' | transloco }}</p>
+            </div>
+            <button type="button" class="close" (click)="close()" [attr.aria-label]="'APPOINTMENTS.DETAILS.CLOSE' | transloco">×</button>
+        </header>
+
+        <div class="field">
+            <label for="clientName">{{ 'APPOINTMENTS.FORM.CLIENT' | transloco }}</label>
+            <input id="clientName" formControlName="clientName" [placeholder]="'APPOINTMENTS.FORM.CLIENT_PLACEHOLDER' | transloco" />
+            @if (hasError('clientName', 'required') || hasError('clientName', 'minlength')) {
+                <span class="error">{{ 'APPOINTMENTS.FORM.ERRORS.CLIENT_NAME' | transloco }}</span>
+            }
+        </div>
+
+        <div class="row">
+            <div class="field">
+                <label for="clientPhone">{{ 'APPOINTMENTS.FORM.PHONE' | transloco }}</label>
+                <input id="clientPhone" formControlName="clientPhone" placeholder="07xx xxx xxx" inputmode="tel" />
+                @if (hasError('clientPhone', 'required') || hasError('clientPhone', 'pattern')) {
+                    <span class="error">{{ 'APPOINTMENTS.FORM.ERRORS.PHONE' | transloco }}</span>
+                }
+            </div>
+            <div class="field">
+                <label for="clientEmail">{{ 'APPOINTMENTS.FORM.EMAIL' | transloco }}</label>
+                <input id="clientEmail" type="email" formControlName="clientEmail" placeholder="client@exemplu.ro" />
+                @if (hasError('clientEmail', 'email')) {
+                    <span class="error">{{ 'APPOINTMENTS.FORM.ERRORS.EMAIL' | transloco }}</span>
+                }
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="serviceId">{{ 'APPOINTMENTS.FORM.SERVICE' | transloco }}</label>
+            <select id="serviceId" formControlName="serviceId">
+                @for (s of services; track s.id) {
+                    <option [value]="s.id">{{ s.name }} · {{ s.durationMinutes }} min</option>
+                }
+            </select>
+        </div>
+
+        <div class="row">
+            <div class="field">
+                <label for="locationId">{{ 'APPOINTMENTS.FORM.LOCATION' | transloco }}</label>
+                <select id="locationId" formControlName="locationId">
+                    @for (l of locations(); track l.id) {
+                        <option [value]="l.id">{{ l.name }}</option>
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label for="employeeId">{{ 'APPOINTMENTS.FORM.EMPLOYEE' | transloco }}</label>
+                <select id="employeeId" formControlName="employeeId">
+                    <option value="">{{ 'APPOINTMENTS.FORM.ANY_EMPLOYEE' | transloco }}</option>
+                    @for (e of employeesForLocation(); track e.id) {
+                        <option [value]="e.id">{{ e.name }}</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="field">
+                <label for="date">{{ 'APPOINTMENTS.FORM.DATE' | transloco }}</label>
+                <input id="date" type="date" formControlName="date" />
+                @if (hasError('date', 'required')) {
+                    <span class="error">{{ 'APPOINTMENTS.FORM.ERRORS.REQUIRED' | transloco }}</span>
+                }
+            </div>
+            <div class="field">
+                <label for="startTime">{{ 'APPOINTMENTS.FORM.TIME' | transloco }}</label>
+                <select id="startTime" formControlName="startTime">
+                    <option value="" disabled>{{ 'APPOINTMENTS.FORM.TIME_PLACEHOLDER' | transloco }}</option>
+                    @for (t of slots(); track t) {
+                        <option [value]="t">{{ t }}</option>
+                    }
+                </select>
+                @if (slots().length === 0) {
+                    <span class="hint">{{ 'APPOINTMENTS.FORM.NO_SLOTS' | transloco }}</span>
+                } @else if (hasError('startTime', 'required')) {
+                    <span class="error">{{ 'APPOINTMENTS.FORM.ERRORS.REQUIRED' | transloco }}</span>
+                }
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="clientNote">{{ 'APPOINTMENTS.FORM.NOTE' | transloco }}</label>
+            <textarea id="clientNote" rows="3" formControlName="clientNote" [placeholder]="'APPOINTMENTS.FORM.NOTE_PLACEHOLDER' | transloco"></textarea>
+            @if (hasError('clientNote', 'maxlength')) {
+                <span class="error">{{ 'APPOINTMENTS.FORM.ERRORS.NOTE_LENGTH' | transloco }}</span>
+            }
+        </div>
+
+        @if (selectedService(); as service) {
+            <div class="summary">
+                <div class="summary-top">
+                    <span>{{ 'APPOINTMENTS.DETAILS.PAYMENT.METHOD.PHYSICAL' | transloco }}</span>
+                    <strong>{{ service.price }} {{ service.currency }}</strong>
+                </div>
+                <div class="summary-detail">
+                    {{ form.controls.startTime.value || '--:--' }}–{{ endTime() || '--:--' }} · {{ service.name }} · {{ service.durationMinutes }} min
+                </div>
+            </div>
+        }
+
+        @if (error()) {
+            <p class="error banner" role="alert">{{ 'APPOINTMENTS.FORM.ERRORS.SLOT_TAKEN' | transloco }}</p>
+        }
+
+        <p class="hint">{{ 'APPOINTMENTS.FORM.AVAILABILITY_NOTE' | transloco }}</p>
+
+        <footer class="actions">
+            <button type="button" class="btn secondary" (click)="close()">{{ 'APPOINTMENTS.FORM.CANCEL' | transloco }}</button>
+            <button type="submit" class="btn primary" [disabled]="submitting()">
+                {{ (submitting() ? 'APPOINTMENTS.FORM.SAVING' : 'APPOINTMENTS.ADD') | transloco }}
+            </button>
+        </footer>
+    </form>
+</div>
