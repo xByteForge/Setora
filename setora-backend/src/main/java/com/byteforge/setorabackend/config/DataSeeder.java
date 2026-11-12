@@ -9,10 +9,7 @@ import com.byteforge.setorabackend.business.Business;
 import com.byteforge.setorabackend.business.BusinessRepository;
 import com.byteforge.setorabackend.common.DateTimeInterval;
 import com.byteforge.setorabackend.common.TimeInterval;
-import com.byteforge.setorabackend.employees.Employee;
-import com.byteforge.setorabackend.employees.EmployeeRepository;
-import com.byteforge.setorabackend.employees.WorkSchedule;
-import com.byteforge.setorabackend.employees.WorkScheduleRepository;
+import com.byteforge.setorabackend.employees.*;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
 import com.byteforge.setorabackend.serviceItem.ServiceItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +45,7 @@ public class DataSeeder implements CommandLineRunner {
     private final EmployeeRepository employeeRepository;
     private final WorkScheduleRepository workScheduleRepository;
     private final AppointmentRepository appointmentRepository;
+    private final UnavailableSlotRepository unavailableSlotRepository;
 
     @Override
     @Transactional
@@ -72,14 +70,10 @@ public class DataSeeder implements CommandLineRunner {
                 seedUser("Dumitru", "Andrei", "andrei.dumitru@setora.test", "0700000004"),
                 Set.of(haircut, manicure), LocalTime.of(12, 0), LocalTime.of(20, 0));
 
-        seedAppointmentInFuture(client, maria, haircut, LocalTime.of(10, 0));
-        seedAppointmentInFuture(client, andrei, manicure, LocalTime.of(14, 0));
-        seedAppointment(client, andrei, manicure, LocalTime.of(15, 0), AppointmentStatus.PENDING);
-        seedAppointment(client, maria, haircut, LocalTime.of(16, 30), AppointmentStatus.CONFIRMED);
-        seedAppointment(client, andrei, manicure, LocalTime.of(11, 30), AppointmentStatus.CONFIRMED);
-        //seedAppointment(client, andrei, manicure, LocalTime.of(9, 00), AppointmentStatus.CANCELLED);
+        seedAppointment(client, maria, haircut, LocalTime.of(10, 0));
+        seedAppointment(client, andrei, manicure, LocalTime.of(14, 0));
 
-
+        seedUnavailableSlots();
         log.info("Seeded business {} with id {}", business.getName(), business.getId());
     }
 
@@ -96,8 +90,8 @@ public class DataSeeder implements CommandLineRunner {
     private Business seedBusiness(User owner) {
         Business business = new Business();
         business.setOwner(owner);
-        business.setName("Studio Armonia");
-        business.setSlug("studio-armonia");
+        business.setName("Studio Coafura");
+        business.setSlug("studio-coafura");
         business.setDescription("Salon de infrumusetare");
         business.setAddress("Str. Memorandumului 10, Cluj-Napoca");
         business.setLatitude(46.7694);
@@ -136,7 +130,7 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     //booked for next monday, so it is always in the future
-    private void seedAppointmentInFuture(User client, Employee employee, ServiceItem serviceItem, LocalTime at) {
+    private void seedAppointment(User client, Employee employee, ServiceItem serviceItem, LocalTime at) {
         Instant start = LocalDate.now(ZONE)
                 .with(TemporalAdjusters.next(DayOfWeek.MONDAY))
                 .atTime(at)
@@ -152,6 +146,36 @@ public class DataSeeder implements CommandLineRunner {
         appointment.setStatus(AppointmentStatus.CONFIRMED);
         appointment.setPriceAtAppointment(serviceItem.getPrice());
         appointmentRepository.save(appointment);
+    }
+
+    private void seedUnavailableSlots() {
+        if (unavailableSlotRepository.count() > 0) {
+            return;
+        }
+        LocalDate nextWednesday = LocalDate.now(ZONE).with(TemporalAdjusters.next(DayOfWeek.WEDNESDAY));
+
+        for (Employee employee : employeeRepository.findAll()) {
+            for (DayOfWeek day : WORK_DAYS) {
+                seedUnavailableSlot(employee, UnavailableType.BREAK, "Lunch",
+                        null, day, LocalTime.of(13, 0), LocalTime.of(14, 0));
+            }
+            seedUnavailableSlot(employee, UnavailableType.BLOCKED, "Doctor",
+                    nextWednesday, null, LocalTime.of(15, 0), LocalTime.of(16, 0));
+        }
+        log.info("Seeded unavailable slots for next wednesday {}", nextWednesday);
+    }
+
+    //exactly one of date and dayOfWeek is set
+    private void seedUnavailableSlot(Employee employee, UnavailableType type, String reason,
+                                     LocalDate date, DayOfWeek dayOfWeek, LocalTime from, LocalTime to) {
+        UnavailableSlot slot = new UnavailableSlot();
+        slot.setEmployee(employee);
+        slot.setType(type);
+        slot.setReason(reason);
+        slot.setSpecificDate(date);
+        slot.setDayOfWeek(dayOfWeek);
+        slot.setInterval(new TimeInterval(from, to));
+        unavailableSlotRepository.save(slot);
     }
 
     private void seedAppointment(User client, Employee employee, ServiceItem serviceItem, LocalTime at, AppointmentStatus appointmentStatus) {
