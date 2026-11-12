@@ -1,0 +1,2 @@
+### Daily summary
+GET http://localhost:8080/api/appointments/summary?businessId=c6c8e088-50e1-4d69-8de9-793ce6cd0046&date=2026-11-12
