@@ -67,6 +67,10 @@
     font-weight: 600;
 }
 
+.required {
+    color: var(--status-cancelled);
+}
+
 input,
 select,
 textarea {

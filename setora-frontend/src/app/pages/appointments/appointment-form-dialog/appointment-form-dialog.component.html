@@ -18,7 +18,7 @@
         </header>
 
         <div class="field">
-            <label for="clientName">{{ 'APPOINTMENTS.FORM.CLIENT' | transloco }}</label>
+            <label for="clientName">{{ 'APPOINTMENTS.FORM.CLIENT' | transloco }} <span class="required">*</span></label>
             <input id="clientName" formControlName="clientName" [placeholder]="'APPOINTMENTS.FORM.CLIENT_PLACEHOLDER' | transloco" />
             @if (hasError('clientName', 'required') || hasError('clientName', 'minlength')) {
                 <span class="error">{{ 'APPOINTMENTS.FORM.ERRORS.CLIENT_NAME' | transloco }}</span>
@@ -27,7 +27,7 @@
 
         <div class="row">
             <div class="field">
-                <label for="clientPhone">{{ 'APPOINTMENTS.FORM.PHONE' | transloco }}</label>
+                <label for="clientPhone">{{ 'APPOINTMENTS.FORM.PHONE' | transloco }} <span class="required">*</span></label>
                 <input id="clientPhone" formControlName="clientPhone" placeholder="07xx xxx xxx" inputmode="tel" />
                 @if (hasError('clientPhone', 'required') || hasError('clientPhone', 'pattern')) {
                     <span class="error">{{ 'APPOINTMENTS.FORM.ERRORS.PHONE' | transloco }}</span>
@@ -43,7 +43,7 @@
         </div>
 
         <div class="field">
-            <label for="serviceId">{{ 'APPOINTMENTS.FORM.SERVICE' | transloco }}</label>
+            <label for="serviceId">{{ 'APPOINTMENTS.FORM.SERVICE' | transloco }} <span class="required">*</span></label>
             <select id="serviceId" formControlName="serviceId">
                 @for (s of services; track s.id) {
                     <option [value]="s.id">{{ s.name }} · {{ s.durationMinutes }} min</option>
@@ -53,7 +53,7 @@
 
         <div class="row">
             <div class="field">
-                <label for="locationId">{{ 'APPOINTMENTS.FORM.LOCATION' | transloco }}</label>
+                <label for="locationId">{{ 'APPOINTMENTS.FORM.LOCATION' | transloco }} <span class="required">*</span></label>
                 <select id="locationId" formControlName="locationId">
                     @for (l of locations(); track l.id) {
                         <option [value]="l.id">{{ l.name }}</option>
@@ -73,14 +73,14 @@
 
         <div class="row">
             <div class="field">
-                <label for="date">{{ 'APPOINTMENTS.FORM.DATE' | transloco }}</label>
+                <label for="date">{{ 'APPOINTMENTS.FORM.DATE' | transloco }} <span class="required">*</span></label>
                 <input id="date" type="date" formControlName="date" />
                 @if (hasError('date', 'required')) {
                     <span class="error">{{ 'APPOINTMENTS.FORM.ERRORS.REQUIRED' | transloco }}</span>
                 }
             </div>
             <div class="field">
-                <label for="startTime">{{ 'APPOINTMENTS.FORM.TIME' | transloco }}</label>
+                <label for="startTime">{{ 'APPOINTMENTS.FORM.TIME' | transloco }} <span class="required">*</span></label>
                 <select id="startTime" formControlName="startTime">
                     <option value="" disabled>{{ 'APPOINTMENTS.FORM.TIME_PLACEHOLDER' | transloco }}</option>
                     @for (t of slots(); track t) {
