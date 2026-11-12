@@ -87,6 +87,35 @@
         }
       }
     },
+    "FORM": {
+      "SUBTITLE": "Completează detaliile pentru o programare nouă.",
+      "CLIENT": "Client",
+      "CLIENT_PLACEHOLDER": "Nume și prenume",
+      "PHONE": "Telefon",
+      "EMAIL": "E-mail",
+      "SERVICE": "Serviciu",
+      "LOCATION": "Locație",
+      "EMPLOYEE": "Angajat (opțional)",
+      "ANY_EMPLOYEE": "Orice angajat disponibil",
+      "DATE": "Data",
+      "TIME": "Ora disponibilă",
+      "TIME_PLACEHOLDER": "Alege ora",
+      "NO_SLOTS": "Nu există ore libere pentru selecția curentă.",
+      "NOTE": "Notă (opțional)",
+      "NOTE_PLACEHOLDER": "Adaugă o notă pentru această programare",
+      "AVAILABILITY_NOTE": "Disponibilitatea va fi verificată înainte de confirmare.",
+      "CANCEL": "Renunță",
+      "SAVING": "Se salvează...",
+      "SUCCESS": "Programarea a fost adăugată.",
+      "ERRORS": {
+        "REQUIRED": "Câmp obligatoriu.",
+        "CLIENT_NAME": "Introdu numele clientului (minim 2 caractere).",
+        "PHONE": "Introdu un număr valid, ex. 0712 345 678.",
+        "EMAIL": "Introdu o adresă de e-mail validă.",
+        "NOTE_LENGTH": "Nota poate avea maximum 500 de caractere.",
+        "SLOT_TAKEN": "Intervalul ales nu mai este disponibil. Alege altă oră."
+      }
+    },
     "TITLE": "Programări",
     "SUBTITLE": "O zi bine organizată începe cu o imagine clară.",
     "ADD": "Adaugă programare"

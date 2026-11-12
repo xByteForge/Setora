@@ -87,6 +87,35 @@
         }
       }
     },
+    "FORM": {
+      "SUBTITLE": "Fill in the details for a new appointment.",
+      "CLIENT": "Client",
+      "CLIENT_PLACEHOLDER": "Full name",
+      "PHONE": "Phone",
+      "EMAIL": "Email",
+      "SERVICE": "Service",
+      "LOCATION": "Location",
+      "EMPLOYEE": "Employee (optional)",
+      "ANY_EMPLOYEE": "Any available employee",
+      "DATE": "Date",
+      "TIME": "Available time",
+      "TIME_PLACEHOLDER": "Choose a time",
+      "NO_SLOTS": "No free slots for the current selection.",
+      "NOTE": "Note (optional)",
+      "NOTE_PLACEHOLDER": "Add a note for this appointment",
+      "AVAILABILITY_NOTE": "Availability will be checked before confirmation.",
+      "CANCEL": "Cancel",
+      "SAVING": "Saving...",
+      "SUCCESS": "The appointment was added.",
+      "ERRORS": {
+        "REQUIRED": "Required field.",
+        "CLIENT_NAME": "Enter the client's name (at least 2 characters).",
+        "PHONE": "Enter a valid number, e.g. 0712 345 678.",
+        "EMAIL": "Enter a valid email address.",
+        "NOTE_LENGTH": "The note can have at most 500 characters.",
+        "SLOT_TAKEN": "The selected slot is no longer available. Choose another time."
+      }
+    },
     "TITLE": "Appointments",
     "SUBTITLE": "A well-organized day starts with a clear picture.",
     "ADD": "Add appointment"

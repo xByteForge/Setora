@@ -10,10 +10,13 @@ import { CalendarService } from '../../core/services/calendar.service';
 import { filterAppointments, filterEmployees, isSameDay } from './appointment-filters/appointment-filters.util';
 import { AppointmentDetailsComponent } from './appointment-details/appointment-details.component';
 import { AppointmentAgendaComponent } from './appointment-agenda/appointment-agenda.component';
-import { MOCK_LOCATIONS } from './appointments.mock';
+import { CalendarAppointment } from "../../core/models/calendar-appointment.model";
+import { CatalogService } from '../../core/services/catalog.service';
+import { AppointmentFormDialogComponent } from "./appointment-form-dialog/appointment-form-dialog.component";
 
 @Component({
-  imports: [TranslocoModule, AppointmentsHeaderComponent, AppointmentCalendarComponent, AppointmentFiltersComponent, AppointmentDetailsComponent, AppointmentAgendaComponent, ],
+  imports: [TranslocoModule, AppointmentsHeaderComponent, AppointmentCalendarComponent, AppointmentFiltersComponent,
+    AppointmentDetailsComponent, AppointmentAgendaComponent, AppointmentFormDialogComponent,],
   selector: 'app-appointments',
   templateUrl: './appointments.component.html',
   styleUrl: './appointments.component.css',
@@ -23,9 +26,10 @@ export class AppointmentsComponent {
   private readonly calendarService = inject(CalendarService);
 
   // Pagina deține datele; calendarul doar le afișează.
-  readonly locations = signal(MOCK_LOCATIONS); // TODO: din serviciu
+  private readonly catalog = inject(CatalogService);
+  readonly locations = signal(this.catalog.getLocations());
   readonly employees = signal(this.calendarService.getEmployees());
-  readonly appointments = signal(this.calendarService.getAppointments());
+  readonly appointments = computed(() => this.calendarService.getAppointments());
 
   readonly filters = signal<AppointmentFilters>(DEFAULT_FILTERS);
   /** Ziua afișată în calendar (sincronizată cu acesta). */
@@ -69,8 +73,27 @@ export class AppointmentsComponent {
     }
   }
 
+  // starea dialogului de add
+  readonly addOpen = signal(false);
+
   openAddAppointment(): void {
-    // TODO: deschide formularul de adaugare
+    this.addOpen.set(true);
+  }
+
+  closeAddAppointment(): void {
+    this.addOpen.set(false);
+  }
+
+  readonly toast = signal<string | null>(null);
+
+  onAppointmentCreated(created: CalendarAppointment): void {
+    this.addOpen.set(false);
+    const [y, m, d] = created.start.slice(0, 10).split('-').map(Number);
+    this.selectedDate.set(new Date(y, m - 1, d));
+    this.selectedId.set(created.id);
+
+    this.toast.set('APPOINTMENTS.FORM.SUCCESS');
+    setTimeout(() => this.toast.set(null), 4000);
   }
 
   readonly selectedId = signal<string | null>(null);

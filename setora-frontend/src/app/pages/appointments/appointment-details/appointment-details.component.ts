@@ -31,7 +31,7 @@ export class AppointmentDetailsComponent {
   readonly edit = output<string>();
   readonly cancelConfirmed = output<string>();
 
-  readonly canModify = computed(() => this.appointment().status !== 'Cancelled');
+  readonly canModify = computed(() => this.appointment().status !== 'cancelled');
 
   readonly dateLabel = computed(() => {
     const text = new Date(`${this.appointment().date}T00:00:00`).toLocaleDateString(this.lang(), {

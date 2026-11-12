@@ -47,3 +47,16 @@
       (cancelConfirmed)="cancelAppointment($event)" />
   }
 </div>
+
+<!-- dialog de add -->
+@if (addOpen()) {
+    <app-appointment-form-dialog
+            [selectedDate]="selectedDate()"
+            [locations]="locations()"
+            (closed)="closeAddAppointment()"
+            (created)="onAppointmentCreated($event)" />
+}
+
+@if (toast(); as key) {
+    <div class="toast" role="status">{{ key | transloco }}</div>
+}
