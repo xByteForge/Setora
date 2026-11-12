@@ -94,7 +94,9 @@ public class AppointmentService {
     }
 
 
-    public Appointment createGuestAppointment(@Valid CreateAppointmentGhostClientRequestDto request) {
+    //the lazy relations are read here and in the mapper, so everything stays in one transaction
+    @Transactional
+    public AppointmentResponseDto createGuestAppointment(@Valid CreateAppointmentGhostClientRequestDto request) {
         ServiceItem service = serviceItemService.findById(request.serviceId());
 
         Employee employee = employeeService.findById(request.employeeId());
@@ -122,6 +124,6 @@ public class AppointmentService {
 
         appointment.setClientNote(note);
 
-        return appointmentRepository.save(appointment);
+        return AppointmentMapper.toResponseDto(appointmentRepository.save(appointment));
     }
 }
