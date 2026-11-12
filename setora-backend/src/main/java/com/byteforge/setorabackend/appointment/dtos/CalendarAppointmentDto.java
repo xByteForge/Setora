@@ -3,7 +3,7 @@ package com.byteforge.setorabackend.appointment.dtos;
 
 import com.byteforge.setorabackend.appointment.Appointment;
 import com.byteforge.setorabackend.auth.User;
-import com.byteforge.setorabackend.employees.Employee;
+import com.byteforge.setorabackend.employees.model.Employee;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
 
 import java.math.BigDecimal;
