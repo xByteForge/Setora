@@ -3,9 +3,10 @@ export interface CalendarAppointment {
     id: string;
     employeeId: string;
     locationId: string;
+    serviceId: string;  
     clientName: string;
     service: string;
-    start: string; // ISO, ex. '2026-11-07T09:30:00'
+    start: string;
     end: string;
     status: AppointmentStatus;
 }

@@ -1,0 +1,46 @@
+<div class="backdrop" (click)="close()">
+    <div
+        class="dialog"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="cancel-title"
+        aria-describedby="cancel-desc"
+        (click)="$event.stopPropagation()">
+
+        <header class="dialog-header">
+            <h2 id="cancel-title">{{ 'APPOINTMENTS.CANCEL.TITLE' | transloco }}</h2>
+            <button
+                type="button"
+                class="close"
+                [disabled]="busy()"
+                (click)="close()"
+                [attr.aria-label]="'APPOINTMENTS.DETAILS.CLOSE' | transloco">×</button>
+        </header>
+
+        <p id="cancel-desc" class="text">{{ 'APPOINTMENTS.CANCEL.QUESTION' | transloco }}</p>
+
+        <div class="summary">
+            <strong>{{ appointment().clientName }}</strong>
+            <span>{{ appointment().serviceName }} · {{ appointment().durationMinutes }} min</span>
+            <span>{{ when() }}</span>
+            <span class="muted">{{ appointment().employeeName }} · {{ locationName() }}</span>
+        </div>
+
+        <p class="text">{{ 'APPOINTMENTS.CANCEL.NOTIFY' | transloco }}</p>
+        <p class="muted small">{{ 'APPOINTMENTS.CANCEL.REFUND' | transloco }}</p>
+
+        @if (failed()) {
+            <p class="error" role="alert">{{ 'APPOINTMENTS.ERRORS.GENERIC' | transloco }}</p>
+        }
+
+        <footer class="actions">
+            <!-- Safe action gets initial focus, per the design spec -->
+            <button type="button" class="btn secondary" autofocus [disabled]="busy()" (click)="close()">
+                {{ 'APPOINTMENTS.CANCEL.KEEP' | transloco }}
+            </button>
+            <button type="button" class="btn danger" [disabled]="busy()" (click)="confirmed.emit()">
+                {{ (busy() ? 'APPOINTMENTS.CANCEL.CANCELLING' : 'APPOINTMENTS.CANCEL.CONFIRM') | transloco }}
+            </button>
+        </footer>
+    </div>
+</div>

@@ -1,16 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, HostListener, inject, input, OnInit, output, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslocoModule } from '@ngneat/transloco';
+import { map } from 'rxjs';
 import { CalendarService } from '../../../core/services/calendar.service';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { CalendarAppointment } from '../../../core/models/calendar-appointment.model';
+import { Appointment } from '../../../core/models/appointment.model';
 import { Location } from '../../../core/models/location.model';
-import { HostListener } from '@angular/core';
 
 const PHONE_PATTERN = /^(\+40|0040|0)7\d{2}[\s.-]?\d{3}[\s.-]?\d{3}$/;
-
-
 
 const toIsoDate = (d: Date) =>
     `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -32,10 +31,18 @@ export class AppointmentFormDialogComponent implements OnInit {
     private readonly calendar = inject(CalendarService);
     private readonly catalog = inject(CatalogService);
 
+    /** null = creare. Cand e setat, dialogul e in modul editare. */
+    readonly appointment = input<Appointment | null>(null);
     readonly selectedDate = input.required<Date>();
     readonly locations = input.required<Location[]>();
+    readonly locationId = input<string>('');
+
     readonly closed = output<void>();
     readonly created = output<CalendarAppointment>();
+    readonly updated = output<CalendarAppointment>();
+    
+
+    readonly isEdit = computed(() => this.appointment() !== null);
 
     readonly services = this.catalog.getServices();
     private readonly allEmployees = this.calendar.getEmployees();
@@ -55,7 +62,11 @@ export class AppointmentFormDialogComponent implements OnInit {
     readonly submitting = signal(false);
     readonly error = signal(false);
 
-    private readonly value = toSignal(this.form.valueChanges, { initialValue: this.form.getRawValue() });
+    // getRawValue() include si campurile dezactivate (form.value nu le include)
+    private readonly value = toSignal(
+        this.form.valueChanges.pipe(map(() => this.form.getRawValue())),
+        { initialValue: this.form.getRawValue() },
+    );
 
     readonly employeesForLocation = computed(() =>
         this.allEmployees.filter((e) => e.locationIds.includes(this.value().locationId ?? '')),
@@ -64,6 +75,10 @@ export class AppointmentFormDialogComponent implements OnInit {
     readonly selectedService = computed(() => this.services.find((s) => s.id === this.value().serviceId));
 
     readonly slots = computed(() => {
+        if (this.isEdit()) {
+            // Ora e blocata in editare: aratam doar ora curenta
+            return [this.appointment()!.startTime];
+        }
         const v = this.value();
         const service = this.selectedService();
         if (!service || !v.locationId || !v.date) return [];
@@ -89,6 +104,12 @@ export class AppointmentFormDialogComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        const appt = this.appointment();
+        if (appt) {
+            this.fillForEdit(appt);
+            return;
+        }
+
         this.form.patchValue({
             date: toIsoDate(this.selectedDate()),
             locationId: this.locations()[0]?.id ?? '',
@@ -96,16 +117,48 @@ export class AppointmentFormDialogComponent implements OnInit {
         });
     }
 
+    private fillForEdit(a: Appointment): void {
+        const c = this.form.controls;
+
+        c.clientName.setValue(a.clientName);
+        c.clientPhone.setValue(a.clientPhone);
+        c.clientEmail.setValue(a.clientEmail ?? '');
+        c.clientNote.setValue(a.clientNote ?? '');
+
+        // Ordinea conteaza: fiecare setare de mai sus poate reseta ora,
+        // deci ora se seteaza ultima
+        c.locationId.setValue(this.locationId());
+        c.employeeId.setValue(a.employeeId ?? '');
+        c.serviceId.setValue(a.serviceId);
+        c.date.setValue(a.date);
+        c.startTime.setValue(a.startTime);
+
+        // Blocam campurile. emitEvent: false ca sa nu reseteze ora.
+        [c.serviceId, c.locationId, c.employeeId, c.date, c.startTime].forEach((ctrl) =>
+            ctrl.disable({ emitEvent: false }),
+        );
+    }
+
     submit(): void {
         if (this.form.invalid) {
             this.form.markAllAsTouched();
             return;
         }
-        const service = this.selectedService()!;
-        const v = this.form.getRawValue();
 
         this.submitting.set(true);
         this.error.set(false);
+
+        const appt = this.appointment();
+        if (appt) {
+            this.saveEdit(appt);
+        } else {
+            this.saveCreate();
+        }
+    }
+
+    private saveCreate(): void {
+        const service = this.selectedService()!;
+        const v = this.form.getRawValue();
 
         this.calendar
             .create(
@@ -126,6 +179,29 @@ export class AppointmentFormDialogComponent implements OnInit {
                 next: (appointment) => {
                     this.submitting.set(false);
                     this.created.emit(appointment);
+                },
+                error: () => {
+                    this.submitting.set(false);
+                    this.error.set(true);
+                },
+            });
+    }
+
+    private saveEdit(appt: Appointment): void {
+        const v = this.form.getRawValue();
+
+        // Trimitem doar campurile editabile
+        this.calendar
+            .update(appt.id, {
+                clientName: v.clientName.trim(),
+                clientPhone: v.clientPhone,
+                clientEmail: v.clientEmail,
+                clientNote: v.clientNote.trim() || undefined,
+            })
+            .subscribe({
+                next: (updated) => {
+                    this.submitting.set(false);
+                    this.updated.emit(updated);
                 },
                 error: () => {
                     this.submitting.set(false);

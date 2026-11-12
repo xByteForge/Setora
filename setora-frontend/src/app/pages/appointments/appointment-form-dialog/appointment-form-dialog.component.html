@@ -9,8 +9,10 @@
     >
         <header class="dialog-header">
             <div>
-                <h2>{{ 'APPOINTMENTS.ADD' | transloco }}</h2>
-                <p class="subtitle">{{ 'APPOINTMENTS.FORM.SUBTITLE' | transloco }}</p>
+                <h2>{{ (isEdit() ? 'APPOINTMENTS.EDIT' : 'APPOINTMENTS.ADD') | transloco }}</h2>
+                <p class="subtitle">
+                    {{ (isEdit() ? 'APPOINTMENTS.FORM.EDIT_SUBTITLE' : 'APPOINTMENTS.FORM.SUBTITLE') | transloco }}
+                </p>
             </div>
             <button
                 type="button"
@@ -162,18 +164,22 @@
 
         @if (error()) {
             <p class="error banner" role="alert">
-                {{ 'APPOINTMENTS.FORM.ERRORS.SLOT_TAKEN' | transloco }}
+                {{ (isEdit() ? 'APPOINTMENTS.ERRORS.GENERIC' : 'APPOINTMENTS.FORM.ERRORS.SLOT_TAKEN') | transloco }}
             </p>
         }
 
-        <p class="hint">{{ 'APPOINTMENTS.FORM.AVAILABILITY_NOTE' | transloco }}</p>
+        @if (isEdit()) {
+            <p class="hint">{{ 'APPOINTMENTS.FORM.LOCKED_NOTE' | transloco }}</p>
+        } @else {
+            <p class="hint">{{ 'APPOINTMENTS.FORM.AVAILABILITY_NOTE' | transloco }}</p>
+        }
 
         <footer class="actions">
             <button type="button" class="btn secondary" (click)="close()">
                 {{ 'APPOINTMENTS.FORM.CANCEL' | transloco }}
             </button>
             <button type="submit" class="btn primary" [disabled]="submitting()">
-                {{ (submitting() ? 'APPOINTMENTS.FORM.SAVING' : 'APPOINTMENTS.ADD') | transloco }}
+                {{ (submitting() ? 'APPOINTMENTS.FORM.SAVING' : isEdit() ? 'APPOINTMENTS.FORM.SAVE_CHANGES' : 'APPOINTMENTS.ADD') | transloco }}
             </button>
         </footer>
     </form>
