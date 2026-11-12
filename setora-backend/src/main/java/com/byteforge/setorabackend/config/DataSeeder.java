@@ -58,7 +58,7 @@ public class DataSeeder implements CommandLineRunner {
 
         User owner = seedUser("Pavel", "Emma", "emma.pavel@setora.test", "0700000001");
         User client = seedUser("Pop", "Ana", "ana.pop@setora.test", "0700000002");
-
+        User ghostUser=seedUser("Ghost","User","ghost@gmail.com", "0700000003");
         Business business = seedBusiness(owner);
 
         ServiceItem haircut = seedService(business, "Tuns", "Tuns si aranjat", "80.00", 45);

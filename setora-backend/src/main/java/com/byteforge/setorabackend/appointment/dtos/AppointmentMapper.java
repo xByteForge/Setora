@@ -1,6 +1,7 @@
 package com.byteforge.setorabackend.appointment.dtos;
 import com.byteforge.setorabackend.appointment.Appointment;
 import com.byteforge.setorabackend.appointment.AppointmentStatus;
+import com.byteforge.setorabackend.auth.User;
 import com.byteforge.setorabackend.common.DateTimeInterval;
 import com.byteforge.setorabackend.employees.Employee;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
@@ -63,10 +64,11 @@ public class AppointmentMapper {
             CreateAppointmentGhostClientRequestDto request,
             Employee employee,
             ServiceItem service,
+            User client,
             ZoneId timezone
     ) {
         Appointment appointment = new Appointment();
-
+        appointment.setClient(client);
         appointment.setEmployee(employee);
         appointment.setServiceItem(service);
 

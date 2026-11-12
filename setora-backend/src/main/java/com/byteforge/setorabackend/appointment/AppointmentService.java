@@ -1,12 +1,15 @@
 package com.byteforge.setorabackend.appointment;
 
-import com.byteforge.setorabackend.appointment.dtos.AppointmentResponseDto;
-import com.byteforge.setorabackend.appointment.dtos.AppointmentsTodaySummaryDto;
-import com.byteforge.setorabackend.appointment.dtos.AppointmentsTodaySummaryProjection;
-import com.byteforge.setorabackend.appointment.dtos.CreateAppointmentGhostClientRequestDto;
+import com.byteforge.setorabackend.appointment.dtos.*;
+import com.byteforge.setorabackend.auth.User;
+import com.byteforge.setorabackend.auth.UserService;
 import com.byteforge.setorabackend.business.Business;
 import com.byteforge.setorabackend.business.BusinessRepository;
 import com.byteforge.setorabackend.business.BusinessService;
+import com.byteforge.setorabackend.employees.Employee;
+import com.byteforge.setorabackend.employees.EmployeeService;
+import com.byteforge.setorabackend.serviceItem.ServiceItem;
+import com.byteforge.setorabackend.serviceItem.ServiceItemService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,9 @@ import java.util.UUID;
 public class AppointmentService {
     final private AppointmentRepository appointmentRepository;
     final private BusinessService businessService;
+    private final ServiceItemService serviceItemService;
+    private final EmployeeService employeeService;
+    private final UserService userService;
 
     public AppointmentsTodaySummaryDto getDailySummary(
             UUID businessId,
@@ -53,6 +59,33 @@ public class AppointmentService {
     }
 
     public Appointment createGuestAppointment(@Valid CreateAppointmentGhostClientRequestDto request) {
-        return null;
+        ServiceItem service = serviceItemService.findById(request.serviceId());
+
+        Employee employee = employeeService.findById(request.employeeId());
+
+        Business business = service.getBusiness();
+
+        User client = userService.findByEmail("ghost@gmail.com"); //this indicates appointment through phone call
+
+        // Validate business, employee and service compatibility. //check again time slots -  so we do not create double bookings
+        //TODO
+        Appointment appointment = AppointmentMapper.toEntity(
+                request,
+                employee,
+                service,
+                client,
+                business.getTimezone()
+        );
+
+        String note="";
+        note +="Appointment for: "+request.clientName()+"\n";
+        note +="Email: "+request.clientEmail() +"\n";
+        note +="Phone number: "+request.clientPhone()+"\n";
+        note+="\n --- Details ---\n";
+        note+=request.clientName()+"\n";
+
+        appointment.setClientNote(note);
+
+        return appointmentRepository.save(appointment);
     }
 }
