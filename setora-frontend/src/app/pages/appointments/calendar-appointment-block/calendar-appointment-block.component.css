@@ -1,0 +1,91 @@
+:host {
+    /* Culorile vin din styles.css (--appt-*) și se schimbă cu tema. */
+    --tone-bg: var(--appt-confirmed-bg);
+    --tone-border: var(--appt-confirmed-border);
+    --tone-text: var(--appt-confirmed-text);
+
+    position: absolute;
+    box-sizing: border-box;
+    min-width: 0;
+    padding: 7px 10px;
+    border: 1px solid var(--tone-border);
+    border-radius: 4px;
+    background: var(--tone-bg);
+    color: var(--ink);
+    overflow: hidden;
+}
+
+:host(.confirmed) {
+    --tone-bg: var(--appt-confirmed-bg);
+    --tone-border: var(--appt-confirmed-border);
+    --tone-text: var(--appt-confirmed-text);
+}
+
+:host(.pending) {
+    --tone-bg: var(--appt-pending-bg);
+    --tone-border: var(--appt-pending-border);
+    --tone-text: var(--appt-pending-text);
+}
+
+:host(.cancelled) {
+    --tone-bg: var(--appt-cancelled-bg);
+    --tone-border: var(--appt-cancelled-border);
+    --tone-text: var(--appt-cancelled-text);
+}
+
+/* Clasa vine din status ('blocked'), nu 'unavailable'. */
+:host(.blocked) {
+    --tone-bg: var(--appt-blocked-bg);
+    --tone-border: var(--appt-blocked-border);
+    --tone-text: var(--appt-blocked-text);
+}
+
+/* Programarea deschisă în panoul de detalii (se activează cu [class.selected]). */
+:host(.selected) {
+    --tone-bg: var(--appt-selected-bg);
+    --tone-border: var(--appt-selected-border);
+    --tone-text: var(--appt-selected-text);
+    border-width: 2px;
+    padding: 6px 9px; /* compensează bordura de 2px, ca blocul să nu "sară" */
+}
+
+p {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+:host(.compact) {
+    padding: 3px 6px;
+    border-radius: 4px;
+}
+
+:host(.compact.selected) {
+    padding: 2px 5px;
+}
+
+:host(.compact) p {
+    font-size: 11px;
+}
+
+:host(.compact) .block__client {
+    font-size: 12px;
+}
+
+.block__time {
+    font-weight: 600;
+    color: var(--tone-text);
+}
+
+.block__client {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.block__meta {
+    color: var(--tone-text);
+}

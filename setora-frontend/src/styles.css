@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&display=swap');
+
+:root {
+  --brand-mint: #43CDB6;
+  --brand-mint-hover: #33B9A3;
+  --brand-mint-pressed: #269F8C;
+
+  --paper: #FFFFFF;
+  --canvas: #F5F8F7;
+  --ink: #000000;
+  --text-secondary: #5B6B66;
+
+  --border-color: #DCE5E1;
+  --control-border: #778A84;
+
+  --mint-wash: #E8F8F3;
+  --accent-text: #064E43;
+  --focus: #087F6D;
+
+  --status-pending: #8A5A00;
+  --status-cancelled: #B42318;
+
+  /* Confirmată */
+  --appt-confirmed-bg: #ecfdf5;
+  --appt-confirmed-border: #10b981;
+  --appt-confirmed-text: #064e43;
+  /* În așteptare */
+  --appt-pending-bg: #fef3c7;
+  --appt-pending-border: #f59e0b;
+  --appt-pending-text: #8a5a00;
+  /* Anulată */
+  --appt-cancelled-bg: #fee2e2;
+  --appt-cancelled-border: #ef4444;
+  --appt-cancelled-text: #b42318;
+  /* Interval blocat (pauză) */
+  --appt-blocked-bg: #e5e7eb;
+  --appt-blocked-border: #6b7280;
+  --appt-blocked-text: #4b5563;
+  /* Selectată */
+  --appt-selected-bg: #d1fae5;
+  --appt-selected-border: #43cdb6;
+  --appt-selected-text: #064e43;
+}
+
+body.dark-theme {
+  --paper: #1D2D44;
+  --canvas: #0D1321;
+  --ink: #F0EBD8;
+  --text-secondary: #B6C6D8;
+
+  --border-color: #3E5C76;
+  --control-border: #748CAB;
+
+  --mint-wash: #163E3B;
+  --accent-text: #93E3CB;
+  --focus: #43CDB6;
+
+  --status-pending: #F2C265;
+  --status-cancelled: #FF8A80;
+}
+
+body {
+  margin: 0;
+  font-family: Arimo, Arial, Helvetica, sans-serif;
+  background-color: var(--canvas);
+  color: var(--ink);
+  transition: background-color 160ms cubic-bezier(0.2, 0, 0, 1),
+              color 160ms cubic-bezier(0.2, 0, 0, 1);
+  -webkit-font-smoothing: antialiased;
+}
+
+
+/* Default to light values so the page is styled before the theme class is applied */
+:root {
+  --paper: #FFFFFF;
+  --canvas: #F5F8F7;
+  --border-color: #DCE5E1;
+  --ink: #000000;
+  --text-secondary: #5B6B67;
+  --mint-wash: #E8F8F3;
+  --brand-mint: #43CDB6;
+  --accessible-green: #064E43;
+  --focus-ring: #087F6D;
+}
+
+body.light-theme {
+  color-scheme: light;
+  background-color: var(--canvas);
+  --paper: #FFFFFF;
+  --canvas: #F5F8F7;
+  --border-color: #DCE5E1;
+  --ink: #000000;
+  --text-secondary: #5B6B67;
+  --mint-wash: #E8F8F3;
+  --brand-mint: #43CDB6;
+  --accessible-green: #064E43;
+  --focus-ring: #087F6D;
+}
+
+body.dark-theme {
+  color-scheme: dark;
+  background-color: var(--canvas);
+  --paper: #1D2D44;          /* Deep blue: sidebar and card surfaces */
+  --canvas: #0D1321;         /* Midnight: page background and hint card */
+  --border-color: #3E5C76;   /* Slate: dividers and structure */
+  --ink: #F0EBD8;            /* Ivory: headings and primary text */
+  --text-secondary: #B6C6D8; /* Lighter blue-gray for supporting text */
+  --mint-wash: #163E3B;      /* Selected and hover background (derived) */
+  --brand-mint: #43CDB6;
+  --accessible-green: #43CDB6; /* Mint text on dark for links, badge, active label */
+  --focus-ring: #43CDB6;
+  
+  --appt-confirmed-bg: #1d2d44;
+  --appt-confirmed-border: #3e5c76;
+  --appt-confirmed-text: #93e3cb;
+ 
+  --appt-pending-bg: #463b26;
+  --appt-pending-border: #ffd48a;
+  --appt-pending-text: #ffd48a;
+ 
+  --appt-cancelled-bg: #482b39;
+  --appt-cancelled-border: #ffa6ad;
+  --appt-cancelled-text: #ffa6ad;
+ 
+  --appt-blocked-bg: #2d4059;
+  --appt-blocked-border: #b6c6d8;
+  --appt-blocked-text: #b6c6d8;
+ 
+  --appt-selected-bg: #123e3c;
+  --appt-selected-border: #43cdb6;
+  --appt-selected-text: #93e3cb;
+}
+
+.app-layout {
+  min-height: 100vh;
+}
+
+.main-content {
+  margin-left: 260px;
+  min-height: 100vh;
+  min-width: 0;
+}

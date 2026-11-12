@@ -1,0 +1,50 @@
+<div class="toolbar">
+    <div class="toolbar__nav">
+        <button
+                type="button"
+                class="toolbar__icon-btn"
+                [attr.aria-label]="'APPOINTMENTS.CALENDAR.PREVIOUS' | transloco"
+                (click)="previous.emit()"
+        >
+            ‹
+        </button>
+
+        <h2 class="toolbar__date">{{ dateLabel() }}</h2>
+
+        <button
+                type="button"
+                class="toolbar__icon-btn"
+                [attr.aria-label]="'APPOINTMENTS.CALENDAR.NEXT' | transloco"
+                (click)="next.emit()"
+        >
+            ›
+        </button>
+
+        <button type="button" class="toolbar__today" (click)="today.emit()">
+            {{ 'APPOINTMENTS.CALENDAR.TODAY' | transloco }}
+        </button>
+    </div>
+
+    <div class="toolbar__right">
+        <div class="toolbar__views" role="group">
+            <button
+                    type="button"
+                    class="toolbar__view"
+                    [class.toolbar__view--active]="view() === 'day'"
+                    [attr.aria-pressed]="view() === 'day'"
+                    (click)="viewChange.emit('day')"
+            >
+                {{ 'APPOINTMENTS.CALENDAR.VIEW_DAY' | transloco }}
+            </button>
+            <button
+                    type="button"
+                    class="toolbar__view"
+                    [class.toolbar__view--active]="view() === 'week'"
+                    [attr.aria-pressed]="view() === 'week'"
+                    (click)="viewChange.emit('week')"
+            >
+                {{ 'APPOINTMENTS.CALENDAR.VIEW_WEEK' | transloco }}
+            </button>
+        </div>
+    </div>
+</div>

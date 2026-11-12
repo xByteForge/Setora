@@ -1,0 +1,67 @@
+{
+  "NAV": {
+    "APPOINTMENTS": "Programări",
+    "SERVICES": "Servicii",
+    "EMPLOYEES": "Angajați",
+    "CLIENTS": "Clienți",
+    "LOCATIONS": "Locații",
+    "WORKING_HOURS": "Program de lucru",
+    "SETTINGS": "Setări"
+  },
+  "HEADER": {
+    "SEARCH": "Caută un client sau un serviciu...",
+    "BREADCRUMB": "Navigare",
+    "THEME_TO_DARK": "Comută la tema întunecată",
+    "THEME_TO_LIGHT": "Comută la tema luminoasă",
+    "NOTIFICATIONS": "Notificări",
+    "LANGUAGE": "Limba"
+  },
+  "HINT": {
+    "PHONE_BOOKINGS": "Programările telefonice pot fi adăugate direct în calendar.",
+    "MANAGE_AVAILABILITY": "Gestionează disponibilitatea"
+  },
+  "APPOINTMENTS": {
+    "SUMMARY": {
+      "TITLE": "Rezumatul programărilor de azi",
+      "TODAY": "Programări astăzi",
+      "CONFIRMED": "Confirmate",
+      "PENDING": "În așteptare",
+      "CANCELLED": "Anulate"
+    },
+    "FILTERS": {
+      "TITLE": "Filtre programări",
+      "LOCATION": "Locație",
+      "EMPLOYEE": "Angajat",
+      "STATUS": "Stare",
+      "TIME_RANGE": "Interval orar",
+      "ALL_LOCATIONS": "Toate locațiile",
+      "ALL_EMPLOYEES": "Toți angajații",
+      "ALL_STATUSES": "Toate stările",
+      "STATUS_UNAVAILABLE": "Indisponibil",
+      "CUSTOM": "Personalizat…",
+      "FROM": "De la",
+      "TO": "Până la",
+      "ACTIVE": "Filtre active",
+      "REMOVE": "Elimină filtrul {{filter}}",
+      "RESET": "Resetează filtrele"
+    },
+    "CALENDAR": {
+      "APPOINTMENTS_COUNT": "programări",
+      "TODAY": "Astăzi",
+      "VIEW_DAY": "Zi",
+      "VIEW_WEEK": "Săptămână",
+      "PREVIOUS": "Precedenta",
+      "NEXT": "Următoarea",
+      "STATUS": {
+        "CONFIRMED": "Confirmată",
+        "PENDING": "În așteptare",
+        "CANCELLED": "Anulată",
+        "UNAVAILABLE": "Indisponibil"
+      },
+      "EMPLOYEE": "Angajat"
+    },
+    "TITLE": "Programări",
+    "SUBTITLE": "O zi bine organizată începe cu o imagine clară.",
+    "ADD": "Adaugă programare"
+  }
+}

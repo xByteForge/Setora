@@ -1,0 +1,7 @@
+setora-frontend/.prettierrc
+setora-frontend/.editorconfig
+
+# macOS
+.DS_Store
+
+.idea/

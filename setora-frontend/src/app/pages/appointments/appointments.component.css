@@ -1,0 +1,23 @@
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--canvas);
+}
+
+.main-content {
+  margin-left: 260px; 
+  flex-grow: 1;
+  box-sizing: border-box;
+}
+
+.sidebar .nav-link:focus-visible {
+  outline: 2px solid var(--focus-ring, #087F6D);
+  outline-offset: 2px;
+}
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
