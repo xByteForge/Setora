@@ -26,6 +26,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class AppointmentService {
+
     final private AppointmentRepository appointmentRepository;
     final private BusinessService businessService;
 
@@ -75,11 +76,7 @@ public class AppointmentService {
             );
         }
 
-        Business business = businessRepository.findById(businessId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Business not found"
-                ));
+        Business business = businessService.findById(businessId);
 
         ZoneId zone = business.getTimezone();
 
