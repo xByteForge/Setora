@@ -177,33 +177,32 @@ export class CalendarService {
 
     /** Maps a calendar item to the full details shape (mock until the API exists). */
     getDetails(a: CalendarAppointment): Appointment {
-        const employee = this.employees.find((e) => e.id === a.employeeId);
-        const minutes = (iso: string) => +iso.slice(11, 13) * 60 + +iso.slice(14, 16);
+    const employee = this.employees.find((e) => e.id === a.employeeId);
+    const minutes = (iso: string) => +iso.slice(11, 13) * 60 + +iso.slice(14, 16);
 
-        return {
-            id: a.id,
-            businessId: 'studio-armonia',
-            serviceId: a.serviceId,
-            serviceName: a.service,
-            durationMinutes: minutes(a.end) - minutes(a.start),
-            clientId: a.id,
-            clientName: a.clientName,
-            clientPhone: '0700 000 000',
-            clientEmail: 'client@example.com',
-            employeeId: a.employeeId,
-            employeeName: employee?.name ?? '',
-            locationId: a.locationId,
-            date: a.start.slice(0, 10),
-            startTime: a.start.slice(11, 16),
-            endTime: a.end.slice(11, 16),
-            status: a.status,
-            price: 150,
-            currency: 'lei',
-            paymentMethod: 'Physical',
-            isPaid: false,
-            ...this.extras[a.id],
-        };
-    }
+    return {
+        id: a.id,
+        businessId: 'studio-armonia',
+        serviceId: a.serviceId,
+        serviceName: a.service,
+        durationMinutes: minutes(a.end) - minutes(a.start),
+        clientId: a.id,
+        clientName: a.clientName,
+        clientPhone: '0700 000 000',
+        clientEmail: 'client@example.com',
+        employeeId: a.employeeId,
+        employeeName: employee?.name ?? '',
+        date: a.start.slice(0, 10),
+        startTime: a.start.slice(11, 16),
+        endTime: a.end.slice(11, 16),
+        status: a.status,
+        price: 150,
+        currency: 'lei',
+        paymentMethod: 'Physical',
+        isPaid: false,
+        ...this.extras[a.id],
+    };
+}
 
     private findOrThrow(id: string): CalendarAppointment {
         const found = this.appointments().find((a) => a.id === id);

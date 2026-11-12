@@ -122,47 +122,56 @@ export class AppointmentsComponent {
   }
 
   // Editare
-  readonly editingId = signal<string | null>(null);
-  readonly editTarget = computed(() => {
+readonly editingId = signal<string | null>(null);
+readonly editTarget = computed(() => {
     const id = this.editingId();
     const item = id ? this.appointments().find((a) => a.id === id) : undefined;
     return item ? this.calendarService.getDetails(item) : null;
-  });
+});
+readonly editLocationId = computed(() => {
+    const id = this.editingId();
+    return this.appointments().find((a) => a.id === id)?.locationId ?? '';
+});
 
-  editAppointment(id: string): void {
+editAppointment(id: string): void {
     this.editingId.set(id);
-  }
+}
 
-  closeEdit(): void {
+closeEdit(): void {
     this.editingId.set(null);
-  }
+}
 
-  onAppointmentUpdated(updated: CalendarAppointment): void {
+onAppointmentUpdated(updated: CalendarAppointment): void {
     this.editingId.set(null);
     this.selectedId.set(updated.id);
     this.showToast('APPOINTMENTS.FORM.UPDATED');
-  }
+}
 
-  // Anulare
-  readonly cancelingId = signal<string | null>(null);
-  readonly cancelTarget = computed(() => {
+// Anulare
+readonly cancelingId = signal<string | null>(null);
+readonly cancelTarget = computed(() => {
     const id = this.cancelingId();
     const item = id ? this.appointments().find((a) => a.id === id) : undefined;
     return item ? this.calendarService.getDetails(item) : null;
-  });
-  readonly cancelBusy = signal(false);
-  readonly cancelFailed = signal(false);
+});
+readonly cancelLocationName = computed(() => {
+    const id = this.cancelingId();
+    const locationId = this.appointments().find((a) => a.id === id)?.locationId;
+    return this.locations().find((l) => l.id === locationId)?.name ?? '';
+});
+readonly cancelBusy = signal(false);
+readonly cancelFailed = signal(false);
 
-  cancelAppointment(id: string): void {
+cancelAppointment(id: string): void {
     this.cancelFailed.set(false);
     this.cancelingId.set(id);
-  }
+}
 
-  closeCancel(): void {
+closeCancel(): void {
     if (!this.cancelBusy()) this.cancelingId.set(null);
-  }
+}
 
-  confirmCancel(): void {
+confirmCancel(): void {
     const id = this.cancelingId();
     if (!id) return;
 
@@ -170,18 +179,17 @@ export class AppointmentsComponent {
     this.cancelFailed.set(false);
 
     this.calendarService.cancel(id).subscribe({
-      next: () => {
-        this.cancelBusy.set(false);
-        this.cancelingId.set(null);
-        // selectedId rămâne setat, deci panoul arată statusul anulat
-        this.showToast('APPOINTMENTS.CANCEL.SUCCESS');
-      },
-      error: () => {
-        this.cancelBusy.set(false);
-        this.cancelFailed.set(true);
-      },
+        next: () => {
+            this.cancelBusy.set(false);
+            this.cancelingId.set(null);
+            this.showToast('APPOINTMENTS.CANCEL.SUCCESS');
+        },
+        error: () => {
+            this.cancelBusy.set(false);
+            this.cancelFailed.set(true);
+        },
     });
-  }
+}
 
   locationName(locationId: string): string {
     return this.locations().find((l) => l.id === locationId)?.name ?? '';

@@ -35,10 +35,12 @@ export class AppointmentFormDialogComponent implements OnInit {
     readonly appointment = input<Appointment | null>(null);
     readonly selectedDate = input.required<Date>();
     readonly locations = input.required<Location[]>();
+    readonly locationId = input<string>('');
 
     readonly closed = output<void>();
     readonly created = output<CalendarAppointment>();
     readonly updated = output<CalendarAppointment>();
+    
 
     readonly isEdit = computed(() => this.appointment() !== null);
 
@@ -125,7 +127,7 @@ export class AppointmentFormDialogComponent implements OnInit {
 
         // Ordinea conteaza: fiecare setare de mai sus poate reseta ora,
         // deci ora se seteaza ultima
-        c.locationId.setValue(a.locationId);
+        c.locationId.setValue(this.locationId());
         c.employeeId.setValue(a.employeeId ?? '');
         c.serviceId.setValue(a.serviceId);
         c.date.setValue(a.date);

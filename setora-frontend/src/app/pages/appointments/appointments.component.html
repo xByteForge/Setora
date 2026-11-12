@@ -61,6 +61,7 @@
 @if (editTarget(); as appt) {
   <app-appointment-form-dialog
     [appointment]="appt"
+    [locationId]="editLocationId()"
     [selectedDate]="selectedDate()"
     [locations]="locations()"
     (closed)="closeEdit()"
@@ -71,7 +72,7 @@
 @if (cancelTarget(); as appt) {
   <app-cancel-appointment-dialog
     [appointment]="appt"
-    [locationName]="locationName(appt.locationId)"
+    [locationName]="cancelLocationName()"
     [busy]="cancelBusy()"
     [failed]="cancelFailed()"
     (closed)="closeCancel()"

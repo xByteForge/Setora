@@ -13,7 +13,6 @@ export interface Appointment {
   clientEmail: string;
   employeeId: string;
   employeeName: string;
-  locationId: string;
   date: string; // YYYY-MM-DD
   startTime: string; // HH:mm
   endTime: string; // HH:mm
