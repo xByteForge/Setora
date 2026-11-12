@@ -1,4 +1,4 @@
-export type AppointmentStatus = 'Confirmed' | 'Pending' | 'Cancelled' | 'Unavailable';
+export type AppointmentStatus = 'confirmed' | 'pending' | 'cancelled' | 'unavailable';
 export type PaymentMethod = 'Free' | 'Physical' | 'Online' | 'PhysicalOrOnline';
 
 export interface Appointment {

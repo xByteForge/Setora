@@ -45,6 +45,10 @@
       "REMOVE": "Remove filter {{filter}}",
       "RESET": "Reset filters"
     },
+    "AGENDA": {
+      "META": "Agenda · {{count}} employees · 30 min intervals",
+      "EMPTY": "No appointments on this day."
+    },
     "CALENDAR": {
       "APPOINTMENTS_COUNT": "appointments",
       "TODAY": "Today",
@@ -60,8 +64,66 @@
       },
       "EMPLOYEE": "Employee"
     },
+    "DETAILS": {
+      "TITLE": "Appointment details",
+      "CLOSE": "Close",
+      "CLIENT": "Client",
+      "DATE": "Date",
+      "TIME": "Time",
+      "EMPLOYEE": "Employee",
+      "LOCATION": "Location",
+      "NOTE": "Client note",
+      "EDIT": "Edit appointment",
+      "CANCEL": "Cancel appointment",
+      "CANCEL_HINT": "Cancelling requires confirmation. The business policy applies; the client will be notified by email.",
+      "PAYMENT": {
+        "PAID": "Marked as paid",
+        "UNPAID": "Not marked as paid",
+        "METHOD": {
+          "FREE": "Free",
+          "PHYSICAL": "Pay on site",
+          "ONLINE": "Pay online",
+          "PHYSICAL_OR_ONLINE": "Pay on site or online"
+        }
+      }
+    },
+    "FORM": {
+      "SUBTITLE": "Fill in the details for a new appointment.",
+      "CLIENT": "Client",
+      "CLIENT_PLACEHOLDER": "Full name",
+      "PHONE": "Phone",
+      "EMAIL": "Email",
+      "SERVICE": "Service",
+      "LOCATION": "Location",
+      "EMPLOYEE": "Employee (optional)",
+      "ANY_EMPLOYEE": "Any available employee",
+      "DATE": "Date",
+      "TIME": "Available time",
+      "TIME_PLACEHOLDER": "Choose a time",
+      "NO_SLOTS": "No free slots for the current selection.",
+      "NOTE": "Note (optional)",
+      "NOTE_PLACEHOLDER": "Add a note for this appointment",
+      "AVAILABILITY_NOTE": "Availability will be checked before confirmation.",
+      "CANCEL": "Cancel",
+      "SAVING": "Saving...",
+      "SUCCESS": "The appointment was added.",
+      "ERRORS": {
+        "REQUIRED": "Required field.",
+        "CLIENT_NAME": "Enter the client's name (at least 2 characters).",
+        "PHONE": "Enter a valid number, e.g. 0712 345 678.",
+        "EMAIL": "Enter a valid email address.",
+        "NOTE_LENGTH": "The note can have at most 500 characters.",
+        "SLOT_TAKEN": "The selected slot is no longer available. Choose another time."
+      }
+    },
     "TITLE": "Appointments",
     "SUBTITLE": "A well-organized day starts with a clear picture.",
     "ADD": "Add appointment"
+  },
+  "MENU": {
+    "TITLE": "Menu",
+    "THEME": "Theme",
+    "LIGHT": "Light",
+    "DARK": "Dark"
   }
 }

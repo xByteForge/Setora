@@ -38,23 +38,26 @@
     </div>
 
     <div class="calendar__body">
-        <div class="calendar__time-axis" [style.height.px]="gridHeight()">
+        <div class="calendar__time-axis" [style.min-height.px]="gridHeight()">
             @for (hour of hours(); track hour) {
                 <span class="calendar__time-label">{{ formatHour(hour) }}</span>
             }
         </div>
 
         @for (column of columns(); track column.id) {
-            <div class="calendar__column" [style.height.px]="gridHeight()">
+            <div class="calendar__column" [style.min-height.px]="gridHeight()">
                 @for (item of column.appointments; track item.appointment.id) {
                     <app-calendar-appointment-block
-                            [appointment]="item.appointment"
-                            [lane]="item.lane"
-                            [lanes]="item.lanes"
-                            [compact]="view() === 'week'"
-                            [startHour]="startHour()"
-                            [pxPerMinute]="pxPerMinute"
-                    />
+                        [appointment]="item.appointment"
+                        [lane]="item.lane"
+                        [lanes]="item.lanes"
+                        [compact]="view() === 'week'"
+                        [startHour]="startHour()"
+                        [pxPerMinute]="pxPerMinute"
+                        [selected]="selectedId() === item.appointment.id"
+                        (click)="select(item.appointment)"
+                        (keydown.enter)="select(item.appointment)"
+                        (keydown.space)="select(item.appointment); $event.preventDefault()" />
                 }
             </div>
         }

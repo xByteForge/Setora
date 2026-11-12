@@ -1,10 +1,23 @@
-<aside class="sidebar">
+@if (menu.open()) {
+  <div class="backdrop" (click)="menu.close()"></div>
+}
+
+<aside class="sidebar" [class.sidebar--open]="menu.open()">
+  <div class="mobile-head">
+    <h2 class="mobile-title">{{ 'MENU.TITLE' | transloco }}</h2>
+    <button type="button" class="mobile-close" (click)="menu.close()"
+            [attr.aria-label]="'APPOINTMENTS.DETAILS.CLOSE' | transloco">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" />
+      </svg>
+    </button>
+  </div>
+
   <div class="sidebar-header">
     <div class="logo-plaque">
       <img src="assets/logo.jpg" alt="SETORA" class="logo" />
     </div>
   </div>
-
 
   <div class="business-info">
     <p class="business-name">{{ businessName }}</p>
@@ -13,10 +26,7 @@
 
   <nav class="sidebar-nav">
     @for (item of navItems; track item.path) {
-      <a
-        [routerLink]="item.path"
-        routerLinkActive="active"
-        class="nav-link">
+      <a [routerLink]="item.path" routerLinkActive="active" class="nav-link" (click)="menu.close()">
         <i [class]="item.iconClass" aria-hidden="true"></i>
         <span class="nav-label">{{ item.labelKey | transloco }}</span>
         @if (item.badge !== undefined) {
@@ -26,16 +36,21 @@
     }
   </nav>
 
-  <div class="sidebar-hint">    
+  <div class="sidebar-hint">
     <p>{{ 'HINT.PHONE_BOOKINGS' | transloco }}</p>
     <a routerLink="/working-hours">{{ 'HINT.MANAGE_AVAILABILITY' | transloco }}</a>
   </div>
 
   <div class="sidebar-footer">
-    <a routerLink="/settings" routerLinkActive="active" class="nav-link">
+    <a routerLink="/settings" routerLinkActive="active" class="nav-link" (click)="menu.close()">
       <i class="fa-solid fa-gear" aria-hidden="true"></i>
       <span class="nav-label">{{ 'NAV.SETTINGS' | transloco }}</span>
     </a>
+
+    <button type="button" class="theme-row" (click)="theme.toggleTheme()">
+      <span>{{ 'MENU.THEME' | transloco }}</span>
+      <strong>{{ (theme.currentTheme() === 'light' ? 'MENU.LIGHT' : 'MENU.DARK') | transloco }}</strong>
+    </button>
 
     <div class="user-card">
       <div class="avatar">{{ userInitials }}</div>

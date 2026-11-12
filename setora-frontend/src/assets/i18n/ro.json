@@ -45,6 +45,10 @@
       "REMOVE": "Elimină filtrul {{filter}}",
       "RESET": "Resetează filtrele"
     },
+    "AGENDA": {
+      "META": "Agendă · {{count}} angajați · intervale de 30 min",
+      "EMPTY": "Nicio programare în această zi."
+    },
     "CALENDAR": {
       "APPOINTMENTS_COUNT": "programări",
       "TODAY": "Astăzi",
@@ -60,8 +64,66 @@
       },
       "EMPLOYEE": "Angajat"
     },
+    "DETAILS": {
+      "TITLE": "Detalii programare",
+      "CLOSE": "Închide",
+      "CLIENT": "Client",
+      "DATE": "Data",
+      "TIME": "Ora",
+      "EMPLOYEE": "Angajat",
+      "LOCATION": "Locație",
+      "NOTE": "Notă client",
+      "EDIT": "Editează programarea",
+      "CANCEL": "Anulează programarea",
+      "CANCEL_HINT": "Anularea necesită confirmare. Se aplică politica afacerii; clientul va fi notificat prin e-mail.",
+      "PAYMENT": {
+        "PAID": "Marcată ca plătită",
+        "UNPAID": "Nu este marcată ca plătită",
+        "METHOD": {
+          "FREE": "Gratuit",
+          "PHYSICAL": "Plată la sediu",
+          "ONLINE": "Plată online",
+          "PHYSICAL_OR_ONLINE": "Plată la sediu sau online"
+        }
+      }
+    },
+    "FORM": {
+      "SUBTITLE": "Completează detaliile pentru o programare nouă.",
+      "CLIENT": "Client",
+      "CLIENT_PLACEHOLDER": "Nume și prenume",
+      "PHONE": "Telefon",
+      "EMAIL": "E-mail",
+      "SERVICE": "Serviciu",
+      "LOCATION": "Locație",
+      "EMPLOYEE": "Angajat (opțional)",
+      "ANY_EMPLOYEE": "Orice angajat disponibil",
+      "DATE": "Data",
+      "TIME": "Ora disponibilă",
+      "TIME_PLACEHOLDER": "Alege ora",
+      "NO_SLOTS": "Nu există ore libere pentru selecția curentă.",
+      "NOTE": "Notă (opțional)",
+      "NOTE_PLACEHOLDER": "Adaugă o notă pentru această programare",
+      "AVAILABILITY_NOTE": "Disponibilitatea va fi verificată înainte de confirmare.",
+      "CANCEL": "Renunță",
+      "SAVING": "Se salvează...",
+      "SUCCESS": "Programarea a fost adăugată.",
+      "ERRORS": {
+        "REQUIRED": "Câmp obligatoriu.",
+        "CLIENT_NAME": "Introdu numele clientului (minim 2 caractere).",
+        "PHONE": "Introdu un număr valid, ex. 0712 345 678.",
+        "EMAIL": "Introdu o adresă de e-mail validă.",
+        "NOTE_LENGTH": "Nota poate avea maximum 500 de caractere.",
+        "SLOT_TAKEN": "Intervalul ales nu mai este disponibil. Alege altă oră."
+      }
+    },
     "TITLE": "Programări",
     "SUBTITLE": "O zi bine organizată începe cu o imagine clară.",
     "ADD": "Adaugă programare"
+  },
+  "MENU": {
+    "TITLE": "Meniu",
+    "THEME": "Temă",
+    "LIGHT": "Luminoasă",
+    "DARK": "Întunecată"
   }
 }
