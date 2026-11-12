@@ -1,16 +1,16 @@
 package com.byteforge.setorabackend.appointment;
 
-import com.byteforge.setorabackend.appointment.dtos.AppointmentResponseDto;
-import com.byteforge.setorabackend.appointment.dtos.AppointmentsTodaySummaryDto;
-import com.byteforge.setorabackend.appointment.dtos.AppointmentsTodaySummaryProjection;
-import com.byteforge.setorabackend.appointment.dtos.CreateAppointmentGhostClientRequestDto;
+import com.byteforge.setorabackend.appointment.dtos.*;
 import com.byteforge.setorabackend.business.Business;
 import com.byteforge.setorabackend.business.BusinessRepository;
 import com.byteforge.setorabackend.business.BusinessService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -50,6 +50,17 @@ public class AppointmentService {
                 Math.toIntExact(summary.getPending()),
                 Math.toIntExact(summary.getCancelled())
         );
+    }
+
+    @Transactional(readOnly = true)
+    public AppointmentResponseDto getAppointmentById(UUID id) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Appointment not found"
+                ));
+
+        return AppointmentMapper.toResponseDto(appointment);
     }
 
     public Appointment createGuestAppointment(@Valid CreateAppointmentGhostClientRequestDto request) {
