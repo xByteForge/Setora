@@ -22,6 +22,7 @@ import {
 } from '@lucide/angular';
 import { ThemeService } from '../../services/theme.service';
 import { BusinessService } from '../../services/business.service';
+import { MobileMenuService } from '../../services/mobile-menu.service';
 
 export interface Breadcrumb {
   label?: string;     // text brut (ex: numele business-ului)
@@ -65,7 +66,7 @@ export interface Breadcrumb {
       </nav>
 
       <div class="actions">
-        <form class="search" role="search" (submit)="$event.preventDefault(); onSearch(q.value)">
+        <form class="search hide-mobile" role="search" (submit)="$event.preventDefault(); onSearch(q.value)">
           <svg lucideSearch [size]="16" aria-hidden="true"></svg>
           <input
             #q
@@ -77,7 +78,7 @@ export interface Breadcrumb {
 
         <button
           type="button"
-          class="icon-btn"
+          class="icon-btn hide-mobile"
           (click)="theme.toggleTheme()"
           [attr.aria-label]="
             theme.currentTheme() === 'light' ? t('HEADER.THEME_TO_DARK') : t('HEADER.THEME_TO_LIGHT')
@@ -92,7 +93,7 @@ export interface Breadcrumb {
 
         <button
           type="button"
-          class="icon-btn"
+          class="icon-btn hide-mobile"
           (click)="notificationsClicked.emit()"
           [attr.aria-label]="t('HEADER.NOTIFICATIONS')"
         >
@@ -123,12 +124,23 @@ export interface Breadcrumb {
             </ul>
           }
         </div>
+
+        <button
+          type="button"
+          class="menu-btn"
+          (click)="menu.toggle()"
+          aria-haspopup="dialog"
+          [attr.aria-expanded]="menu.open()"
+        >
+          {{ t('MENU.TITLE') }}
+        </button>
       </div>
     </header>
   `,
 })
 export class TopbarComponent {
   readonly theme = inject(ThemeService);
+  readonly menu = inject(MobileMenuService);
   private readonly transloco = inject(TranslocoService);
   private readonly businessService = inject(BusinessService);
   private readonly router = inject(Router);

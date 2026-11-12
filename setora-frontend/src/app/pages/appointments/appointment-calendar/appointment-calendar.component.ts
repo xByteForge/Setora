@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, model, output } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import type { CalendarService } from '../../../core/services/calendar.service';
@@ -135,6 +135,9 @@ export class AppointmentCalendarComponent {
         });
     });
 
+    readonly selectedId = input<string | null>(null);
+    readonly appointmentSelected = output<string>()
+
     previous(): void {
         this.shift(-1);
     }
@@ -160,4 +163,9 @@ export class AppointmentCalendarComponent {
         const d = this.selectedDate();
         this.selectedDate.set(new Date(d.getFullYear(), d.getMonth(), d.getDate() + step * direction));
     }
+
+    select(a: CalendarAppointment): void {
+        if (a.status === 'unavailable') return; // blocked intervals have no details
+            this.appointmentSelected.emit(a.id);
+        }
 }

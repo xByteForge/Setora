@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AppointmentsHeaderComponent } from './appointment-header/appointment-header.component';
 import { AppointmentFiltersComponent } from './appointment-filters/appointment-filters.component';
@@ -8,10 +8,12 @@ import { AppointmentFilters, DEFAULT_FILTERS } from '../../core/models/appointme
 import { CalendarView } from '../../core/models/calendar-view.type';
 import { CalendarService } from '../../core/services/calendar.service';
 import { filterAppointments, filterEmployees, isSameDay } from './appointment-filters/appointment-filters.util';
+import { AppointmentDetailsComponent } from './appointment-details/appointment-details.component';
+import { AppointmentAgendaComponent } from './appointment-agenda/appointment-agenda.component';
 import { MOCK_LOCATIONS } from './appointments.mock';
 
 @Component({
-  imports: [TranslocoModule, AppointmentsHeaderComponent, AppointmentCalendarComponent, AppointmentFiltersComponent],
+  imports: [TranslocoModule, AppointmentsHeaderComponent, AppointmentCalendarComponent, AppointmentFiltersComponent, AppointmentDetailsComponent, AppointmentAgendaComponent, ],
   selector: 'app-appointments',
   templateUrl: './appointments.component.html',
   styleUrl: './appointments.component.css',
@@ -41,20 +43,20 @@ export class AppointmentsComponent {
   readonly summary = computed<AppointmentSummary>(() => {
     // Folosim strict data de astăzi în timp real
     const today = new Date();
-    
+
     // Filtrăm doar programările care au data de start în ziua de azi
     const items = this.appointments().filter((a) => isSameDay(new Date(a.start), today));
-    
+
     const count = (s: string) => items.filter((a) => a.status === s).length;
     const confirmed = count('confirmed');
     const pending = count('pending');
     const cancelled = count('cancelled');
-    
-    return { 
-      total: items.length, 
-      confirmed, 
-      pending, 
-      cancelled 
+
+    return {
+      total: items.length,
+      confirmed,
+      pending,
+      cancelled
     };
   });
 
@@ -69,5 +71,40 @@ export class AppointmentsComponent {
 
   openAddAppointment(): void {
     // TODO: deschide formularul de adaugare
+  }
+
+  readonly selectedId = signal<string | null>(null);
+
+  /** Null when nothing is selected, or when filters hide the selected item. */
+  readonly selectedAppointment = computed(() => {
+    const id = this.selectedId();
+    const item = id ? this.visibleAppointments().find((a) => a.id === id) : undefined;
+    return item ? this.calendarService.getDetails(item) : null;
+  });
+
+  readonly selectedLocationName = computed(() => {
+    const id = this.appointments().find((a) => a.id === this.selectedId())?.locationId;
+    return this.locations().find((l) => l.id === id)?.name ?? '';
+  });
+
+  closeDetails(): void {
+    this.selectedId.set(null);
+  }
+
+  editAppointment(id: string): void {
+    // TODO: open the edit form
+  }
+
+  cancelAppointment(id: string): void {
+    // TODO: call API; optimistic local update for now
+  }
+
+  private readonly mql = window.matchMedia('(max-width: 900px)');
+  readonly isMobile = signal(this.mql.matches);
+
+  constructor() {
+    const onChange = (e: MediaQueryListEvent) => this.isMobile.set(e.matches);
+    this.mql.addEventListener('change', onChange);
+    inject(DestroyRef).onDestroy(() => this.mql.removeEventListener('change', onChange));
   }
 }

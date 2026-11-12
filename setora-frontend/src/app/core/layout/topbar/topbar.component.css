@@ -62,4 +62,28 @@
 .lang-menu button:hover { background: var(--mint-wash); }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
-@media (max-width: 768px) { .search { width: 160px; } .topbar { padding: 0 16px; } }
+.menu-btn { display: none; }
+.topbar, .actions, .breadcrumb { min-width: 0; }
+
+@media (max-width: 900px) {
+  .topbar { padding: 0 16px; height: 64px; gap: 8px; }
+  .hide-mobile { display: none; }
+  .actions { gap: 8px; }
+  .breadcrumb ol { flex-wrap: nowrap; }
+  .breadcrumb li { white-space: nowrap; font-size: 13px; }
+
+  .menu-btn {
+    display: inline-flex;
+    align-items: center;
+    height: 40px;
+    padding: 0 16px;
+    border: 1px solid var(--control-border);
+    border-radius: 8px;
+    background: var(--paper);
+    color: var(--ink);
+    font: 700 14px/20px Arimo, Arial, sans-serif;
+    cursor: pointer;
+  }
+
+  .menu-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+}

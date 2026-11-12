@@ -1,0 +1,80 @@
+<aside class="details" role="complementary" [attr.aria-label]="'APPOINTMENTS.DETAILS.TITLE' | transloco">
+    <header class="details__heading">
+        <h2 class="details__title">{{ 'APPOINTMENTS.DETAILS.TITLE' | transloco }}</h2>
+        <button type="button" class="details__close" (click)="closed.emit()"
+            [attr.aria-label]="'APPOINTMENTS.DETAILS.CLOSE' | transloco">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
+        </button>
+    </header>
+
+    <span class="badge" [class]="'badge badge--' + appointment().status.toLowerCase()">
+        {{ statusKey() | transloco }}
+    </span>
+
+    <section class="service">
+        <h3 class="service__name">{{ appointment().serviceName }}</h3>
+        <p class="muted">{{ appointment().durationMinutes }} min</p>
+    </section>
+
+    <hr class="divider" />
+
+    <section class="client">
+        <span class="muted client__label">{{ 'APPOINTMENTS.DETAILS.CLIENT' | transloco }}</span>
+        <strong class="client__name">{{ appointment().clientName }}</strong>
+        <a class="client__phone" [href]="'tel:' + appointment().clientPhone">{{ appointment().clientPhone }}</a>
+        <a class="muted" [href]="'mailto:' + appointment().clientEmail">{{ appointment().clientEmail }}</a>
+    </section>
+
+    <hr class="divider" />
+
+    <dl class="facts">
+        <div>
+            <dt>{{ 'APPOINTMENTS.DETAILS.DATE' | transloco }}</dt>
+            <dd>{{ dateLabel() }}</dd>
+        </div>
+        <div>
+            <dt>{{ 'APPOINTMENTS.DETAILS.TIME' | transloco }}</dt>
+            <dd>{{ timeLabel() }}</dd>
+        </div>
+        <div>
+            <dt>{{ 'APPOINTMENTS.DETAILS.EMPLOYEE' | transloco }}</dt>
+            <dd>{{ appointment().employeeName }}</dd>
+        </div>
+        <div>
+            <dt>{{ 'APPOINTMENTS.DETAILS.LOCATION' | transloco }}</dt>
+            <dd>{{ locationName() }}</dd>
+        </div>
+    </dl>
+
+    <section class="payment">
+        <div>
+            <p class="muted">{{ paymentMethodKey() | transloco }}</p>
+            <p class="muted">{{ paymentStatusKey() | transloco }}</p>
+        </div>
+        @if (appointment().paymentMethod !== 'Free') {
+        <strong>{{ appointment().price }} {{ appointment().currency }}</strong>
+        }
+    </section>
+
+    @if (appointment().clientNote) {
+    <section class="note">
+        <strong>{{ 'APPOINTMENTS.DETAILS.NOTE' | transloco }}</strong>
+        <p class="muted">„{{ appointment().clientNote }}”</p>
+    </section>
+    }
+
+    @if (canModify()) {
+    <button type="button" class="btn btn--outline" (click)="edit.emit(appointment().id)">
+        {{ 'APPOINTMENTS.DETAILS.EDIT' | transloco }}
+    </button>
+
+    <button type="button" class="btn btn--danger" (click)="cancelConfirmed.emit(appointment().id)">
+        {{ 'APPOINTMENTS.DETAILS.CANCEL' | transloco }}
+    </button>
+
+    <p class="muted hint">{{ 'APPOINTMENTS.DETAILS.CANCEL_HINT' | transloco }}</p>
+    }
+</aside>

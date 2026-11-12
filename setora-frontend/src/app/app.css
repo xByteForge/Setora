@@ -3,7 +3,7 @@
 }
 
 .main-content {
-  margin-left: 260px; 
+  margin-left: 260px;
   min-height: 100vh;
   min-width: 0;
   background-color: var(--canvas);
@@ -17,4 +17,20 @@ app-topbar {
 
 .page-content {
   padding: 32px;
+}
+
+@media (max-width: 900px) {
+  .app-layout {
+    display: block;
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .page-content {
+    padding: 16px;
+    box-sizing: border-box;
+  }
 }

@@ -1,0 +1,45 @@
+:host { display: block; min-width: 0; }
+
+.agenda { display: flex; flex-direction: column; gap: 16px; color: var(--ink); }
+
+.agenda__nav { display: flex; align-items: center; gap: 8px; }
+.agenda__date { flex: 1; margin: 0; text-align: center; font-size: 16px; font-weight: 700; }
+.agenda__arrow {
+  width: 44px; height: 44px; border: 0; border-radius: 8px;
+  background: none; color: var(--ink); font-size: 24px; line-height: 1; cursor: pointer;
+}
+.agenda__today {
+  min-height: 44px; border: 1px solid var(--control-border); border-radius: 8px;
+  background: var(--paper); color: var(--ink); font: 700 14px/20px Arimo, Arial, sans-serif; cursor: pointer;
+}
+.agenda__meta { margin: 0; font-size: 13px; color: var(--text-secondary); }
+
+.agenda__list { display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.agenda__empty { padding: 24px 0; text-align: center; color: var(--text-secondary); }
+
+.card {
+  position: relative; display: grid; gap: 4px; width: 100%; box-sizing: border-box;
+  padding: 16px 44px 16px 16px; text-align: left;
+  background: var(--paper); border: 1px solid var(--border-color); border-radius: 8px;
+  color: var(--ink); font: inherit; cursor: pointer;
+}
+.card:disabled { cursor: default; color: var(--ink); }
+.card:focus-visible, .agenda__today:focus-visible, .agenda__arrow:focus-visible {
+  outline: 2px solid var(--focus); outline-offset: 2px;
+}
+.card--selected { border-color: var(--appt-selected-border); box-shadow: 0 0 0 1px var(--appt-selected-border); }
+
+.card__time { font-size: 12px; font-weight: 700; color: var(--text-secondary); }
+.card__client { font-size: 14px; font-weight: 700; }
+.card__meta { font-size: 12px; color: var(--text-secondary); }
+.card__status {
+  justify-self: start; margin-top: 4px; padding: 2px 8px;
+  border-radius: 4px; font-size: 12px; font-weight: 700;
+}
+.card__chevron { position: absolute; top: 14px; right: 16px; font-size: 18px; color: var(--text-secondary); }
+.card:disabled .card__chevron { display: none; }
+
+.card[data-status='confirmed']   .card__status { background: var(--mint-wash);         color: var(--accent-text); }
+.card[data-status='pending']     .card__status { background: var(--appt-pending-bg);   color: var(--appt-pending-text); }
+.card[data-status='cancelled']   .card__status { background: var(--appt-cancelled-bg); color: var(--appt-cancelled-text); }
+.card[data-status='unavailable'] .card__status { background: var(--appt-blocked-bg);   color: var(--appt-blocked-text); }

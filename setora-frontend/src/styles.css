@@ -130,13 +130,3 @@ body.dark-theme {
   --appt-selected-border: #43cdb6;
   --appt-selected-text: #93e3cb;
 }
-
-.app-layout {
-  min-height: 100vh;
-}
-
-.main-content {
-  margin-left: 260px;
-  min-height: 100vh;
-  min-width: 0;
-}

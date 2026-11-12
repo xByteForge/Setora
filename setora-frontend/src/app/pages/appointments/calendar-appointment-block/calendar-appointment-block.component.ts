@@ -21,7 +21,11 @@ const toTime = (iso: string): string => {
     host: {
         '[class]': 'appointment().status',
         '[class.compact]': 'compact()',
+        '[class.selected]': 'selected()',
         '[attr.title]': 'tooltip()',
+        '[attr.role]': "'button'",
+        '[attr.tabindex]': 'appointment().status === \'unavailable\' ? -1 : 0',
+        '[attr.aria-pressed]': 'selected()',
         '[style.top.px]': 'top()',
         '[style.height.px]': 'height()',
         '[style.left]': 'left()',
@@ -52,6 +56,8 @@ export class CalendarAppointmentBlockComponent {
     readonly width = computed(() => `calc((100% - 12px) / ${this.lanes()})`);
 
     readonly compact = input(false);
+
+    readonly selected = input(false);
 
     readonly tooltip = computed(
         () => `${this.timeRange()} · ${this.appointment().clientName} · ${this.appointment().service}`,

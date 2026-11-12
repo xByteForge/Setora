@@ -3,17 +3,47 @@
   (addClicked)="openAddAppointment()"
 />
 
+@if (isMobile()) {
+  <label class="mobile-search">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+      <circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" />
+    </svg>
+    <!-- TODO: leagă la căutarea reală -->
+    <input type="search" [placeholder]="'HEADER.SEARCH' | transloco" />
+  </label>
+}
+
 <app-appointment-filters
   [locations]="locations()"
   [employees]="employees()"
   [(filters)]="filters"
 />
 
-<app-appointment-calendar
-  [employees]="visibleEmployees()"
-  [appointments]="visibleAppointments()"
-  [timeRange]="filters().timeRange"
-  [(selectedDate)]="selectedDate"
-  [view]="view()"
-  (viewChange)="onViewChange($event)"
-/>
+<div class="calendar-layout" [class.calendar-layout--with-details]="selectedAppointment()">
+  @if (isMobile()) {
+    <app-appointment-agenda
+      [appointments]="visibleAppointments()"
+      [employees]="visibleEmployees()"
+      [selectedId]="selectedId()"
+      (appointmentSelected)="selectedId.set($event)"
+      [(selectedDate)]="selectedDate" />
+  } @else {
+    <app-appointment-calendar
+      [employees]="visibleEmployees()"
+      [appointments]="visibleAppointments()"
+      [timeRange]="filters().timeRange"
+      [selectedId]="selectedId()"
+      (appointmentSelected)="selectedId.set($event)"
+      [(selectedDate)]="selectedDate"
+      [(view)]="view" />
+  }
+
+  @if (selectedAppointment(); as appt) {
+    <app-appointment-details
+      [appointment]="appt"
+      [locationName]="selectedLocationName()"
+      (closed)="closeDetails()"
+      (edit)="editAppointment($event)"
+      (cancelConfirmed)="cancelAppointment($event)" />
+  }
+</div>
