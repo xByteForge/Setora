@@ -1,4 +1,3 @@
-
 package com.byteforge.setorabackend.appointment;
 
 import com.byteforge.setorabackend.appointment.dtos.*;
@@ -101,6 +100,60 @@ public class AppointmentService {
     }
 
 
+    @Transactional
+    public AppointmentResponseDto updateAppointment(
+            UUID id,
+            UpdateAppointmentRequestDto request
+    ) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Appointment not found"
+                ));
+
+        if (appointment.getStatus() == AppointmentStatus.CANCELLED || appointment.getStatus() == AppointmentStatus.UNAVAILABLE)
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "This appointment cannot be modified"
+            );
+
+
+        if (request == null ||
+                (request.surname() == null &&
+                        request.firstname() == null &&
+                        request.email() == null &&
+                        request.phoneNumber() == null &&
+                        request.clientNote() == null))
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "At least one field must be provided"
+            );
+
+        User client = appointment.getClient();
+
+        boolean updatingClient =
+                request.surname() != null ||
+                        request.firstname() != null ||
+                        request.email() != null ||
+                        request.phoneNumber() != null;
+
+        if (updatingClient)
+            userService.updateClientDetails(client,
+                    request.surname(),
+                    request.firstname(),
+                    request.email(),
+                    request.phoneNumber()
+            );
+
+
+        if (request.clientNote() != null)
+            appointment.setClientNote(request.clientNote());
+
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+        return AppointmentMapper.toResponseDto(savedAppointment);
+    }
+
+
     //the lazy relations are read here and in the mapper, so everything stays in one transaction
     @Transactional
     public AppointmentResponseDto createGuestAppointment(@Valid CreateAppointmentGhostClientRequestDto request) {
@@ -122,12 +175,12 @@ public class AppointmentService {
                 business.getTimezone()
         );
 
-        String note="";
-        note +="Appointment for: "+request.clientName()+"\n";
-        note +="Email: "+request.clientEmail() +"\n";
-        note +="Phone number: "+request.clientPhone()+"\n";
-        note+="\n --- Details ---\n";
-        note+=request.clientName()+"\n";
+        String note = "";
+        note += "Appointment for: " + request.clientName() + "\n";
+        note += "Email: " + request.clientEmail() + "\n";
+        note += "Phone number: " + request.clientPhone() + "\n";
+        note += "\n --- Details ---\n";
+        note += request.clientName() + "\n";
 
         appointment.setClientNote(note);
 

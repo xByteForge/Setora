@@ -18,3 +18,22 @@ Content-Type: application/json
   "paymentMethod": "Physical",
   "clientNote": "First appointment. Hello"
 }
+
+### Edit appointment
+PATCH http://localhost:8080/api/appointments/fe89943e-1ac4-4918-b840-58964b37279f
+Content-Type: application/json
+
+{
+  "surname": "Popescu",
+  "firstname": "Ana",
+  "email": "ana.popescu@gmail.com",
+  "phoneNumber": "0712345678",
+  "clientNote": "Green should be banned in magic the gathering."
+}
+
+
+### Get appointment
+GET http://localhost:8080/api/appointments/8096f236-7045-4dad-80e5-eedd4fd87ea8
+
+### Cancel appointment
+PATCH http://localhost:8080/api/appointments/8096f236-7045-4dad-80e5-eedd4fd87ea8/cancel

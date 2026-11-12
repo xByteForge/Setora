@@ -1,10 +1,6 @@
-
 package com.byteforge.setorabackend.appointment;
 
-import com.byteforge.setorabackend.appointment.dtos.AppointmentResponseDto;
-import com.byteforge.setorabackend.appointment.dtos.AppointmentsTodaySummaryDto;
-import com.byteforge.setorabackend.appointment.dtos.CalendarAppointmentDto;
-import com.byteforge.setorabackend.appointment.dtos.CreateAppointmentGhostClientRequestDto;
+import com.byteforge.setorabackend.appointment.dtos.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -100,5 +96,17 @@ public class AppointmentController {
                 appointmentService.cancelAppointment(id)
         );
     }
+
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<AppointmentResponseDto> updateAppointment(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateAppointmentRequestDto request
+    ) {
+        return ResponseEntity.ok(
+                appointmentService.updateAppointment(id, request)
+        );
+    }
+
 
 }
