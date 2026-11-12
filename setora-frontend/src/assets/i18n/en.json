@@ -114,16 +114,34 @@
         "EMAIL": "Enter a valid email address.",
         "NOTE_LENGTH": "The note can have at most 500 characters.",
         "SLOT_TAKEN": "The selected slot is no longer available. Choose another time."
-      }
+      },
+      "EDIT_SUBTITLE": "Update the client details and note.",
+      "SAVE_CHANGES": "Save changes",
+      "LOCKED_NOTE": "Service, location, employee, date and time can't be changed. To change them, cancel the appointment and create a new one.",
+      "UPDATED": "Appointment updated."
     },
     "TITLE": "Appointments",
     "SUBTITLE": "A well-organized day starts with a clear picture.",
-    "ADD": "Add appointment"
+    "ADD": "Add appointment",
+    "EDIT": "Edit appointment",
+    "CANCEL": {
+      "TITLE": "Cancel appointment?",
+      "QUESTION": "Are you sure you want to cancel this appointment?",
+      "NOTIFY": "The client will be notified by email, and the time slot will become available.",
+      "REFUND": "Any refund follows the business's policy.",
+      "KEEP": "Keep appointment",
+      "CONFIRM": "Yes, cancel",
+      "CANCELLING": "Cancelling…",
+      "SUCCESS": "Appointment cancelled."
+    }
   },
   "MENU": {
     "TITLE": "Menu",
     "THEME": "Theme",
     "LIGHT": "Light",
     "DARK": "Dark"
+  },
+  "ERRORS": {
+    "GENERIC": "Something went wrong. Please try again."
   }
 }

@@ -1,5 +1,5 @@
 export interface CreateAppointmentPayload {
-    clientName: string;
+   clientName: string;
     clientPhone: string;
     clientEmail: string;
     serviceId: string;
@@ -9,3 +9,8 @@ export interface CreateAppointmentPayload {
     startTime: string; // HH:mm
     clientNote?: string;
 }
+
+export type UpdateAppointmentPayload = Pick<
+    CreateAppointmentPayload,
+    'clientName' | 'clientPhone' | 'clientEmail' | 'clientNote'
+>;
