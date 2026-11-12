@@ -67,8 +67,11 @@
     font-weight: 600;
 }
 
-.required {
+/* Required field indicator */
+.field label.required::after {
+    content: " *";
     color: var(--status-cancelled);
+    font-weight: 700;
 }
 
 input,
@@ -161,7 +164,6 @@ textarea.ng-invalid.ng-touched {
     padding: 12px 20px;
     border-radius: 8px;
     font-weight: 600;
-    cursor: pointer;
     border: 1px solid var(--control-border);
     background: var(--paper);
     color: var(--ink);
@@ -180,7 +182,58 @@ textarea.ng-invalid.ng-touched {
 
 .btn:disabled {
     opacity: 0.6;
+}
+
+/* Interactive elements */
+button,
+a,
+select,
+label,
+option,
+[role="button"],
+[role="option"],
+input[type="checkbox"],
+input[type="radio"],
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+input[type="month"],
+input[type="week"],
+input[type="range"] {
+    cursor: pointer;
+}
+
+/* Native calendar picker */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+}
+
+/* Dropdown options */
+select option {
+    cursor: pointer;
+}
+
+select option:disabled {
+    cursor: not-allowed;
+}
+
+/* Disabled elements */
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled,
+[aria-disabled="true"] {
+    cursor: not-allowed;
+}
+
+.btn:disabled {
     cursor: wait;
+}
+
+.close {
+    cursor: pointer;
 }
 
 @media (max-width: 640px) {
