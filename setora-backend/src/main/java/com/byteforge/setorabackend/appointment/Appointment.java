@@ -74,9 +74,3 @@ public class Appointment {
 
 }
 
-enum PaymentMethod{
-    Free,
-    Physical,
-    Online,
-    PhysicalOrOnline
-}
