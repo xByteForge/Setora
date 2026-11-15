@@ -41,7 +41,7 @@ public class ServiceItem {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     //for services where payment depends and needs to be decided on site
-    private PaymentMethod paymentMethod = PaymentMethod.Physical;
+    private PaymentMethod paymentMethod = PaymentMethod.PHYSICAL;
 
 
 }

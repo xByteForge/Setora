@@ -92,7 +92,7 @@ public class Appointment {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PaymentMethod paymentMethod = PaymentMethod.Physical;
+    private PaymentMethod paymentMethod = PaymentMethod.PHYSICAL;
 
     @Column(nullable = true)
     private String clientNote;
