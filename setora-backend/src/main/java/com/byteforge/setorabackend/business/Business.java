@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import java.time.Instant;
@@ -57,8 +59,9 @@ public class Business {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
-    @Column(name = "photo_url", columnDefinition = "text")
-    private String photoUrl; //daca mai multe poze, ar trebui tabela separata...
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    @Column(name = "photo_urls", columnDefinition = "text[]")
+    private String[] photoUrls;
 
     @Column(name = "thumbnail_url", columnDefinition = "text")
     private String thumbnailUrl;
