@@ -7,6 +7,7 @@ import com.byteforge.setorabackend.appointment.AppointmentRepository;
 import com.byteforge.setorabackend.appointment.AppointmentStatus;
 import com.byteforge.setorabackend.business.Business;
 import com.byteforge.setorabackend.business.BusinessRepository;
+import com.byteforge.setorabackend.business.Location;
 import com.byteforge.setorabackend.common.DateTimeInterval;
 import com.byteforge.setorabackend.common.TimeInterval;
 import com.byteforge.setorabackend.employees.model.Employee;
@@ -84,24 +85,18 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private User seedUser(String surname, String firstname, String email, String phoneNumber) {
-        User user = new User();
-        user.setSurname(surname);
-        user.setFirstname(firstname);
-        user.setEmail(email);
-        user.setPasswordHash("not-a-real-hash");
-        user.setPhoneNumber(phoneNumber);
+        User user = new User(surname,firstname,email,phoneNumber,"not-a-real-hash");
         return userRepository.save(user);
     }
 
     private Business seedBusiness(User owner) {
         Business business = new Business();
         business.setOwner(owner);
-        business.setName("Studio Coafura");
-        business.setSlug("studio-coafura");
+        business.setName("Studio Armonia");
+        business.setEmail("contact@armonia.com");
+        business.setSlug("studio-armonia");
         business.setDescription("Salon de infrumusetare");
-        business.setAddress("Str. Memorandumului 10, Cluj-Napoca");
-        business.setLatitude(46.7694);
-        business.setLongitude(23.5899);
+        business.setLocation(new Location("Pe memorandum","Str. Memorandumului 10, Cluj-Napoca",46.7694,23.5899));
         business.setPhone("0264000000");
         business.setTimezone(ZONE);
         return businessRepository.save(business);

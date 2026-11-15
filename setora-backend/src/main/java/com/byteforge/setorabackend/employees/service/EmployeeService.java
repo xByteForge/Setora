@@ -22,7 +22,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
+
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +35,7 @@ public class EmployeeService {
     private final AppointmentRepository appointmentRepository;
 
     @Transactional(readOnly = true)
-    public WorkingHours getWorkingHours(UUID employeeId) {
+    public WorkingHours getWorkingHours(int employeeId) {
         Employee employee = findEmployee(employeeId);
         List<WorkingDay> days = workScheduleRepository.findByEmployeeId(employeeId).stream()
                 .sorted(Comparator.comparing(WorkSchedule::getDayOfWeek))
@@ -48,7 +48,7 @@ public class EmployeeService {
     }
 
     @Transactional(readOnly = true)
-    public UnavailableSlots getUnavailableSlots(UUID employeeId, LocalDate date, LocalDate from, LocalDate to) {
+    public UnavailableSlots getUnavailableSlots(int employeeId, LocalDate date, LocalDate from, LocalDate to) {
         Employee employee = findEmployee(employeeId);
 
         if (date != null && (from != null || to != null)) {
@@ -78,7 +78,7 @@ public class EmployeeService {
     }
 
     @Transactional
-    public CreateSlotResponse createUnavailableSlot(UUID employeeId, UnavailableSlotRequest request) {
+    public CreateSlotResponse createUnavailableSlot(Integer employeeId, UnavailableSlotRequest request) {
         if (employeeId == null || request == null || request.type() == null) {
             throw badRequest("employeeId and type are required");
         }
@@ -120,7 +120,7 @@ public class EmployeeService {
                 .filter(app -> isAppointmentAffected(app, savedSlot, zone, today))
                 .toList();
 
-        List<UUID> cancelledIds = new ArrayList<>();
+        List<Integer> cancelledIds = new ArrayList<>();
         for (Appointment app : affectedAppointments) {
             app.setStatus(AppointmentStatus.CANCELLED);
             cancelledIds.add(app.getId());
@@ -134,10 +134,10 @@ public class EmployeeService {
     }
 
     @Transactional
-    public void deleteUnavailableSlot(UUID employeeId, UUID slotId) {
+    public void deleteUnavailableSlot(int employeeId, int slotId) {
         UnavailableSlot slot = unavailableSlotRepository.findById(slotId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unavailable slot not found"));
-        if (!slot.getEmployee().getId().equals(employeeId)) {
+        if (!(slot.getEmployee().getId()==employeeId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unavailable slot not found for this employee");
         }
         unavailableSlotRepository.delete(slot);
@@ -191,7 +191,7 @@ public class EmployeeService {
         }
     }
 
-    private Employee findEmployee(UUID employeeId) {
+    private Employee findEmployee(int employeeId) {
         return employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found"));
     }
@@ -233,7 +233,7 @@ public class EmployeeService {
         return new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
     }
 
-    public Employee findById(UUID id) {
+    public Employee findById(int id) {
         return employeeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
     }

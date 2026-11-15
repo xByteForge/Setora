@@ -26,7 +26,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +38,7 @@ public class AppointmentService {
     private final UserService userService;
 
     public AppointmentsTodaySummaryDto getDailySummary(
-            UUID businessId,
+            int businessId,
             LocalDate date
     ) {
         Business business = businessService.findById(businessId);
@@ -55,7 +54,7 @@ public class AppointmentService {
                         start,
                         end,
                         AppointmentStatus.CONFIRMED,
-                        AppointmentStatus.PENDING,
+                        AppointmentStatus.UNAVAILABLE,
                         AppointmentStatus.CANCELLED
                 );
 
@@ -68,7 +67,7 @@ public class AppointmentService {
     }
 
     @Transactional(readOnly = true)
-    public AppointmentResponseDto getAppointmentById(UUID id) {
+    public AppointmentResponseDto getAppointmentById(int id) {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
@@ -80,7 +79,7 @@ public class AppointmentService {
 
 
     @Transactional
-    public AppointmentResponseDto cancelAppointment(UUID id) {
+    public AppointmentResponseDto cancelAppointment(int id) {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
@@ -102,7 +101,7 @@ public class AppointmentService {
 
     @Transactional
     public AppointmentResponseDto updateAppointment(
-            UUID id,
+            int id,
             UpdateAppointmentRequestDto request
     ) {
         Appointment appointment = appointmentRepository.findById(id)
@@ -189,10 +188,10 @@ public class AppointmentService {
 
     @Transactional(readOnly = true)
     public List<CalendarAppointmentDto> getCalendarAppointments(
-            UUID businessId,
+            int businessId,
             LocalDate startDate,
             LocalDate endDate,
-            UUID employeeId,
+            int employeeId,
             String statusValue,
             Integer from,
             Integer to

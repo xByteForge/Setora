@@ -8,16 +8,15 @@ import com.byteforge.setorabackend.serviceItem.ServiceItem;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Locale;
-import java.util.UUID;
 
 public record CalendarAppointmentDto(
-        UUID id,
-        UUID clientId,
+        int id,
+        int clientId,
         String clientName,
-        UUID businessId,
-        UUID employeeId,
+        int businessId,
+        int employeeId,
         String employeeName,
-        UUID serviceId,
+        int serviceId,
         String serviceName,
         Instant startsAt,
         Instant endsAt,
@@ -34,10 +33,10 @@ public record CalendarAppointmentDto(
         return new CalendarAppointmentDto(
                 appointment.getId(),
                 client.getId(),
-                client.getFirstname() + " " + client.getSurname(),
+                client.getFirstName() + " " + client.getLastName(),
                 service.getBusiness().getId(),
                 employee.getId(),
-                employeeUser.getFirstname() + " " + employeeUser.getSurname(),
+                employeeUser.getFirstName() + " " + employeeUser.getLastName(),
                 service.getId(),
                 service.getName(),
                 appointment.getInterval().getStart(),

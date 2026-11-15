@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/appointments")
@@ -22,7 +21,7 @@ public class AppointmentController {
     //this should be called from the angular service, which is called from appointments.component.ts
     @GetMapping("/summary")
     public ResponseEntity<AppointmentsTodaySummaryDto> getDailyAppointmentSummary(
-            @RequestParam UUID businessId,
+            @RequestParam int businessId,
             @RequestParam
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate date
@@ -34,7 +33,7 @@ public class AppointmentController {
 
     @GetMapping("/calendar")
     public ResponseEntity<List<CalendarAppointmentDto>> getCalendarAppointments(
-            @RequestParam UUID businessId,
+            @RequestParam int businessId,
 
             @RequestParam
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -45,7 +44,7 @@ public class AppointmentController {
             LocalDate endDate,
 
             @RequestParam(required = false)
-            UUID employeeId,
+            int employeeId,
 
             @RequestParam(required = false)
             String status,
@@ -81,7 +80,7 @@ public class AppointmentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<AppointmentResponseDto> getAppointmentById(
-            @PathVariable UUID id
+            @PathVariable int id
     ) {
         return ResponseEntity.ok(
                 appointmentService.getAppointmentById(id)
@@ -90,7 +89,7 @@ public class AppointmentController {
 
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<AppointmentResponseDto> cancelAppointment(
-            @PathVariable UUID id
+            @PathVariable int id
     ) {
         return ResponseEntity.ok(
                 appointmentService.cancelAppointment(id)
@@ -100,7 +99,7 @@ public class AppointmentController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<AppointmentResponseDto> updateAppointment(
-            @PathVariable UUID id,
+            @PathVariable int id,
             @Valid @RequestBody UpdateAppointmentRequestDto request
     ) {
         return ResponseEntity.ok(

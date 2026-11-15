@@ -1,35 +1,30 @@
 package com.byteforge.setorabackend.business;
 
 import com.byteforge.setorabackend.auth.User;
-import jakarta.persistence.CheckConstraint;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.UUID;
+
 
 @Entity
 @Table(
         name = "businesses",
-        check = @CheckConstraint(constraint = "latitude between -90 and 90 and longitude between -180 and 180")
+        check = @CheckConstraint(
+                name = "chk_business_coordinates",
+                constraint = "latitude BETWEEN -90 AND 90 AND longitude BETWEEN -180 AND 180"
+        )
 )
 @Getter
 @Setter
 public class Business {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private int id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "owner_id", nullable = false)
@@ -45,27 +40,30 @@ public class Business {
     @Column(columnDefinition = "text")
     private String description;
 
-    @Column(columnDefinition = "text")
-    private String address;
-
-    //map position, can be missing until the map is integrated
-    private Double latitude;
-
-    private Double longitude;
+    @Embedded
+    private Location location;
 
     @Column(columnDefinition = "text")
     private String phone;
 
-    @Column(name = "photo_url", columnDefinition = "text")
-    private String photoUrl;
+    @Column(nullable = false, unique = true)
+    private String email;
 
-    @Column(columnDefinition = "text")
+    @Convert(converter = Jsr310JpaConverters.ZoneIdConverter.class)
+    @Column(nullable = false)
     private ZoneId timezone;
-
-    @Column(name = "is_active", nullable = false)
-    private boolean active = true;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
+
+    @Column(name = "photo_url", columnDefinition = "text")
+    private String photoUrl; //daca mai multe poze, ar trebui tabela separata...
+
+    @Column(name = "thumbnail_url", columnDefinition = "text")
+    private String thumbnailUrl;
+
+    @Column(name = "tags", columnDefinition = "text")
+    private String tags;
+
 }

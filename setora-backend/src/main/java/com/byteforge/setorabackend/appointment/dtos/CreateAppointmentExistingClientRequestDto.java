@@ -5,12 +5,11 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.UUID;
 
 public record CreateAppointmentExistingClientRequestDto(
-        @NotNull UUID businessId,
-        @NotNull UUID serviceId,
-        @NotNull UUID employeeId,
+        @NotNull int businessId,
+        @NotNull int serviceId,
+        @NotNull int employeeId,
         @NotNull LocalDate date,
         @NotNull LocalTime startTime,
         @NotNull PaymentMethod paymentMethod,

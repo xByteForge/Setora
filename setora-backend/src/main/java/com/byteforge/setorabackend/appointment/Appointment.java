@@ -23,20 +23,47 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.UUID;
 
 @Entity
-@Table(name = "appointments", check = @CheckConstraint(constraint = "ends_at > starts_at and price_at_appointment >= 0"))
+@Table(name = "appointments",
+        check = {
+                @CheckConstraint(
+                        name = "chk_appointment_dates_price",
+                        constraint = "ends_at > starts_at AND price_at_appointment >= 0"
+                ),
+                @CheckConstraint(
+                        name = "chk_appointment_client",
+                        constraint = """
+                (
+                    client_id IS NOT NULL
+                    AND client_name IS NULL
+                    AND client_email IS NULL
+                    AND client_phone IS NULL
+                )
+                OR
+                (
+                    client_id IS NULL
+                    AND client_name IS NOT NULL
+                    AND (client_email IS NOT NULL OR client_phone IS NOT NULL)
+                )
+                """
+                )
+        })
 @Getter
 @Setter
 public class Appointment {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private int id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "client_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id", nullable = true) //modified this, for ghost clients
     private User client;
+
+    //these are relevant only if client==null !!!Attention do not use them if client field is not null!
+    private String clientName;
+    private String clientEmail;
+    private String clientPhone;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "employee_id", nullable = false)
@@ -45,29 +72,27 @@ public class Appointment {
     //the business is the one of the service
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "service_id", nullable = false)
-    private ServiceItem serviceItem;
+    private ServiceItem serviceItem;//through here, we know of business and location
 
     @Embedded
-    private DateTimeInterval interval;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private AppointmentStatus status = AppointmentStatus.PENDING;
+    private DateTimeInterval interval;//holds start and end time, instead of start time and duration - duration is included in ServiceItem
 
     //the service price can change later
     @Column(name = "price_at_appointment", nullable = false, precision = 10, scale = 2)
     private BigDecimal priceAtAppointment;
-
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
+
+    //more of a payment status
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AppointmentStatus status = AppointmentStatus.UNAVAILABLE;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PaymentMethod paymentMethod = PaymentMethod.Physical;
-
-    @Column(nullable = false)
-    private boolean isPaid;
 
     @Column(nullable = true)
     private String clientNote;

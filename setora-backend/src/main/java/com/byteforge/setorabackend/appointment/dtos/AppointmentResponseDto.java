@@ -6,22 +6,21 @@ import com.byteforge.setorabackend.appointment.PaymentMethod;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.UUID;
 
 public record AppointmentResponseDto(
-        UUID id,
-        UUID businessId,
+        int id,
+        int businessId,
 
-        UUID serviceId,
+        int serviceId,
         String serviceName,
         int durationMinutes,
 
-        UUID clientId,
+        int clientId,
         String clientName,
         String clientPhone,
         String clientEmail,
 
-        UUID employeeId,
+        int employeeId,
         String employeeName,
 
         LocalDate date,
@@ -31,10 +30,8 @@ public record AppointmentResponseDto(
         AppointmentStatus status,
 
         BigDecimal price,
-        String currency,
 
         PaymentMethod paymentMethod,
-        boolean isPaid,
 
         String clientNote
 ) {}

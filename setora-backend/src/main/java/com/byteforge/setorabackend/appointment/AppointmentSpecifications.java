@@ -7,13 +7,13 @@ import jakarta.persistence.criteria.Predicate;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+
 
 public class AppointmentSpecifications {
 
     public static Specification<Appointment> filterAppointments(
-            UUID businessId,
-            UUID employeeId,
+            Integer businessId,
+            Integer employeeId,
             AppointmentStatus status,
             Instant rangeStart,
             Instant rangeEnd

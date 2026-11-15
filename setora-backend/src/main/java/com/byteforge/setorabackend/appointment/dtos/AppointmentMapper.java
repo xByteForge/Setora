@@ -51,10 +51,8 @@ public class AppointmentMapper {
                 appointment.getStatus(),
 
                 appointment.getPriceAtAppointment(),
-                "RON", //TODO what to do about currency?
 
                 appointment.getPaymentMethod(),
-                appointment.isPaid(),
 
                 appointment.getClientNote()
         );
@@ -87,8 +85,7 @@ public class AppointmentMapper {
         appointment.setClientNote(request.clientNote());
 
         appointment.setPriceAtAppointment(service.getPrice());
-        appointment.setStatus(AppointmentStatus.PENDING);
-        appointment.setPaid(false);
+        appointment.setStatus(AppointmentStatus.UNAVAILABLE);
 
         return appointment;
     }

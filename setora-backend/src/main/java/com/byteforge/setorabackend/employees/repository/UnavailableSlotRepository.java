@@ -7,10 +7,10 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
-public interface UnavailableSlotRepository extends JpaRepository<UnavailableSlot, UUID> {
-    List<UnavailableSlot> findByEmployeeId(UUID employeeId);
+
+public interface UnavailableSlotRepository extends JpaRepository<UnavailableSlot, Integer> {
+    List<UnavailableSlot> findByEmployeeId(int employeeId);
 
     //all the recurring slots plus the one-off slots inside the date range
     @Query("""
@@ -18,7 +18,7 @@ public interface UnavailableSlotRepository extends JpaRepository<UnavailableSlot
             where s.employee.id = :employeeId
               and (s.dayOfWeek is not null or s.specificDate between :startDate and :endDate)
             """)
-    List<UnavailableSlot> findForRange(@Param("employeeId") UUID employeeId,
+    List<UnavailableSlot> findForRange(@Param("employeeId") int employeeId,
                                        @Param("startDate") LocalDate startDate,
                                        @Param("endDate") LocalDate endDate);
 }
