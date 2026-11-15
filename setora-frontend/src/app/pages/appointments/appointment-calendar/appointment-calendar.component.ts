@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, model, out
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import type { CalendarService } from '../../../core/services/calendar.service';
-import { CalendarView } from '../../../core/models/calendar-view.type';
-import { CalendarAppointment } from '../../../core/models/calendar-appointment.model';
-import { TimeRange } from '../../../core/models/appointment-filters.model';
+import { CalendarView } from '../../../core/ui-models/calendar-view.type';
+import { CalendarAppointment } from '../../../core/ui-models/calendar-appointment.model';
+import { TimeRange } from '../../../core/ui-models/appointment-filters.model';
 import { CalendarAppointmentBlockComponent } from '../calendar-appointment-block/calendar-appointment-block.component';
 import { CalendarToolbarComponent } from '../calendar-toolbar/calendar-toolbar.component';
 import { layoutOverlaps, PositionedAppointment } from './calendar-layout';

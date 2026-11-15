@@ -1,10 +1,10 @@
 import { Injectable, signal } from '@angular/core';
 import { Observable, timer, map } from 'rxjs';
 import { Employee } from '../models/employee.model';
-import { CalendarAppointment } from '../models/calendar-appointment.model';
+import { CalendarAppointment } from '../ui-models/calendar-appointment.model';
 import { Appointment } from '../models/appointment.model';
 import { Service } from '../models/service.model';
-import { CreateAppointmentPayload, UpdateAppointmentPayload } from '../models/create-appointment-payload.model';
+import { CreateAppointmentPayload, UpdateAppointmentPayload } from '../ui-models/create-appointment-payload.model';
 
 const DAY = '2026-11-07';
 const at = (time: string) => `${DAY}T${time}:00`;

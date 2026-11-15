@@ -21,7 +21,7 @@ import {
     minutesToLabel,
     rangeToLabel,
     sameRange,
-} from '../../../core/models/appointment-filters.model';
+} from '../../../core/ui-models/appointment-filters.model';
 
 type ChipKey = 'location' | 'employee' | 'status' | 'time';
 

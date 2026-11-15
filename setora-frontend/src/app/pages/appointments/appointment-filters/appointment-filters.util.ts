@@ -1,4 +1,4 @@
-import { AppointmentFilters, FilterEmployee } from '../../../core/models/appointment-filters.model';
+import { AppointmentFilters, FilterEmployee } from '../../../core/ui-models/appointment-filters.model';
 
 /** Câmpurile pe care se filtrează. CalendarAppointment trebuie să le aibă. */
 export interface FilterableAppointment {

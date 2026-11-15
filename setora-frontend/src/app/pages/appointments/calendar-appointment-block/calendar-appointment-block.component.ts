@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
-import { CalendarAppointment } from '../../../core/models/calendar-appointment.model';
+import { CalendarAppointment } from '../../../core/ui-models/calendar-appointment.model';
 
 const toMinutes = (iso: string): number => {
     const d = new Date(iso);

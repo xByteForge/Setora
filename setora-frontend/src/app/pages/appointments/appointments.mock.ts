@@ -1,4 +1,4 @@
-import { FilterLocation } from '../../core/models/appointment-filters.model';
+import { FilterLocation } from '../../core/ui-models/appointment-filters.model';
 
 // TODO: înlocuiește cu locațiile din serviciu/API.
 export const MOCK_LOCATIONS: FilterLocation[] = [

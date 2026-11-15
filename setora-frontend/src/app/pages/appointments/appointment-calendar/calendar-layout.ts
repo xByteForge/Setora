@@ -1,4 +1,4 @@
-import { CalendarAppointment } from '../../../core/models/calendar-appointment.model';
+import { CalendarAppointment } from '../../../core/ui-models/calendar-appointment.model';
 
 export interface PositionedAppointment {
     appointment: CalendarAppointment;

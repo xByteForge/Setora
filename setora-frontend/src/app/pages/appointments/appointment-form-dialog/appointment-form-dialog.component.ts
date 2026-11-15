@@ -5,9 +5,9 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { map } from 'rxjs';
 import { CalendarService } from '../../../core/services/calendar.service';
 import { CatalogService } from '../../../core/services/catalog.service';
-import { CalendarAppointment } from '../../../core/models/calendar-appointment.model';
+import { CalendarAppointment } from '../../../core/ui-models/calendar-appointment.model';
 import { Appointment } from '../../../core/models/appointment.model';
-import { Location } from '../../../core/models/location.model';
+import { Location } from '../../../core/models/business-location.model';
 
 const PHONE_PATTERN = /^(\+40|0040|0)7\d{2}[\s.-]?\d{3}[\s.-]?\d{3}$/;
 

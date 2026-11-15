@@ -1,37 +1,26 @@
-import { AppointmentStatus } from './calendar-appointment.model';
+import { AppointmentStatus } from "../models/enums/appointment-status.model";
 
-export type { AppointmentStatus };
 
-export interface FilterLocation {
-  id: string;
-  name: string;
-}
-
-/** Minimul de care au nevoie filtrele; modelul vostru de angajat poate avea și alte câmpuri. */
 export interface FilterEmployee {
-  id: string;
+  id: number;
   name: string;
-  /** Locațiile în care lucrează. Dacă lipsește, angajatul apare la orice locație. */
-  locationIds?: string[];
 }
 
 export interface TimeRange {
-  /** minute de la miezul nopții, ex. 540 = 09:00 */
+  /** minutes from midnight, ex. 540 = 09:00 */
   from: number;
   to: number;
 }
 
 export interface AppointmentFilters {
-  locationId: string | null; // null = toate locațiile
-  employeeId: string | null; // null = toți angajații
-  status: AppointmentStatus | null; // null = toate stările
+  employeeId: number | null; // null = all employees
+  status: AppointmentStatus | null; // null = all statuses
   timeRange: TimeRange;
 }
 
 export const DEFAULT_TIME_RANGE: TimeRange = { from: 9 * 60, to: 17 * 60 };
 
 export const DEFAULT_FILTERS: AppointmentFilters = {
-  locationId: null,
   employeeId: null,
   status: null,
   timeRange: DEFAULT_TIME_RANGE,
@@ -45,10 +34,9 @@ export const TIME_PRESETS: readonly TimeRange[] = [
 ];
 
 export const STATUS_I18N_KEYS: Record<AppointmentStatus, string> = {
-  confirmed: 'APPOINTMENTS.SUMMARY.CONFIRMED',
-  pending: 'APPOINTMENTS.SUMMARY.PENDING',
-  cancelled: 'APPOINTMENTS.SUMMARY.CANCELLED',
-  unavailable: 'APPOINTMENTS.FILTERS.STATUS_UNAVAILABLE',
+  CONFIRMED: 'APPOINTMENTS.SUMMARY.CONFIRMED',
+  CANCELLED: 'APPOINTMENTS.SUMMARY.CANCELLED',
+  UNAVAILABLE: 'APPOINTMENTS.FILTERS.STATUS_UNAVAILABLE',
 };
 
 export const minutesToLabel = (m: number): string =>
