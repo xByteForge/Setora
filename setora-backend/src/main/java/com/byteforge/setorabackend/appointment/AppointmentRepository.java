@@ -9,12 +9,12 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
+
 
 public interface AppointmentRepository
-        extends JpaRepository<Appointment, UUID>,
+        extends JpaRepository<Appointment, Integer>,
         JpaSpecificationExecutor<Appointment> {
-    List<Appointment> findByEmployeeIdAndStatusNot(UUID employeeId, AppointmentStatus status);
+    List<Appointment> findByEmployeeIdAndStatusNot(int employeeId, AppointmentStatus status);
 
     @Query("""
         SELECT
@@ -28,7 +28,7 @@ public interface AppointmentRepository
           AND a.interval.end < :end
     """)
     AppointmentsTodaySummaryProjection getDailySummary(
-            @Param("businessId") UUID businessId,
+            @Param("businessId") int businessId,
             @Param("start") Instant start,
             @Param("end") Instant end,
             @Param("confirmed") AppointmentStatus confirmed,

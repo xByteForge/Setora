@@ -19,7 +19,7 @@ import lombok.Setter;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.UUID;
+
 
 //period when an employee cannot take appointments (lunch break, blocked time, time off)
 //either a one-off slot on a specific date or a recurring slot on a day of the week
@@ -33,8 +33,8 @@ import java.util.UUID;
 @Setter
 public class UnavailableSlot {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private int id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "employee_id", nullable = false)

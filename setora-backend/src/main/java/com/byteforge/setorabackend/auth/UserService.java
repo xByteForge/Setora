@@ -22,29 +22,29 @@ public class UserService {
 
     public void updateClientDetails(
             User client,
-            String surname,
-            String firstname,
+            String lastName,
+            String firstName,
             String email,
             String phoneNumber
     ) {
-        if (surname != null) {
-            if (surname.isBlank())
+        if (lastName != null) {
+            if (lastName.isBlank())
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
-                        "Surname cannot be blank"
+                        "lastName cannot be blank"
                 );
 
-            client.setSurname(surname.trim());
+            client.setLastName(lastName.trim());
         }
 
-        if (firstname != null) {
-            if (firstname.isBlank())
+        if (firstName != null) {
+            if (firstName.isBlank())
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
-                        "Firstname cannot be blank"
+                        "firstName cannot be blank"
                 );
 
-            client.setFirstname(firstname.trim());
+            client.setFirstName(firstName.trim());
         }
 
         if (email != null) {

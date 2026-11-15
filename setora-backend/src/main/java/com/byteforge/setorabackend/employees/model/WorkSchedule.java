@@ -19,7 +19,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.DayOfWeek;
-import java.util.UUID;
+
 
 //working hours of an employee in a day of the week
 @Entity
@@ -32,8 +32,8 @@ import java.util.UUID;
 @Setter
 public class WorkSchedule {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private int id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "employee_id", nullable = false)

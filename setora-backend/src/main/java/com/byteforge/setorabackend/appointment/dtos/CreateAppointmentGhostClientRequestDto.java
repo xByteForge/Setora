@@ -8,12 +8,11 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.UUID;
 
 public record CreateAppointmentGhostClientRequestDto (
-    @NotNull UUID businessId,//TODO remove later on when we have sessions
-    @NotNull UUID serviceId,
-    UUID employeeId,
+    @NotNull int businessId,//TODO remove later on when we have sessions
+    @NotNull int serviceId,
+    int employeeId,
 
     @NotBlank String clientName,
     @NotBlank String clientPhone,
