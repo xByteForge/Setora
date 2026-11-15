@@ -7,9 +7,7 @@ export interface PositionedAppointment {
 }
 
 export const layoutOverlaps = (items: CalendarAppointment[]): PositionedAppointment[] => {
-    const sorted = [...items].sort(
-        (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
-    );
+    const sorted = [...items].sort((a, b) => Date.parse(a.startsAt) - Date.parse(b.startsAt));
 
     const result: PositionedAppointment[] = [];
     let cluster: PositionedAppointment[] = [];
@@ -24,8 +22,8 @@ export const layoutOverlaps = (items: CalendarAppointment[]): PositionedAppointm
     };
 
     for (const appointment of sorted) {
-        const start = new Date(appointment.start).getTime();
-        const end = new Date(appointment.end).getTime();
+        const start = Date.parse(appointment.startsAt);
+        const end = Date.parse(appointment.endsAt);
 
         if (cluster.length && start >= clusterEnd) flush();
 
