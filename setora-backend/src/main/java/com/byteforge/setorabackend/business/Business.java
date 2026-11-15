@@ -66,7 +66,8 @@ public class Business {
     @Column(name = "thumbnail_url", columnDefinition = "text")
     private String thumbnailUrl;
 
-    @Column(name = "tags", columnDefinition = "text")
-    private String tags;
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    @Column(name = "tags", columnDefinition = "text[]")
+    private String[] tags;
 
 }
