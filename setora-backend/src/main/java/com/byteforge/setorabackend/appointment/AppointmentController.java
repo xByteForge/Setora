@@ -1,3 +1,4 @@
+
 package com.byteforge.setorabackend.appointment;
 
 import com.byteforge.setorabackend.appointment.dtos.*;
@@ -16,9 +17,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AppointmentController {
 
-    final private AppointmentService appointmentService;
+    private final AppointmentService appointmentService;
 
-    //this should be called from the angular service, which is called from appointments.component.ts
     @GetMapping("/summary")
     public ResponseEntity<AppointmentsTodaySummaryDto> getDailyAppointmentSummary(
             @RequestParam int businessId,
@@ -31,51 +31,42 @@ public class AppointmentController {
         );
     }
 
-    @GetMapping("/calendar")
-    public ResponseEntity<List<CalendarAppointmentDto>> getCalendarAppointments(
-            @RequestParam int businessId,
-
-            @RequestParam
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            LocalDate startDate,
-
-            @RequestParam
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            LocalDate endDate,
-
-            @RequestParam(required = false)
-            int employeeId,
-
-            @RequestParam(required = false)
-            String status,
-
-            @RequestParam(required = false)
-            Integer from,
-
-            @RequestParam(required = false)
-            Integer to
-    ) {
-        return ResponseEntity.ok(
-                appointmentService.getCalendarAppointments(
-                        businessId,
-                        startDate,
-                        endDate,
-                        employeeId,
-                        status,
-                        from,
-                        to
-                )
-        );
-    }
-
     @PostMapping("/ghost")
     public ResponseEntity<AppointmentResponseDto> createGuestAppointment(
             @Valid @RequestBody CreateAppointmentGhostClientRequestDto request
     ) {
         var response = appointmentService.createGuestAppointment(request);
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AppointmentResponseDto>> getAppointments(
+            @RequestParam(required = false) Integer businessId,
+            @RequestParam(required = false) Integer clientId,
+            @RequestParam(required = false) Integer serviceId,
+            @RequestParam(required = false) String status,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate startDate,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate endDate
+    ) {
+        return ResponseEntity.ok(
+                appointmentService.getAppointments(
+                        businessId,
+                        clientId,
+                        serviceId,
+                        status,
+                        startDate,
+                        endDate
+                )
+        );
     }
 
     @GetMapping("/{id}")
@@ -96,7 +87,6 @@ public class AppointmentController {
         );
     }
 
-
     @PatchMapping("/{id}")
     public ResponseEntity<AppointmentResponseDto> updateAppointment(
             @PathVariable int id,
@@ -106,6 +96,4 @@ public class AppointmentController {
                 appointmentService.updateAppointment(id, request)
         );
     }
-
-
 }

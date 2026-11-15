@@ -1,0 +1,54 @@
+
+### Get appointments summary for a given day
+GET http://localhost:8080/api/appointments/summary?businessId=1&date=2026-11-16
+
+### Get all appointments
+GET http://localhost:8080/api/appointments
+
+
+### Get appointments by business
+### Studio Armonia (assuming businessId = 1)
+GET http://localhost:8080/api/appointments?businessId=1
+
+
+### Get appointments by client
+### First seeded client (assuming clientId = 1)
+GET http://localhost:8080/api/appointments?clientId=1
+
+
+### Get appointments by service
+### First service of Studio Armonia (assuming serviceId = 1)
+GET http://localhost:8080/api/appointments?serviceId=1
+
+
+### Get confirmed appointments
+GET http://localhost:8080/api/appointments?status=CONFIRMED
+
+
+### Get cancelled appointments
+GET http://localhost:8080/api/appointments?status=CANCELLED
+
+
+### Get appointments by date
+### Next Monday: 2026-11-16
+GET http://localhost:8080/api/appointments?startDate=2026-11-16&endDate=2026-11-16
+
+
+### Get appointments by business and date
+GET http://localhost:8080/api/appointments?businessId=1&startDate=2026-11-16&endDate=2026-11-16
+
+
+### Get confirmed appointments by business
+GET http://localhost:8080/api/appointments?businessId=1&status=CONFIRMED
+
+
+### Get appointments by business and client
+GET http://localhost:8080/api/appointments?businessId=1&clientId=1
+
+
+### Get appointments by service and status
+GET http://localhost:8080/api/appointments?serviceId=1&status=CONFIRMED
+
+
+### Get appointments with all filters
+GET http://localhost:8080/api/appointments?businessId=1&clientId=1&serviceId=1&status=CONFIRMED&startDate=2026-11-16&endDate=2026-11-16
