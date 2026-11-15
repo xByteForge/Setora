@@ -3,11 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { CalendarAppointment } from '../../../core/ui-models/calendar-appointment.model';
 import { Employee } from '../../../core/models/employee.model';
-
-const isSameDay = (a: Date, b: Date): boolean =>
-  a.getFullYear() === b.getFullYear() &&
-  a.getMonth() === b.getMonth() &&
-  a.getDate() === b.getDate();
+import { businessDate, businessTime, toIsoDate } from '../../../core/utils/date.util';
 
 @Component({
   selector: 'app-appointment-agenda',
@@ -24,15 +20,18 @@ export class AppointmentAgendaComponent {
 
   readonly appointments = input.required<CalendarAppointment[]>();
   readonly employees = input.required<Employee[]>();
-  readonly selectedId = input<string | null>(null);
+  readonly timezone = input.required<string>();
+  readonly selectedId = input<number | null>(null);
   readonly selectedDate = model.required<Date>();
-  readonly appointmentSelected = output<string>();
+  readonly appointmentSelected = output<number>();
 
-  readonly items = computed(() =>
-    this.appointments()
-      .filter((a) => isSameDay(new Date(a.start), this.selectedDate()))
-      .sort((a, b) => a.start.localeCompare(b.start)),
-  );
+  readonly items = computed(() => {
+    const iso = toIsoDate(this.selectedDate());
+    const tz = this.timezone();
+    return this.appointments()
+      .filter((a) => businessDate(a.startsAt, tz) === iso)
+      .sort((a, b) => Date.parse(a.startsAt) - Date.parse(b.startsAt));
+  });
 
   readonly dateLabel = computed(() =>
     new Intl.DateTimeFormat(this.lang(), { day: 'numeric', month: 'long', year: 'numeric' }).format(
@@ -40,8 +39,13 @@ export class AppointmentAgendaComponent {
     ),
   );
 
-  employeeName(id: string): string {
+  employeeName(id: number): string {
     return this.employees().find((e) => e.id === id)?.name ?? '';
+  }
+
+  timeLabel(a: CalendarAppointment): string {
+    const tz = this.timezone();
+    return `${businessTime(a.startsAt, tz)}–${businessTime(a.endsAt, tz)}`;
   }
 
   shift(direction: 1 | -1): void {
@@ -54,7 +58,7 @@ export class AppointmentAgendaComponent {
   }
 
   select(a: CalendarAppointment): void {
-    if (a.status === 'unavailable') return;
+    if (a.status === 'UNAVAILABLE') return;
     this.appointmentSelected.emit(a.id);
   }
 }

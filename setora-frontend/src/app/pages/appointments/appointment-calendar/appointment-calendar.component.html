@@ -54,6 +54,7 @@
                         [compact]="view() === 'week'"
                         [startHour]="startHour()"
                         [pxPerMinute]="pxPerMinute"
+                        [timezone]="timezone()"
                         [selected]="selectedId() === item.appointment.id"
                         (click)="select(item.appointment)"
                         (keydown.enter)="select(item.appointment)"

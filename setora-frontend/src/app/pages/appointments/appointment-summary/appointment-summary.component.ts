@@ -3,7 +3,6 @@ import { TranslocoDirective } from '@ngneat/transloco';
 import {
     LucideCalendar,
     LucideCircleCheck,
-    LucideClock,
     LucideCircleX,
 } from '@lucide/angular';
 import { AppointmentSummary } from '../../../core/ui-models/appointment-summary.model';
@@ -11,7 +10,7 @@ import { AppointmentSummary } from '../../../core/ui-models/appointment-summary.
 @Component({
     selector: 'app-appointment-summary',
     standalone: true,
-    imports: [TranslocoDirective, LucideCalendar, LucideCircleCheck, LucideClock, LucideCircleX],
+    imports: [TranslocoDirective, LucideCalendar, LucideCircleCheck, LucideCircleX],
     styleUrl: './appointment-summary.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
@@ -32,12 +31,6 @@ import { AppointmentSummary } from '../../../core/ui-models/appointment-summary.
         <svg lucideCircleCheck [size]="20" aria-hidden="true"></svg>
         <span class="value">{{ summary().confirmed }}</span>
         <span class="label">{{ t('APPOINTMENTS.SUMMARY.CONFIRMED') }}</span>
-      </article>
-
-      <article class="card pending">
-        <svg lucideClock [size]="20" aria-hidden="true"></svg>
-        <span class="value">{{ summary().pending }}</span>
-        <span class="label">{{ t('APPOINTMENTS.SUMMARY.PENDING') }}</span>
       </article>
 
       <article class="card cancelled">

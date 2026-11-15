@@ -1,138 +1,165 @@
-import { Injectable, signal } from '@angular/core';
-import { Observable, timer, map } from 'rxjs';
-import { Employee } from '../models/employee.model';
-import { CalendarAppointment } from '../ui-models/calendar-appointment.model';
+import { Injectable, inject, signal } from '@angular/core';
+import { Observable, map, timer } from 'rxjs';
 import { Appointment } from '../models/appointment.model';
+
+import { Employee } from '../models/employee.model';
 import { Service } from '../models/service.model';
-import { CreateAppointmentPayload, UpdateAppointmentPayload } from '../ui-models/create-appointment-payload.model';
-
-const DAY = '2026-11-07';
-const at = (time: string) => `${DAY}T${time}:00`;
-const CENTRU = 'buc-centru';
-const NORD = 'buc-nord';
-
-// "09:30" -> 570 si invers
-const toMinutes = (hhmm: string) => +hhmm.slice(0, 2) * 60 + +hhmm.slice(3, 5);
-const toHHmm = (min: number) =>
-    `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
+import { CreateAppointmentPayload } from '../ui-models/create-appointment-payload.model';
+import { addMinutes, businessLocalToInstant } from '../utils/date.util';
+import { CatalogService } from './catalog.service';
+import { AppointmentStatus } from '../models/enums/appointment-status.model';
 
 const WORK_START = 9 * 60;
 const WORK_END = 18 * 60;
 const SLOT_STEP = 30;
+const DAY = '2026-11-07';
+
+/** Pauza de masa: backendul cere un serviciu pentru fiecare programare, deci folosim unul placeholder. */
+const BREAK_SERVICE: Service = {
+    id: 0,
+    businessId: 1,
+    name: 'Pauză de masă',
+    description: null,
+    price: 0,
+    durationMinutes: 60,
+    active: false,
+    paymentMethod: 'PHYSICAL',
+};
+
+/** Date mock. serviceId 0 = pauza. */
+interface SeedRow {
+    id: number;
+    employeeId: number;
+    serviceId: number;
+    clientName: string;
+    date: string;
+    time: string;
+    status: AppointmentStatus;
+    phone?: string;
+    email?: string;
+    note?: string;
+}
+
+const SEED_ROWS: SeedRow[] = [
+    // Ana
+    { id: 1, employeeId: 1, serviceId: 1, clientName: 'Irina Popescu', date: DAY, time: '09:30', status: 'CONFIRMED', phone: '0700 000 123', email: 'irina@example.com', note: 'Aș dori să păstrez lungimea.' },
+    { id: 2, employeeId: 1, serviceId: 1, clientName: 'Elena Dobre', date: DAY, time: '11:00', status: 'CONFIRMED' },
+    { id: 3, employeeId: 1, serviceId: 2, clientName: 'Maria Șerban', date: DAY, time: '13:00', status: 'CONFIRMED' },
+    // Mihai
+    { id: 4, employeeId: 2, serviceId: 3, clientName: 'Andrei Pavel', date: DAY, time: '09:00', status: 'CONFIRMED' },
+    { id: 6, employeeId: 2, serviceId: 0, clientName: 'Pauză de masă', date: DAY, time: '12:00', status: 'UNAVAILABLE' },
+    { id: 7, employeeId: 2, serviceId: 3, clientName: 'Vlad Marinescu', date: DAY, time: '14:00', status: 'CONFIRMED' },
+    // Ioana
+    { id: 8, employeeId: 3, serviceId: 4, clientName: 'Diana Enache', date: DAY, time: '10:00', status: 'CONFIRMED' },
+    { id: 9, employeeId: 3, serviceId: 4, clientName: 'Alina Tudor', date: DAY, time: '11:30', status: 'CANCELLED' },
+    { id: 10, employeeId: 3, serviceId: 4, clientName: 'Oana Dumitru', date: DAY, time: '14:30', status: 'CONFIRMED' },
+    // Alte zile
+    { id: 11, employeeId: 1, serviceId: 1, clientName: 'Laura Matei', date: '2026-11-02', time: '10:00', status: 'CONFIRMED' },
+    { id: 13, employeeId: 3, serviceId: 4, clientName: 'Sara Popa', date: '2026-11-05', time: '13:30', status: 'CANCELLED' },
+];
+
+interface AppointmentInit {
+    id: number;
+    employee: Employee;
+    service: Service;
+    startsAt: string;
+    clientName: string;
+    clientPhone: string | null;
+    clientEmail: string | null;
+    clientNote: string | null;
+    status: AppointmentStatus;
+}
+
+/** Construieste un Appointment (forma DTO) din datele unei programari si ale serviciului. */
+const buildAppointment = (i: AppointmentInit): Appointment => ({
+    id: i.id,
+    clientId: null, // ghost client: datele sunt in campurile de client
+    clientName: i.clientName,
+    clientPhone: i.clientPhone,
+    clientEmail: i.clientEmail,
+    clientNote: i.clientNote,
+    employeeId: i.employee.id,
+    employeeName: i.employee.name,
+    serviceId: i.service.id,
+    serviceName: i.service.name,
+    startsAt: i.startsAt,
+    endsAt: addMinutes(i.startsAt, i.service.durationMinutes),
+    status: i.status,
+    priceAtAppointment: i.service.price,
+    paymentMethod: i.service.paymentMethod,
+    createdAt: new Date().toISOString(),
+});
+
+const toHHmm = (min: number): string =>
+    `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
 
 @Injectable({ providedIn: 'root' })
 export class CalendarService {
+    private readonly catalog = inject(CatalogService);
+
     private readonly employees: Employee[] = [
-        { id: 'ana', name: 'Ana Ionescu', initials: 'AI', role: 'Coafură', locationIds: [CENTRU] },
-        { id: 'mihai', name: 'Mihai Radu', initials: 'MR', role: 'Frizerie', locationIds: [CENTRU] },
-        { id: 'ioana', name: 'Ioana Matei', initials: 'IM', role: 'Îngrijire', locationIds: [CENTRU, NORD] },
+        { id: 1, businessId: 1, userId: 11, active: true, serviceIds: [1, 2], name: 'Ana Ionescu', employmentRole: 'Coafură' },
+        { id: 2, businessId: 1, userId: 12, active: true, serviceIds: [3], name: 'Mihai Radu', employmentRole: 'Frizerie' },
+        { id: 3, businessId: 1, userId: 13, active: true, serviceIds: [4], name: 'Ioana Matei', employmentRole: 'Îngrijire' },
     ];
 
-    private readonly appointments = signal<CalendarAppointment[]>([
-        // Ana
-        { id: '1', employeeId: 'ana', locationId: CENTRU, serviceId: 'tuns-coafat', clientName: 'Irina Popescu', service: 'Tuns & coafat', start: at('09:30'), end: at('10:30'), status: 'confirmed' },
-        { id: '2', employeeId: 'ana', locationId: CENTRU, serviceId: 'tuns-coafat', clientName: 'Elena Dobre', service: 'Tuns & coafat', start: at('11:00'), end: at('12:00'), status: 'confirmed' },
-        { id: '3', employeeId: 'ana', locationId: CENTRU, serviceId: 'vopsit-coafat', clientName: 'Maria Șerban', service: 'Vopsit & coafat', start: at('13:00'), end: at('14:30'), status: 'confirmed' },
-        // Mihai
-        { id: '4', employeeId: 'mihai', locationId: CENTRU, serviceId: 'tuns-barba', clientName: 'Andrei Pavel', service: 'Tuns & barbă', start: at('09:00'), end: at('10:00'), status: 'confirmed' },
-        { id: '5', employeeId: 'mihai', locationId: CENTRU, serviceId: 'tuns-barba', clientName: 'Radu Stan', service: 'Tuns & barbă', start: at('10:30'), end: at('11:30'), status: 'pending' },
-        { id: '6', employeeId: 'mihai', locationId: CENTRU, serviceId: 'blocked', clientName: 'Pauză de masă', service: 'Interval blocat', start: at('12:00'), end: at('13:00'), status: 'unavailable' },
-        { id: '7', employeeId: 'mihai', locationId: CENTRU, serviceId: 'tuns-barba', clientName: 'Vlad Marinescu', service: 'Tuns & barbă', start: at('14:00'), end: at('15:00'), status: 'confirmed' },
-        // Ioana
-        { id: '8', employeeId: 'ioana', locationId: CENTRU, serviceId: 'manichiura', clientName: 'Diana Enache', service: 'Manichiură', start: at('10:00'), end: at('11:00'), status: 'confirmed' },
-        { id: '9', employeeId: 'ioana', locationId: CENTRU, serviceId: 'manichiura', clientName: 'Alina Tudor', service: 'Manichiură', start: at('11:30'), end: at('12:30'), status: 'cancelled' },
-        { id: '10', employeeId: 'ioana', locationId: CENTRU, serviceId: 'manichiura', clientName: 'Oana Dumitru', service: 'Manichiură', start: at('14:30'), end: at('15:30'), status: 'confirmed' },
+    private nextId = 1000;
 
-        { id: '11', employeeId: 'ana', locationId: CENTRU, serviceId: 'tuns-coafat', clientName: 'Laura Matei', service: 'Tuns & coafat', start: '2026-11-02T10:00:00', end: '2026-11-02T11:00:00', status: 'confirmed' },
-        { id: '12', employeeId: 'mihai', locationId: CENTRU, serviceId: 'tuns-barba', clientName: 'Paul Ionescu', service: 'Tuns & barbă', start: '2026-11-05T13:00:00', end: '2026-11-05T14:00:00', status: 'pending' },
-        { id: '13', employeeId: 'ioana', locationId: NORD, serviceId: 'manichiura', clientName: 'Sara Popa', service: 'Manichiură', start: '2026-11-05T13:30:00', end: '2026-11-05T14:30:00', status: 'cancelled' },
-    ]);
-
-    /** Datele care nu fac parte din CalendarAppointment (mock pana exista API-ul). */
-    private readonly extras: Record<string, Partial<Appointment>> = {
-        '1': {
-            clientPhone: '0700 000 123',
-            clientEmail: 'irina@example.com',
-            price: 150,
-            paymentMethod: 'Physical',
-            isPaid: false,
-            clientNote: 'Aș dori să păstrez lungimea.',
-        },
-    };
+    private readonly appointments = signal<Appointment[]>(this.seed());
 
     getEmployees(): Employee[] {
         return this.employees;
     }
 
-    getAppointments(): CalendarAppointment[] {
+    getAppointments(): Appointment[] {
         return this.appointments();
     }
 
-    isEmployeeFree(employeeId: string, date: string, startTime: string, durationMinutes: number): boolean {
-        const start = toMinutes(startTime);
-        const end = start + durationMinutes;
-
-        return !this.appointments().some((a) => {
-            if (a.employeeId !== employeeId) return false;
-            if (a.status === 'cancelled') return false; // anulatele nu blocheaza
-            if (a.start.slice(0, 10) !== date) return false;
-
-            const aStart = toMinutes(a.start.slice(11, 16));
-            const aEnd = toMinutes(a.end.slice(11, 16));
-            return start < aEnd && end > aStart; // suprapunere
-        });
-    }
-
-    getAvailableSlots(locationId: string, employeeId: string | null, date: string, durationMinutes: number): string[] {
+    /** Orele libere (HH:mm, in fusul businessului) pentru un serviciu, intr-o zi. */
+    getAvailableSlots(employeeId: number | null, date: string, durationMinutes: number): string[] {
+        const tz = this.timezone();
         const candidates = this.employees.filter(
-            (e) => e.locationIds.includes(locationId) && (!employeeId || e.id === employeeId),
+            (e) => e.active && (employeeId === null || e.id === employeeId),
         );
+
         const slots: string[] = [];
         for (let m = WORK_START; m + durationMinutes <= WORK_END; m += SLOT_STEP) {
             const time = toHHmm(m);
-            if (candidates.some((e) => this.isEmployeeFree(e.id, date, time, durationMinutes))) {
+            const startsAt = businessLocalToInstant(date, time, tz);
+            const endsAt = addMinutes(startsAt, durationMinutes);
+            if (candidates.some((e) => this.isEmployeeFree(e.id, startsAt, endsAt))) {
                 slots.push(time);
             }
         }
         return slots;
     }
 
-    create(payload: CreateAppointmentPayload, service: Service): Observable<CalendarAppointment> {
+    create(payload: CreateAppointmentPayload): Observable<Appointment> {
         return timer(500).pipe( // simuleaza intarzierea unui API
             map(() => {
-                const candidates = this.employees.filter(
-                    (e) =>
-                        e.locationIds.includes(payload.locationId) &&
-                        (payload.employeeId === null || e.id === payload.employeeId),
-                );
+                const service = this.catalog.getServices().find((s) => s.id === payload.serviceId);
+                if (!service) throw new Error('NOT_FOUND');
 
-                const employee = candidates.find((e) =>
-                    this.isEmployeeFree(e.id, payload.date, payload.startTime, service.durationMinutes),
-                );
+                const startsAt = businessLocalToInstant(payload.date, payload.startTime, this.timezone());
+                const endsAt = addMinutes(startsAt, service.durationMinutes);
 
+                // primul angajat liber (sau cel ales)
+                const employee = this.employees
+                    .filter((e) => e.active && (payload.employeeId === null || e.id === payload.employeeId))
+                    .find((e) => this.isEmployeeFree(e.id, startsAt, endsAt));
                 if (!employee) throw new Error('SLOT_TAKEN');
 
-                const startMin = toMinutes(payload.startTime);
-                const created: CalendarAppointment = {
-                    id: crypto.randomUUID(),
-                    employeeId: employee.id,
-                    locationId: payload.locationId,
-                    serviceId: payload.serviceId,
+                const created = buildAppointment({
+                    id: this.nextId++,
+                    employee,
+                    service,
+                    startsAt,
                     clientName: payload.clientName,
-                    service: service.name,
-                    start: `${payload.date}T${payload.startTime}:00`,
-                    end: `${payload.date}T${toHHmm(startMin + service.durationMinutes)}:00`,
-                    status: 'confirmed',
-                };
-
-                this.extras[created.id] = {
                     clientPhone: payload.clientPhone,
-                    clientEmail: payload.clientEmail,
-                    clientNote: payload.clientNote,
-                    price: service.price,
-                    currency: service.currency,
-                    paymentMethod: service.paymentMethod,
-                };
+                    clientEmail: payload.clientEmail || null,
+                    clientNote: payload.clientNote ?? null,
+                    status: 'CONFIRMED',
+                });
 
                 this.appointments.update((list) => [...list, created]);
                 return created;
@@ -140,73 +167,57 @@ export class CalendarService {
         );
     }
 
-    /**
-     * Editeaza doar datele clientului si nota. Serviciul, locatia, angajatul,
-     * data si ora nu se schimba, deci nu e nevoie de verificare de disponibilitate.
-     */
-    update(id: string, payload: UpdateAppointmentPayload): Observable<CalendarAppointment> {
+    /** Marcheaza programarea ca anulata. Intervalul devine liber (isEmployeeFree ignora anulatele). */
+    cancel(id: number): Observable<Appointment> {
         return timer(500).pipe(
             map(() => {
                 const current = this.findOrThrow(id);
-
-                this.extras[id] = {
-                    ...this.extras[id],
-                    clientPhone: payload.clientPhone,
-                    clientEmail: payload.clientEmail,
-                    clientNote: payload.clientNote,
-                };
-
-                const updated: CalendarAppointment = { ...current, clientName: payload.clientName };
-                this.appointments.update((list) => list.map((a) => (a.id === id ? updated : a)));
-                return updated;
-            }),
-        );
-    }
-
-    /** Marcheaza programarea ca anulata. Intervalul devine liber automat (isEmployeeFree ignora anulatele). */
-    cancel(id: string): Observable<CalendarAppointment> {
-        return timer(500).pipe(
-            map(() => {
-                const current = this.findOrThrow(id);
-                const cancelled: CalendarAppointment = { ...current, status: 'cancelled' };
+                const cancelled: Appointment = { ...current, status: 'CANCELLED' };
                 this.appointments.update((list) => list.map((a) => (a.id === id ? cancelled : a)));
                 return cancelled;
             }),
         );
     }
 
-    /** Maps a calendar item to the full details shape (mock until the API exists). */
-    getDetails(a: CalendarAppointment): Appointment {
-    const employee = this.employees.find((e) => e.id === a.employeeId);
-    const minutes = (iso: string) => +iso.slice(11, 13) * 60 + +iso.slice(14, 16);
+    private seed(): Appointment[] {
+        const tz = this.timezone();
+        return SEED_ROWS.map((r) => {
+            const employee = this.employees.find((e) => e.id === r.employeeId)!;
+            const service = this.catalog.getServices().find((s) => s.id === r.serviceId) ?? BREAK_SERVICE;
+            return buildAppointment({
+                id: r.id,
+                employee,
+                service,
+                startsAt: businessLocalToInstant(r.date, r.time, tz),
+                clientName: r.clientName,
+                clientPhone: r.phone ?? null,
+                clientEmail: r.email ?? null,
+                clientNote: r.note ?? null,
+                status: r.status,
+            });
+        });
+    }
 
-    return {
-        id: a.id,
-        businessId: 'studio-armonia',
-        serviceId: a.serviceId,
-        serviceName: a.service,
-        durationMinutes: minutes(a.end) - minutes(a.start),
-        clientId: a.id,
-        clientName: a.clientName,
-        clientPhone: '0700 000 000',
-        clientEmail: 'client@example.com',
-        employeeId: a.employeeId,
-        employeeName: employee?.name ?? '',
-        date: a.start.slice(0, 10),
-        startTime: a.start.slice(11, 16),
-        endTime: a.end.slice(11, 16),
-        status: a.status,
-        price: 150,
-        currency: 'lei',
-        paymentMethod: 'Physical',
-        isPaid: false,
-        ...this.extras[a.id],
-    };
-}
+    /** Un angajat e liber daca nu are o programare non-anulata care se suprapune. */
+    private isEmployeeFree(employeeId: number, startsAt: string, endsAt: string): boolean {
+        const start = Date.parse(startsAt);
+        const end = Date.parse(endsAt);
+        return !this.appointments().some(
+            (a) =>
+                a.employeeId === employeeId &&
+                a.status !== 'CANCELLED' &&
+                Date.parse(a.startsAt) < end &&
+                Date.parse(a.endsAt) > start,
+        );
+    }
 
-    private findOrThrow(id: string): CalendarAppointment {
+    private findOrThrow(id: number): Appointment {
         const found = this.appointments().find((a) => a.id === id);
         if (!found) throw new Error('NOT_FOUND');
         return found;
+    }
+
+    private timezone(): string {
+        return this.catalog.getBusiness().timezone;
     }
 }

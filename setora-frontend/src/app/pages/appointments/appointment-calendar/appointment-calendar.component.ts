@@ -1,21 +1,19 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, model, output } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import type { CalendarService } from '../../../core/services/calendar.service';
 import { CalendarView } from '../../../core/ui-models/calendar-view.type';
 import { CalendarAppointment } from '../../../core/ui-models/calendar-appointment.model';
 import { TimeRange } from '../../../core/ui-models/appointment-filters.model';
+import { Employee } from '../../../core/models/employee.model';
+import { businessDate, toIsoDate } from '../../../core/utils/date.util';
 import { CalendarAppointmentBlockComponent } from '../calendar-appointment-block/calendar-appointment-block.component';
 import { CalendarToolbarComponent } from '../calendar-toolbar/calendar-toolbar.component';
 import { layoutOverlaps, PositionedAppointment } from './calendar-layout';
 
 const PX_PER_MINUTE = 1;
 
-/** Tipul angajatului, luat direct din serviciu (nu trebuie să-l redefinim). */
-type CalendarEmployee = ReturnType<CalendarService['getEmployees']>[number];
-
 interface CalendarColumn {
-    id: string;
+    id: string | number;
     initials: string;
     title: string;
     subtitle?: string;
@@ -23,13 +21,17 @@ interface CalendarColumn {
     appointments: PositionedAppointment[];
 }
 
-const isSameDay = (a: Date, b: Date): boolean =>
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate();
+/** "Ana Ionescu" -> "AI" */
+const initialsOf = (name: string): string =>
+    name
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((p) => p[0].toUpperCase())
+        .join('');
 
 const countReal = (items: CalendarAppointment[]): number =>
-    items.filter((a) => a.status !== 'unavailable').length;
+    items.filter((a) => a.status !== 'UNAVAILABLE').length;
 
 @Component({
     selector: 'app-appointment-calendar',
@@ -45,17 +47,17 @@ export class AppointmentCalendarComponent {
         initialValue: this.transloco.getActiveLang(),
     });
 
-    /** Date deja filtrate de pagină. */
-    readonly employees = input.required<CalendarEmployee[]>();
+    readonly employees = input.required<Employee[]>();
     readonly appointments = input.required<CalendarAppointment[]>();
     readonly timeRange = input.required<TimeRange>();
+    readonly timezone = input.required<string>();
 
-    /** Vederea pe săptămână arată un singur angajat: primul din lista filtrată. */
-    readonly selectedEmployeeId = computed(() => this.employees()[0]?.id ?? '');
+    /** Vederea pe saptamana arata un singur angajat: primul din lista filtrata. */
+    readonly selectedEmployeeId = computed(() => this.employees()[0]?.id ?? null);
 
-    /** Two-way cu pagina, ca sumarul să numere ziua afișată. */
+    /** Two-way cu pagina, ca sumarul sa numere ziua afisata. */
     readonly selectedDate = model(new Date(2026, 10, 7));
-    /** Two-way cu pagina, ca filtrele să știe ce vedere e activă. */
+    /** Two-way cu pagina, ca filtrele sa stie ce vedere e activa. */
     readonly view = model<CalendarView>('day');
 
     readonly pxPerMinute = PX_PER_MINUTE;
@@ -68,7 +70,7 @@ export class AppointmentCalendarComponent {
     );
     readonly gridHeight = computed(() => (this.endHour() - this.startHour()) * this.hourHeight);
 
-    /** Luni–Duminica pentru saptamana datei selectate */
+    /** Luni–Duminica pentru saptamana datei selectate. */
     readonly weekDays = computed(() => {
         const d = this.selectedDate();
         const offset = (d.getDay() + 6) % 7; // luni = 0
@@ -102,16 +104,16 @@ export class AppointmentCalendarComponent {
 
     readonly columns = computed<CalendarColumn[]>(() => {
         const all = this.appointments();
+        const tz = this.timezone();
 
         if (this.view() === 'week') {
             return this.weekDays().map((date) => {
+                const iso = toIsoDate(date);
                 const items = all.filter(
-                    (a) =>
-                        a.employeeId === this.selectedEmployeeId() &&
-                        isSameDay(new Date(a.start), date),
+                    (a) => a.employeeId === this.selectedEmployeeId() && businessDate(a.startsAt, tz) === iso,
                 );
                 return {
-                    id: date.toISOString(),
+                    id: iso,
                     initials: String(date.getDate()).padStart(2, '0'),
                     title: date.toLocaleDateString(this.lang(), { weekday: 'long' }),
                     count: countReal(items),
@@ -120,23 +122,24 @@ export class AppointmentCalendarComponent {
             });
         }
 
+        const iso = toIsoDate(this.selectedDate());
         return this.employees().map((employee) => {
             const items = all.filter(
-                (a) => a.employeeId === employee.id && isSameDay(new Date(a.start), this.selectedDate()),
+                (a) => a.employeeId === employee.id && businessDate(a.startsAt, tz) === iso,
             );
             return {
                 id: employee.id,
-                initials: employee.initials,
+                initials: initialsOf(employee.name),
                 title: employee.name,
-                subtitle: employee.role,
+                subtitle: employee.employmentRole,
                 count: countReal(items),
                 appointments: layoutOverlaps(items),
             };
         });
     });
 
-    readonly selectedId = input<string | null>(null);
-    readonly appointmentSelected = output<string>()
+    readonly selectedId = input<number | null>(null);
+    readonly appointmentSelected = output<number>();
 
     previous(): void {
         this.shift(-1);
@@ -165,7 +168,7 @@ export class AppointmentCalendarComponent {
     }
 
     select(a: CalendarAppointment): void {
-        if (a.status === 'unavailable') return; // blocked intervals have no details
-            this.appointmentSelected.emit(a.id);
-        }
+        if (a.status === 'UNAVAILABLE') return; // intervalele blocate n-au detalii
+        this.appointmentSelected.emit(a.id);
+    }
 }

@@ -4,5 +4,6 @@ export interface Employee {
   userId: number;
   active: boolean;
   serviceIds: number[]; 
-  name: string;         
+  name: string;     
+  employmentRole: string;    
 }

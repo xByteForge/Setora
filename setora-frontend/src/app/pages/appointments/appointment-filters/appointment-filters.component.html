@@ -1,23 +1,11 @@
 <section class="filters" *transloco="let t" role="search" [attr.aria-label]="t('APPOINTMENTS.FILTERS.TITLE')">
   <div class="row">
     <label class="field">
-      <span class="sr-only">{{ t('APPOINTMENTS.FILTERS.LOCATION') }}</span>
-      <svg lucideMapPin [size]="16" class="icon" aria-hidden="true"></svg>
-      <select (change)="onLocation($event)">
-        <option value="" [selected]="!filters().locationId">{{ t('APPOINTMENTS.FILTERS.ALL_LOCATIONS') }}</option>
-        @for (l of locations(); track l.id) {
-          <option [value]="l.id" [selected]="l.id === filters().locationId">{{ l.name }}</option>
-        }
-      </select>
-      <svg lucideChevronDown [size]="16" class="chevron" aria-hidden="true"></svg>
-    </label>
-
-    <label class="field">
       <span class="sr-only">{{ t('APPOINTMENTS.FILTERS.EMPLOYEE') }}</span>
       <svg lucideUsers [size]="16" class="icon" aria-hidden="true"></svg>
       <select (change)="onEmployee($event)">
-        <option value="" [selected]="!filters().employeeId">{{ t('APPOINTMENTS.FILTERS.ALL_EMPLOYEES') }}</option>
-        @for (e of availableEmployees(); track e.id) {
+        <option value="" [selected]="filters().employeeId === null">{{ t('APPOINTMENTS.FILTERS.ALL_EMPLOYEES') }}</option>
+        @for (e of employees(); track e.id) {
           <option [value]="e.id" [selected]="e.id === filters().employeeId">{{ e.name }}</option>
         }
       </select>

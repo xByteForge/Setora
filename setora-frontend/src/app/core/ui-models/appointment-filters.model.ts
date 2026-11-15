@@ -1,5 +1,4 @@
-import { AppointmentStatus } from "../models/enums/appointment-status.model";
-
+import { AppointmentStatus } from '../models/enums/appointment-status.model';
 
 export interface FilterEmployee {
   id: number;
@@ -7,14 +6,14 @@ export interface FilterEmployee {
 }
 
 export interface TimeRange {
-  /** minutes from midnight, ex. 540 = 09:00 */
+  /** minute de la miezul noptii, ex. 540 = 09:00 */
   from: number;
   to: number;
 }
 
 export interface AppointmentFilters {
-  employeeId: number | null; // null = all employees
-  status: AppointmentStatus | null; // null = all statuses
+  employeeId: number | null;        // null = toti angajatii
+  status: AppointmentStatus | null; // null = toate starile
   timeRange: TimeRange;
 }
 

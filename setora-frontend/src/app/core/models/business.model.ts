@@ -1,4 +1,5 @@
-import { BusinessLocation } from "./business-location.model";
+import { BusinessLocation } from './business-location.model';
+
 
 export interface Business {
   id: number;
@@ -6,10 +7,10 @@ export interface Business {
   name: string;
   slug: string;
   description: string | null;
-  location: BusinessLocation; 
+  location: BusinessLocation;
   phone: string | null;
   email: string;
-  timezone: string; 
+  timezone: string;
   createdAt: string;
   photoUrls: string[];
   thumbnailUrl: string | null;

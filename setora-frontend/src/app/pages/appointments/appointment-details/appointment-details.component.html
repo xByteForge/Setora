@@ -16,7 +16,7 @@
 
     <section class="service">
         <h3 class="service__name">{{ appointment().serviceName }}</h3>
-        <p class="muted">{{ appointment().durationMinutes }} min</p>
+        <p class="muted">{{ durationMinutes() }} min</p>
     </section>
 
     <hr class="divider" />
@@ -24,8 +24,12 @@
     <section class="client">
         <span class="muted client__label">{{ 'APPOINTMENTS.DETAILS.CLIENT' | transloco }}</span>
         <strong class="client__name">{{ appointment().clientName }}</strong>
-        <a class="client__phone" [href]="'tel:' + appointment().clientPhone">{{ appointment().clientPhone }}</a>
-        <a class="muted" [href]="'mailto:' + appointment().clientEmail">{{ appointment().clientEmail }}</a>
+        @if (appointment().clientPhone; as phone) {
+            <a class="client__phone" [href]="'tel:' + phone">{{ phone }}</a>
+        }
+        @if (appointment().clientEmail; as email) {
+            <a class="muted" [href]="'mailto:' + email">{{ email }}</a>
+        }
     </section>
 
     <hr class="divider" />
@@ -52,29 +56,22 @@
     <section class="payment">
         <div>
             <p class="muted">{{ paymentMethodKey() | transloco }}</p>
-            <p class="muted">{{ paymentStatusKey() | transloco }}</p>
         </div>
-        @if (appointment().paymentMethod !== 'Free') {
-        <strong>{{ appointment().price }} {{ appointment().currency }}</strong>
-        }
+        <strong>{{ appointment().priceAtAppointment }} {{ currency }}</strong>
     </section>
 
-    @if (appointment().clientNote) {
-    <section class="note">
-        <strong>{{ 'APPOINTMENTS.DETAILS.NOTE' | transloco }}</strong>
-        <p class="muted">„{{ appointment().clientNote }}”</p>
-    </section>
+    @if (appointment().clientNote; as note) {
+        <section class="note">
+            <strong>{{ 'APPOINTMENTS.DETAILS.NOTE' | transloco }}</strong>
+            <p class="muted">„{{ note }}”</p>
+        </section>
     }
 
     @if (canModify()) {
-    <button type="button" class="btn btn--outline" (click)="edit.emit(appointment().id)">
-        {{ 'APPOINTMENTS.DETAILS.EDIT' | transloco }}
-    </button>
+        <button type="button" class="btn btn--danger" (click)="cancelRequested.emit(appointment().id)">
+            {{ 'APPOINTMENTS.DETAILS.CANCEL' | transloco }}
+        </button>
 
-    <button type="button" class="btn btn--danger" (click)="cancelRequested.emit(appointment().id)">
-        {{ 'APPOINTMENTS.DETAILS.CANCEL' | transloco }}
-    </button>
-
-    <p class="muted hint">{{ 'APPOINTMENTS.DETAILS.CANCEL_HINT' | transloco }}</p>
+        <p class="muted hint">{{ 'APPOINTMENTS.DETAILS.CANCEL_HINT' | transloco }}</p>
     }
 </aside>

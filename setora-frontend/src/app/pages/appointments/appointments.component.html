@@ -14,7 +14,6 @@
 }
 
 <app-appointment-filters
-  [locations]="locations()"
   [employees]="employees()"
   [(filters)]="filters"
 />
@@ -24,6 +23,7 @@
     <app-appointment-agenda
       [appointments]="visibleAppointments()"
       [employees]="visibleEmployees()"
+      [timezone]="business().timezone"
       [selectedId]="selectedId()"
       (appointmentSelected)="selectedId.set($event)"
       [(selectedDate)]="selectedDate" />
@@ -32,18 +32,19 @@
       [employees]="visibleEmployees()"
       [appointments]="visibleAppointments()"
       [timeRange]="filters().timeRange"
+      [timezone]="business().timezone"
       [selectedId]="selectedId()"
       (appointmentSelected)="selectedId.set($event)"
       [(selectedDate)]="selectedDate"
       [(view)]="view" />
   }
 
-  @if (selectedAppointment(); as appt) {
+  @if (selectedAppointment(); as appt) {   
     <app-appointment-details
       [appointment]="appt"
-      [locationName]="selectedLocationName()"
+      [locationName]="locationLabel()"
+      [timezone]="business().timezone"
       (closed)="closeDetails()"
-      (edit)="editAppointment($event)"
       (cancelRequested)="cancelAppointment($event)" />
   }
 </div>
@@ -52,27 +53,16 @@
 @if (addOpen()) {
   <app-appointment-form-dialog
     [selectedDate]="selectedDate()"
-    [locations]="locations()"
     (closed)="closeAddAppointment()"
     (created)="onAppointmentCreated($event)" />
-}
-
-<!-- Dialog de editare -->
-@if (editTarget(); as appt) {
-  <app-appointment-form-dialog
-    [appointment]="appt"
-    [locationId]="editLocationId()"
-    [selectedDate]="selectedDate()"
-    [locations]="locations()"
-    (closed)="closeEdit()"
-    (updated)="onAppointmentUpdated($event)" />
 }
 
 <!-- Confirmare anulare -->
 @if (cancelTarget(); as appt) {
   <app-cancel-appointment-dialog
     [appointment]="appt"
-    [locationName]="cancelLocationName()"
+    [locationName]="locationLabel()"
+    [timezone]="business().timezone"
     [busy]="cancelBusy()"
     [failed]="cancelFailed()"
     (closed)="closeCancel()"

@@ -1,47 +1,42 @@
+import { AppointmentStatus } from '../../../core/models/enums/appointment-status.model';
 import { AppointmentFilters, FilterEmployee } from '../../../core/ui-models/appointment-filters.model';
+import { BUSINESS_TIMEZONE, businessMinutesOfDay } from '../../../core/utils/date.util';
 
-/** Câmpurile pe care se filtrează. CalendarAppointment trebuie să le aibă. */
+/** Campurile pe care se filtreaza. CalendarAppointment le are pe toate. */
 export interface FilterableAppointment {
-  employeeId: string;
-  locationId?: string;
-  status: string;
-  start: string | Date;
-  end: string | Date;
+  employeeId: number;
+  status: AppointmentStatus;
+  startsAt: string;
+  endsAt: string;
 }
 
-const minutesOfDay = (value: string | Date): number => {
-  const d = new Date(value);
-  return d.getHours() * 60 + d.getMinutes();
+/** Minutul de final in fusul businessului. 00:00 inseamna sfarsitul zilei (1440). */
+const endMinutes = (instant: string, tz: string): number => {
+  const m = businessMinutesOfDay(instant, tz);
+  return m === 0 ? 24 * 60 : m;
 };
 
-/** Toate filtrele active se combină cu ȘI. `null` = fără restricție. */
+/** Toate filtrele active se combina cu SI. `null` = fara restrictie. */
 export function filterAppointments<T extends FilterableAppointment>(
   items: readonly T[],
   f: AppointmentFilters,
+  tz: string = BUSINESS_TIMEZONE,
 ): T[] {
   return items.filter((a) => {
-    if (f.locationId && a.locationId !== f.locationId) return false;
-    if (f.employeeId && a.employeeId !== f.employeeId) return false;
+    if (f.employeeId !== null && a.employeeId !== f.employeeId) return false;
     if (f.status && a.status !== f.status) return false;
 
-    // Rămân și programările care se suprapun doar parțial cu intervalul ales.
-    return minutesOfDay(a.start) < f.timeRange.to && minutesOfDay(a.end) > f.timeRange.from;
+    const start = businessMinutesOfDay(a.startsAt, tz);
+    const end = endMinutes(a.endsAt, tz);
+    // Raman si programarile care se suprapun doar partial cu intervalul ales.
+    return start < f.timeRange.to && end > f.timeRange.from;
   });
 }
 
-/** Angajații afișați ca coloane în calendar. */
-export function filterEmployees<T extends Pick<FilterEmployee, 'id' | 'locationIds'>>(
+/** Angajatii afisati ca coloane in calendar. */
+export function filterEmployees<T extends { id: number }>(
   all: readonly T[],
   f: AppointmentFilters,
 ): T[] {
-  return all.filter(
-    (e) =>
-      (!f.locationId || (e.locationIds?.includes(f.locationId) ?? true)) &&
-      (!f.employeeId || e.id === f.employeeId),
-  );
+  return all.filter((e) => f.employeeId === null || e.id === f.employeeId);
 }
-
-export const isSameDay = (a: Date, b: Date): boolean =>
-  a.getFullYear() === b.getFullYear() &&
-  a.getMonth() === b.getMonth() &&
-  a.getDate() === b.getDate();
