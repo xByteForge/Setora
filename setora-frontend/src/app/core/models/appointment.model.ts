@@ -1,25 +1,30 @@
-export type AppointmentStatus = 'confirmed' | 'pending' | 'cancelled' | 'unavailable';
-export type PaymentMethod = 'Free' | 'Physical' | 'Online' | 'PhysicalOrOnline';
+import { AppointmentStatus } from "./enums/appointment-status.model";
+import { PaymentMethod } from "./enums/payment-method.model";
+
 
 export interface Appointment {
-  id: string;
-  businessId: string;
-  serviceId: string;
-  serviceName: string;
-  durationMinutes: number;
-  clientId: string;
+  id: number;
+
+  // Client: clientId is set for registered users. The DTO fills clientName,
+  // clientPhone and clientEmail from the User, or from the ghost-client fields.
+  clientId: number | null;
   clientName: string;
-  clientPhone: string;
-  clientEmail: string;
-  employeeId: string;
-  employeeName: string;
-  date: string; // YYYY-MM-DD
-  startTime: string; // HH:mm
-  endTime: string; // HH:mm
+  clientPhone: string | null;
+  clientEmail: string | null;
+  clientNote: string | null;
+
+  employeeId: number;
+  employeeName: string;     // DTO only
+  
+  serviceId: number;
+  serviceName: string;      // DTO only
+  
+  start: string;
+  end: string;
+  
   status: AppointmentStatus;
-  price: number;
-  currency: string;
+  priceAtAppointment: number;
   paymentMethod: PaymentMethod;
-  isPaid: boolean;
-  clientNote?: string;
+  
+  createdAt: string;
 }

@@ -4,6 +4,7 @@ import { SidebarComponent } from './core/layout/sidebar/sidebar.component';
 import { ThemeService } from './core/services/theme.service';
 import { TopbarComponent } from './core/layout/topbar/topbar.component';
 import { BusinessService } from './core/services/business.service';
+import { CatalogService } from './core/services/catalog.service';
 
 @Component({
   imports: [RouterOutlet, SidebarComponent, TopbarComponent],
@@ -15,15 +16,10 @@ export class App {
   protected readonly title = signal('setora-frontend');
   private readonly themeService = inject(ThemeService);
   private readonly businessService = inject(BusinessService);
+  private readonly catalog = inject(CatalogService);
 
   constructor() {
-    this.businessService.setCurrent({
-      id: '1',
-      name: 'Studio Armonia',
-      description: 'Spațiu business · București',
-      tags: [],
-      phone: '',
-      email: '',
-    });
+    // Un singur loc pentru datele mock ale businessului: CatalogService.
+    this.businessService.setCurrent(this.catalog.getBusiness());
   }
 }

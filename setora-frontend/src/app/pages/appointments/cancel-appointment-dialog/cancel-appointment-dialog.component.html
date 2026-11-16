@@ -21,7 +21,7 @@
 
         <div class="summary">
             <strong>{{ appointment().clientName }}</strong>
-            <span>{{ appointment().serviceName }} · {{ appointment().durationMinutes }} min</span>
+            <span>{{ appointment().serviceName }} · {{ durationMinutes() }} min</span>
             <span>{{ when() }}</span>
             <span class="muted">{{ appointment().employeeName }} · {{ locationName() }}</span>
         </div>

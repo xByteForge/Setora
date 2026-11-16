@@ -17,14 +17,14 @@
     @for (item of items(); track item.id) {
       <li>
         <button type="button" class="card"
-                [attr.data-status]="item.status"
+                [attr.data-status]="item.status.toLowerCase()"
                 [class.card--selected]="selectedId() === item.id"
-                [disabled]="item.status === 'unavailable'"
+                [disabled]="item.status === 'UNAVAILABLE'"
                 (click)="select(item)">
-          <span class="card__time">{{ item.start.slice(11, 16) }}–{{ item.end.slice(11, 16) }}</span>
+          <span class="card__time">{{ timeLabel(item) }}</span>
           <span class="card__client">{{ item.clientName }}</span>
-          <span class="card__meta">{{ item.service }} · {{ employeeName(item.employeeId) }}</span>
-          <span class="card__status">{{ 'APPOINTMENTS.CALENDAR.STATUS.' + item.status.toUpperCase() | transloco }}</span>
+          <span class="card__meta">{{ item.serviceName }} · {{ employeeName(item.employeeId) }}</span>
+          <span class="card__status">{{ 'APPOINTMENTS.CALENDAR.STATUS.' + item.status | transloco }}</span>
           <span class="card__chevron" aria-hidden="true">›</span>
         </button>
       </li>

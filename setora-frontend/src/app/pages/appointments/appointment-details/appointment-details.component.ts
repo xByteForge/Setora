@@ -1,13 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { Appointment, PaymentMethod } from '../../../core/models/appointment.model';
+import { Appointment } from '../../../core/models/appointment.model';
+import { PaymentMethod } from '../../../core/models/enums/payment-method.model';
+import { CURRENCY } from '../../../core/services/catalog.service';
+import { businessDate, businessTime, minutesBetween } from '../../../core/utils/date.util';
 
 const PAYMENT_KEYS: Record<PaymentMethod, string> = {
-  Free: 'FREE',
-  Physical: 'PHYSICAL',
-  Online: 'ONLINE',
-  PhysicalOrOnline: 'PHYSICAL_OR_ONLINE',
+  PHYSICAL: 'PHYSICAL',
+  ONLINE: 'ONLINE',
+  PHYSICAL_OR_ONLINE: 'PHYSICAL_OR_ONLINE',
 };
 
 @Component({
@@ -25,33 +27,36 @@ export class AppointmentDetailsComponent {
 
   readonly appointment = input.required<Appointment>();
   readonly locationName = input<string>('');
+  readonly timezone = input.required<string>();
 
   readonly closed = output<void>();
-  readonly edit = output<string>();
-  readonly cancelRequested = output<string>();
+  readonly cancelRequested = output<number>();
 
-  readonly canModify = computed(() => this.appointment().status !== 'cancelled');
+  readonly currency = CURRENCY;
+
+  readonly canModify = computed(() => this.appointment().status !== 'CANCELLED');
+
+  readonly durationMinutes = computed(() =>
+    minutesBetween(this.appointment().start, this.appointment().end),
+  );
 
   readonly dateLabel = computed(() => {
-    const text = new Date(`${this.appointment().date}T00:00:00`).toLocaleDateString(this.lang(), {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
+    const date = businessDate(this.appointment().start, this.timezone());
+    const text = new Date(`${date}T00:00:00`).toLocaleDateString(this.lang(), {
+      weekday: 'long', day: 'numeric', month: 'long',
     });
     return text.charAt(0).toUpperCase() + text.slice(1);
   });
 
-  readonly timeLabel = computed(() => `${this.appointment().startTime}–${this.appointment().endTime}`);
+  readonly timeLabel = computed(() => {
+    const a = this.appointment();
+    const tz = this.timezone();
+    return `${businessTime(a.start, tz)}–${businessTime(a.end, tz)}`;
+  });
 
-  readonly statusKey = computed(
-    () => `APPOINTMENTS.CALENDAR.STATUS.${this.appointment().status.toUpperCase()}`,
-  );
+  readonly statusKey = computed(() => `APPOINTMENTS.CALENDAR.STATUS.${this.appointment().status}`);
 
   readonly paymentMethodKey = computed(
     () => `APPOINTMENTS.DETAILS.PAYMENT.METHOD.${PAYMENT_KEYS[this.appointment().paymentMethod]}`,
-  );
-
-  readonly paymentStatusKey = computed(
-    () => `APPOINTMENTS.DETAILS.PAYMENT.${this.appointment().isPaid ? 'PAID' : 'UNPAID'}`,
   );
 }

@@ -4,26 +4,24 @@ import {
     LucideChevronDown,
     LucideClock,
     LucideListFilter,
-    LucideMapPin,
     LucideUsers,
     LucideX,
 } from '@lucide/angular';
+import { AppointmentStatus } from '../../../core/models/enums/appointment-status.model';
 import {
     AppointmentFilters,
-    AppointmentStatus,
-    FilterEmployee,
-    FilterLocation,
     DEFAULT_FILTERS,
     DEFAULT_TIME_RANGE,
+    FilterEmployee,
     STATUS_I18N_KEYS,
     TIME_PRESETS,
     TimeRange,
     minutesToLabel,
     rangeToLabel,
     sameRange,
-} from '../../../core/models/appointment-filters.model';
+} from '../../../core/ui-models/appointment-filters.model';
 
-type ChipKey = 'location' | 'employee' | 'status' | 'time';
+type ChipKey = 'employee' | 'status' | 'time';
 
 interface FilterChip {
     key: ChipKey;
@@ -36,7 +34,6 @@ interface FilterChip {
     standalone: true,
     imports: [
         TranslocoDirective,
-        LucideMapPin,
         LucideUsers,
         LucideListFilter,
         LucideClock,
@@ -48,7 +45,6 @@ interface FilterChip {
     templateUrl: './appointment-filters.component.html',
 })
 export class AppointmentFiltersComponent {
-    readonly locations = input.required<FilterLocation[]>();
     readonly employees = input.required<FilterEmployee[]>();
 
     /** Two-way: [(filters)]="filters" */
@@ -62,13 +58,7 @@ export class AppointmentFiltersComponent {
     readonly time = minutesToLabel;
     readonly rangeLabel = rangeToLabel;
 
-    /** Doar angajații de la locația selectată. */
-    readonly availableEmployees = computed(() => {
-        const loc = this.filters().locationId;
-        return loc ? this.employees().filter((e) => e.locationIds?.includes(loc) ?? true) : this.employees();
-    });
-
-    /** True după ce utilizatorul alege "Personalizat…", chiar dacă intervalul curent coincide cu o presetare. */
+    /** True dupa ce utilizatorul alege "Personalizat…", chiar daca intervalul coincide cu o presetare. */
     private readonly customMode = signal(false);
 
     readonly presetValue = computed(() => {
@@ -76,14 +66,11 @@ export class AppointmentFiltersComponent {
         return this.customMode() || i === -1 ? 'custom' : String(i);
     });
 
-    /** Valorile selectate, afișate ca etichete ce pot fi eliminate. */
+    /** Valorile selectate, afisate ca etichete ce pot fi eliminate. */
     readonly chips = computed<FilterChip[]>(() => {
         const f = this.filters();
         const chips: FilterChip[] = [];
-        if (f.locationId) {
-            chips.push({ key: 'location', text: this.locations().find((l) => l.id === f.locationId)?.name ?? '' });
-        }
-        if (f.employeeId) {
+        if (f.employeeId !== null) {
             chips.push({ key: 'employee', text: this.employees().find((e) => e.id === f.employeeId)?.name ?? '' });
         }
         if (f.status) {
@@ -95,19 +82,9 @@ export class AppointmentFiltersComponent {
         return chips;
     });
 
-    onLocation(e: Event): void {
-        const locationId = this.value(e) || null;
-        const f = this.filters();
-        // Dacă angajatul ales nu lucrează în noua locație, filtrul de angajat se resetează.
-        const employeeStillValid =
-            !f.employeeId ||
-            !locationId ||
-            (this.employees().find((x) => x.id === f.employeeId)?.locationIds?.includes(locationId) ?? true);
-        this.filters.set({ ...f, locationId, employeeId: employeeStillValid ? f.employeeId : null });
-    }
-
     onEmployee(e: Event): void {
-        this.filters.update((f) => ({ ...f, employeeId: this.value(e) || null }));
+        const v = this.value(e);
+        this.filters.update((f) => ({ ...f, employeeId: v ? Number(v) : null }));
     }
 
     onStatus(e: Event): void {
@@ -117,7 +94,7 @@ export class AppointmentFiltersComponent {
     onPreset(e: Event): void {
         const v = this.value(e);
         if (v === 'custom') {
-            this.customMode.set(true); // păstrează intervalul curent și arată selectoarele De la / Până la
+            this.customMode.set(true); // pastreaza intervalul curent si arata selectoarele De la / Pana la
             return;
         }
         this.customMode.set(false);
@@ -127,7 +104,7 @@ export class AppointmentFiltersComponent {
     onCustom(edge: keyof TimeRange, e: Event): void {
         this.filters.update((f) => {
             const next = { ...f.timeRange, [edge]: +this.value(e) };
-            // Intervalul rămâne valid: sfârșitul e mereu după început.
+            // Intervalul ramane valid: sfarsitul e mereu dupa inceput.
             if (next.from >= next.to) {
                 if (edge === 'from') next.to = Math.min(next.from + 30, 24 * 60);
                 else next.from = Math.max(next.to - 30, 0);
@@ -139,10 +116,13 @@ export class AppointmentFiltersComponent {
     clear(key: ChipKey): void {
         this.filters.update((f) => {
             switch (key) {
-                case 'location': return { ...f, locationId: null };
-                case 'employee': return { ...f, employeeId: null };
-                case 'status': return { ...f, status: null };
-                case 'time': this.customMode.set(false); return { ...f, timeRange: DEFAULT_TIME_RANGE };
+                case 'employee':
+                    return { ...f, employeeId: null };
+                case 'status':
+                    return { ...f, status: null };
+                case 'time':
+                    this.customMode.set(false);
+                    return { ...f, timeRange: DEFAULT_TIME_RANGE };
             }
         });
     }

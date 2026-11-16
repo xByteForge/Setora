@@ -1,10 +1,13 @@
-import { PaymentMethod } from './appointment.model';
+import { PaymentMethod } from "./enums/payment-method.model";
+
 
 export interface Service {
-    id: string;
-    name: string;
-    durationMinutes: number;
-    price: number;
-    currency: string;
-    paymentMethod: PaymentMethod;
+  id: number;
+  businessId: number;
+  name: string;
+  description: string | null;
+  price: number;
+  durationMinutes: number;
+  active: boolean;
+  paymentMethod: PaymentMethod;
 }
