@@ -7,37 +7,67 @@ import jakarta.persistence.criteria.Predicate;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class AppointmentSpecifications {
 
     public static Specification<Appointment> filterAppointments(
-            UUID businessId,
-            UUID employeeId,
+            Integer businessId,
+            Integer clientId,
+            Integer serviceId,
             AppointmentStatus status,
             Instant rangeStart,
             Instant rangeEnd
     ) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(cb.equal(root.get("serviceItem")
+
+            if (businessId != null) {
+                predicates.add(
+                        cb.equal(
+                                root.get("serviceItem")
                                         .get("business")
                                         .get("id"),
-                                        businessId));
+                                businessId
+                        )
+                );
+            }
 
-            if (employeeId != null)
-                predicates.add(cb.equal(root.get("employee").get("id"), employeeId));
+            if (clientId != null) {
+                predicates.add(
+                        cb.equal(root.get("client").get("id"), clientId)
+                );
+            }
 
+            if (serviceId != null) {
+                predicates.add(
+                        cb.equal(root.get("serviceItem").get("id"), serviceId)
+                );
+            }
 
-            if (status != null)
-                predicates.add(cb.equal(root.get("status"), status));
+            if (status != null) {
+                predicates.add(
+                        cb.equal(root.get("status"), status)
+                );
+            }
 
+            if (rangeStart != null && rangeEnd != null) {
+                predicates.add(
+                        cb.lessThan(
+                                root.get("interval").<Instant>get("start"),
+                                rangeEnd
+                        )
+                );
 
-            predicates.add(cb.lessThan(root.get("interval").<Instant>get("start"), rangeEnd));
-
-            predicates.add(cb.greaterThan(root.get("interval").<Instant>get("end"), rangeStart));
+                predicates.add(
+                        cb.greaterThan(
+                                root.get("interval").<Instant>get("end"),
+                                rangeStart
+                        )
+                );
+            }
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
 }
+

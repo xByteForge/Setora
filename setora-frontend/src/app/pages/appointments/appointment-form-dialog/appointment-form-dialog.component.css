@@ -10,7 +10,7 @@
     background: rgb(0 0 0 / 0.45);
     display: grid;
     place-items: center;
-    z-index: 100;
+    z-index: 400; /* above the mobile details panel (300) */
 }
 
 .dialog {
@@ -47,6 +47,7 @@
     border: 0;
     color: var(--ink);
     font-size: 24px;
+    cursor: pointer;
 }
 
 .row {
@@ -84,6 +85,14 @@ textarea {
     background: var(--paper);
     color: var(--ink);
     font: inherit;
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled {
+    background: var(--canvas);
+    color: var(--text-secondary);
+    cursor: not-allowed;
 }
 
 input::placeholder,

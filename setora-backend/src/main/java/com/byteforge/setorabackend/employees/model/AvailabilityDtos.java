@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.UUID;
+
 
 //request and response bodies of the availability endpoints
 //all times are local times in the timezone of the business, the end is exclusive
@@ -16,7 +16,7 @@ public final class AvailabilityDtos {
     public record WorkingDay(DayOfWeek dayOfWeek, LocalTime start, LocalTime end) {
     }
 
-    public record WorkingHours(UUID employeeId, ZoneId timezone, List<WorkingDay> days) {
+    public record WorkingHours(int employeeId, ZoneId timezone, List<WorkingDay> days) {
     }
 
     //send either date (one-off slot) or dayOfWeek (recurring weekly slot)
@@ -32,8 +32,8 @@ public final class AvailabilityDtos {
 
     //the slot as it is stored
     public record UnavailableSlotResponse(
-            UUID id,
-            UUID employeeId,
+            int id,
+            int employeeId,
             UnavailableType type,
             String reason,
             boolean recurring,
@@ -46,7 +46,7 @@ public final class AvailabilityDtos {
 
     //the slot on one concrete date, recurring slots are expanded for every date in the range
     public record UnavailableOccurrence(
-            UUID slotId,
+            int slotId,
             UnavailableType type,
             String reason,
             boolean recurring,
@@ -57,7 +57,7 @@ public final class AvailabilityDtos {
     }
 
     public record UnavailableSlots(
-            UUID employeeId,
+            int employeeId,
             ZoneId timezone,
             LocalDate from,
             LocalDate to,
@@ -67,7 +67,7 @@ public final class AvailabilityDtos {
 
     public record CreateSlotResponse(
             UnavailableSlotResponse slot,
-            List<UUID> cancelledAppointmentIds
+            List<Integer> cancelledAppointmentIds
     ) {
 
     }

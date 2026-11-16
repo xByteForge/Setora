@@ -5,7 +5,7 @@
     <p class="block__time">{{ timeRange() }}</p>
     <p class="block__client">{{ appointment().clientName }}</p>
     <p class="block__meta">
-        {{ appointment().service }} ·
-        {{ 'APPOINTMENTS.CALENDAR.STATUS.' + appointment().status.toUpperCase() | transloco }}
+        {{ appointment().serviceName }} ·
+        {{ ('APPOINTMENTS.CALENDAR.STATUS.' + appointment().status) | transloco }}
     </p>
 }

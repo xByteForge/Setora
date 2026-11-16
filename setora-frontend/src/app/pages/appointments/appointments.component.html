@@ -14,7 +14,6 @@
 }
 
 <app-appointment-filters
-  [locations]="locations()"
   [employees]="employees()"
   [(filters)]="filters"
 />
@@ -24,6 +23,7 @@
     <app-appointment-agenda
       [appointments]="visibleAppointments()"
       [employees]="visibleEmployees()"
+      [timezone]="business().timezone"
       [selectedId]="selectedId()"
       (appointmentSelected)="selectedId.set($event)"
       [(selectedDate)]="selectedDate" />
@@ -32,31 +32,43 @@
       [employees]="visibleEmployees()"
       [appointments]="visibleAppointments()"
       [timeRange]="filters().timeRange"
+      [timezone]="business().timezone"
       [selectedId]="selectedId()"
       (appointmentSelected)="selectedId.set($event)"
       [(selectedDate)]="selectedDate"
       [(view)]="view" />
   }
 
-  @if (selectedAppointment(); as appt) {
+  @if (selectedAppointment(); as appt) {   
     <app-appointment-details
       [appointment]="appt"
-      [locationName]="selectedLocationName()"
+      [locationName]="locationLabel()"
+      [timezone]="business().timezone"
       (closed)="closeDetails()"
-      (edit)="editAppointment($event)"
-      (cancelConfirmed)="cancelAppointment($event)" />
+      (cancelRequested)="cancelAppointment($event)" />
   }
 </div>
 
-<!-- dialog de add -->
+<!-- Dialog de adăugare -->
 @if (addOpen()) {
-    <app-appointment-form-dialog
-            [selectedDate]="selectedDate()"
-            [locations]="locations()"
-            (closed)="closeAddAppointment()"
-            (created)="onAppointmentCreated($event)" />
+  <app-appointment-form-dialog
+    [selectedDate]="selectedDate()"
+    (closed)="closeAddAppointment()"
+    (created)="onAppointmentCreated($event)" />
+}
+
+<!-- Confirmare anulare -->
+@if (cancelTarget(); as appt) {
+  <app-cancel-appointment-dialog
+    [appointment]="appt"
+    [locationName]="locationLabel()"
+    [timezone]="business().timezone"
+    [busy]="cancelBusy()"
+    [failed]="cancelFailed()"
+    (closed)="closeCancel()"
+    (confirmed)="confirmCancel()" />
 }
 
 @if (toast(); as key) {
-    <div class="toast" role="status">{{ key | transloco }}</div>
+  <div class="toast" role="status">{{ key | transloco }}</div>
 }

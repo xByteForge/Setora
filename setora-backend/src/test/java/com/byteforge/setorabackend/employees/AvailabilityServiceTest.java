@@ -28,7 +28,9 @@ import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -54,7 +56,7 @@ class EmployeeServiceTest {
     @InjectMocks
     private EmployeeService service;
 
-    private final UUID employeeId = UUID.randomUUID();
+    private final int employeeId = new Random().nextInt(1000);
     // business timezone is not set in these tests, so the service uses UTC
     private final LocalDate nextWeek = LocalDate.now(ZoneOffset.UTC).plusDays(7);
 
@@ -87,7 +89,7 @@ class EmployeeServiceTest {
         when(unavailableSlotRepository.save(any(UnavailableSlot.class))).thenAnswer(call -> call.getArgument(0));
 
         // Creăm un mock pentru o programare care se va suprapune cu slotul (12:00 - 13:00)
-        UUID appId = UUID.randomUUID();
+        int appId = new Random().nextInt(1000);
         Appointment overlappingApp = mock(Appointment.class);
         when(overlappingApp.getId()).thenReturn(appId);
 

@@ -1,17 +1,20 @@
 
 package com.byteforge.setorabackend.appointment;
 
-import com.byteforge.setorabackend.appointment.dtos.AppointmentsTodaySummaryDto;
-import com.byteforge.setorabackend.appointment.dtos.AppointmentsTodaySummaryProjection;
-import com.byteforge.setorabackend.appointment.dtos.CalendarAppointmentDto;
+import com.byteforge.setorabackend.appointment.dtos.*;
+import com.byteforge.setorabackend.auth.User;
+import com.byteforge.setorabackend.auth.UserService;
 import com.byteforge.setorabackend.business.Business;
-import com.byteforge.setorabackend.business.BusinessRepository;
 import com.byteforge.setorabackend.business.BusinessService;
-import jakarta.persistence.EntityNotFoundException;
+import com.byteforge.setorabackend.employees.model.Employee;
+import com.byteforge.setorabackend.employees.service.EmployeeService;
+import com.byteforge.setorabackend.serviceItem.ServiceItem;
+import com.byteforge.setorabackend.serviceItem.ServiceItemService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,17 +24,19 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class AppointmentService {
 
-    final private AppointmentRepository appointmentRepository;
-    final private BusinessService businessService;
+    private final AppointmentRepository appointmentRepository;
+    private final BusinessService businessService;
+    private final ServiceItemService serviceItemService;
+    private final EmployeeService employeeService;
+    private final UserService userService;
 
     public AppointmentsTodaySummaryDto getDailySummary(
-            UUID businessId,
+            int businessId,
             LocalDate date
     ) {
         Business business = businessService.findById(businessId);
@@ -47,7 +52,7 @@ public class AppointmentService {
                         start,
                         end,
                         AppointmentStatus.CONFIRMED,
-                        AppointmentStatus.PENDING,
+                        AppointmentStatus.UNAVAILABLE,
                         AppointmentStatus.CANCELLED
                 );
 
@@ -60,30 +65,150 @@ public class AppointmentService {
     }
 
     @Transactional(readOnly = true)
-    public List<CalendarAppointmentDto> getCalendarAppointments(
-            UUID businessId,
-            LocalDate startDate,
-            LocalDate endDate,
-            UUID employeeId,
-            String statusValue,
-            Integer from,
-            Integer to
+    public AppointmentResponseDto getAppointmentById(int id) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Appointment not found"
+                ));
+
+        return AppointmentMapper.toResponseDto(appointment);
+    }
+
+    @Transactional
+    public AppointmentResponseDto cancelAppointment(int id) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Appointment not found"
+                ));
+
+        if (appointment.getStatus() == AppointmentStatus.CANCELLED) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Appointment is already cancelled"
+            );
+        }
+
+        appointment.setStatus(AppointmentStatus.CANCELLED);
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+
+        return AppointmentMapper.toResponseDto(savedAppointment);
+    }
+
+    @Transactional
+    public AppointmentResponseDto updateAppointment(
+            int id,
+            UpdateAppointmentRequestDto request
     ) {
-        if (startDate == null || endDate == null || startDate.isAfter(endDate)) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Appointment not found"
+                ));
+
+        if (appointment.getStatus() == AppointmentStatus.CANCELLED ||
+                appointment.getStatus() == AppointmentStatus.UNAVAILABLE) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "This appointment cannot be modified"
+            );
+        }
+
+        if (request == null ||
+                (request.surname() == null &&
+                        request.firstname() == null &&
+                        request.email() == null &&
+                        request.phoneNumber() == null &&
+                        request.clientNote() == null)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "At least one field must be provided"
+            );
+        }
+
+        User client = appointment.getClient();
+
+        boolean updatingClient =
+                request.surname() != null ||
+                        request.firstname() != null ||
+                        request.email() != null ||
+                        request.phoneNumber() != null;
+
+        if (updatingClient) {
+            userService.updateClientDetails(
+                    client,
+                    request.surname(),
+                    request.firstname(),
+                    request.email(),
+                    request.phoneNumber()
+            );
+        }
+
+        if (request.clientNote() != null) {
+            appointment.setClientNote(request.clientNote());
+        }
+
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+
+        return AppointmentMapper.toResponseDto(savedAppointment);
+    }
+
+    @Transactional
+    public AppointmentResponseDto createGuestAppointment(
+            @Valid CreateAppointmentGhostClientRequestDto request
+    ) {
+        ServiceItem service = serviceItemService.findById(request.serviceId());
+        Employee employee = employeeService.findById(request.employeeId());
+
+        Business business = service.getBusiness();
+
+        User client = userService.findByEmail("ghost@gmail.com");
+
+        // Validate business, employee and service compatibility.
+        // TODO: Check time slots to prevent double bookings.
+        Appointment appointment = AppointmentMapper.toEntity(
+                request,
+                employee,
+                service,
+                client,
+                business.getTimezone()
+        );
+
+        String note = "";
+        note += "Appointment for: " + request.clientName() + "\n";
+        note += "Email: " + request.clientEmail() + "\n";
+        note += "Phone number: " + request.clientPhone() + "\n";
+        note += "\n --- Details ---\n";
+        note += request.clientName() + "\n";
+
+        appointment.setClientNote(note);
+
+        return AppointmentMapper.toResponseDto(
+                appointmentRepository.save(appointment)
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public List<AppointmentResponseDto> getAppointments(
+            Integer businessId,
+            Integer clientId,
+            Integer serviceId,
+            String statusValue,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Invalid date range"
             );
         }
 
-        Business business = businessService.findById(businessId);
-
-        ZoneId zone = business.getTimezone();
-
-        if (zone == null) {
+        if ((startDate == null) != (endDate == null)) {
             throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Business timezone is not configured"
+                    HttpStatus.BAD_REQUEST,
+                    "Both startDate and endDate must be provided"
             );
         }
 
@@ -102,79 +227,38 @@ public class AppointmentService {
             }
         }
 
-        if ((from == null) != (to == null)) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Both from and to must be provided"
-            );
-        }
+        Instant rangeStart = null;
+        Instant rangeEnd = null;
 
-        int fromMinutes = from == null ? 0 : from;
-        int toMinutes = to == null ? 1440 : to;
+        if (startDate != null) {
+            ZoneId zone;
 
-        if (fromMinutes < 0 || toMinutes > 1440
-                || fromMinutes >= toMinutes) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Invalid time range"
-            );
-        }
-
-        Specification<Appointment> specification;
-
-        if (fromMinutes == 0 && toMinutes == 1440) {
-            Instant rangeStart = startDate.atStartOfDay(zone).toInstant();
-            Instant rangeEnd = endDate.plusDays(1)
-                    .atStartOfDay(zone).toInstant();
-
-            specification = AppointmentSpecifications.filterAppointments(
-                    businessId,
-                    employeeId,
-                    status,
-                    rangeStart,
-                    rangeEnd
-            );
-        } else {
-            Specification<Appointment> combined = null;
-
-            for (LocalDate day = startDate;
-                 !day.isAfter(endDate);
-                 day = day.plusDays(1)) {
-
-                Instant rangeStart = day.atStartOfDay()
-                        .plusMinutes(fromMinutes)
-                        .atZone(zone)
-                        .toInstant();
-
-                Instant rangeEnd = day.atStartOfDay()
-                        .plusMinutes(toMinutes)
-                        .atZone(zone)
-                        .toInstant();
-
-                Specification<Appointment> daily =
-                        AppointmentSpecifications.filterAppointments(
-                                businessId,
-                                employeeId,
-                                status,
-                                rangeStart,
-                                rangeEnd
-                        );
-
-                combined = combined == null
-                        ? daily
-                        : combined.or(daily);
+            if (businessId != null) {
+                zone = businessService.findById(businessId).getTimezone();
+            } else {
+                zone = ZoneId.of("UTC");
             }
 
-            specification = combined;
+            rangeStart = startDate.atStartOfDay(zone).toInstant();
+            rangeEnd = endDate.plusDays(1).atStartOfDay(zone).toInstant();
         }
 
-        List<Appointment> appointments = appointmentRepository.findAll(
-                specification,
-                Sort.by(Sort.Direction.ASC, "interval.start")
-        );
+        Specification<Appointment> specification =
+                AppointmentSpecifications.filterAppointments(
+                        businessId,
+                        clientId,
+                        serviceId,
+                        status,
+                        rangeStart,
+                        rangeEnd
+                );
 
-        return appointments.stream()
-                .map(CalendarAppointmentDto::from)
+        return appointmentRepository.findAll(
+                        specification,
+                        Sort.by(Sort.Direction.ASC, "interval.start")
+                )
+                .stream()
+                .map(AppointmentMapper::toResponseDto)
                 .toList();
     }
 }

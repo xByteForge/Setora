@@ -1,0 +1,1 @@
+export type UnavailableType = 'BREAK' | 'BLOCKED' | 'TIME_OFF';

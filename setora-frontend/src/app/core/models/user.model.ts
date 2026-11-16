@@ -1,11 +1,12 @@
-export type UserRole = 'Admin' | 'BusinessOwner' | 'Employee' | 'Client';
+import { UserRole } from "./enums/user-role.model";
+
 
 export interface User {
-  id: string;
+  id: number;
   firstName: string;
   lastName: string;
-  email: string;
-  phone?: string;
   username: string;
+  email: string;
+  phoneNumber: string | null;
   role: UserRole;
 }

@@ -1,43 +1,61 @@
 package com.byteforge.setorabackend.auth;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.UUID;
 
 @Entity
 @Table(name = "users")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
-    @GeneratedValue(strategy= GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy= GenerationType.SEQUENCE)
+    private int id;
 
     @Column(nullable = false)
-    private String surname;
+    private String firstName;
 
     @Column(nullable = false)
-    private String firstname;
+    private String lastName;
+
+    @Column(nullable = false)
+    private String username = firstName;
 
     //always saved in lower case, used for login
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(columnDefinition = "text")
+    private String phoneNumber;
+
     @Column(nullable = false)
     private String passwordHash;
 
-    private String phoneNumber;
+    @Enumerated(EnumType.STRING)
+    @Column
+    private UserRole role=UserRole.CLIENT;
 
     //add the rest later on
 
     public void setEmail(String email) {
         this.email = email == null ? null : email.trim().toLowerCase();
+    }
+
+    public String getName(){
+        return this.firstName + " " + this.lastName;
+    }
+
+    public User(String firstName, String lastName, String email, String phoneNumber, String passwordHash) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = firstName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.passwordHash = passwordHash;
     }
 }

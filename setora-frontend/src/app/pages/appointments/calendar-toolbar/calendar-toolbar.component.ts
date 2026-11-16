@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
-import { CalendarView } from '../../../core/models/calendar-view.type';
+import { CalendarView } from '../../../core/ui-models/calendar-view.type';
 
 @Component({
     selector: 'app-calendar-toolbar',

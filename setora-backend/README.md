@@ -87,7 +87,7 @@ Pretty sure we'll get ServiceItemService later on, but oh well... At least it's 
 
 ## Conventions
 
-- All ids are UUIDs.
+- All ids are ints.
 - Clients and employees are users: an appointment points to the `User` who made it, an employee is linked to a `User`.
 - The end of an interval is exclusive: 10:00-11:00 and 11:00-12:00 do not overlap.
 - An appointment has no business column, the business is the one of the booked service.

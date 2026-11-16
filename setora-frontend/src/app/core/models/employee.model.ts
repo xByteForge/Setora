@@ -1,7 +1,9 @@
 export interface Employee {
-    id: string;
-    name: string;
-    initials: string;
-    role: string;
-    locationIds: string[];
+  id: number;
+  businessId: number;
+  userId: number;
+  active: boolean;
+  serviceIds: number[]; 
+  name: string;     
+  employmentRole: string;    
 }

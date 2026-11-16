@@ -1,23 +1,42 @@
 import { Injectable } from '@angular/core';
-import { Location } from '../models/location.model';
+import { Business } from '../models/business.model';
 import { Service } from '../models/service.model';
+
+/** Moneda e aceeasi pentru toate businessurile deocamdata. */
+export const CURRENCY = 'lei';
 
 @Injectable({ providedIn: 'root' })
 export class CatalogService {
-    private readonly locations: Location[] = [
-        { id: 'buc-centru', name: 'București · Centru' },
-        { id: 'buc-nord', name: 'București · Nord' },
-    ];
+    private readonly business: Business = {
+        id: 1,
+        ownerId: 1,
+        name: 'Studio Armonia',
+        slug: 'studio-armonia',
+        description: 'Spațiu business · București',
+        location: {
+            locationName: 'Centru',
+            address: 'București, Centru',
+            latitude: null,
+            longitude: null,
+        },
+        phone: null,
+        email: 'contact@studioarmonia.ro',
+        timezone: 'Europe/Bucharest',
+        createdAt: '2026-01-01T00:00:00Z',
+        photoUrls: [],
+        thumbnailUrl: null,
+        tags: [],
+    };
 
     private readonly services: Service[] = [
-        { id: 'tuns-coafat', name: 'Tuns & coafat', durationMinutes: 60, price: 150, currency: 'lei', paymentMethod: 'Physical' },
-        { id: 'vopsit-coafat', name: 'Vopsit & coafat', durationMinutes: 90, price: 250, currency: 'lei', paymentMethod: 'Physical' },
-        { id: 'tuns-barba', name: 'Tuns & barbă', durationMinutes: 60, price: 120, currency: 'lei', paymentMethod: 'Physical' },
-        { id: 'manichiura', name: 'Manichiură', durationMinutes: 60, price: 100, currency: 'lei', paymentMethod: 'Physical' },
+        { id: 1, businessId: 1, name: 'Tuns & coafat', description: null, price: 150, durationMinutes: 60, active: true, paymentMethod: 'PHYSICAL' },
+        { id: 2, businessId: 1, name: 'Vopsit & coafat', description: null, price: 250, durationMinutes: 90, active: true, paymentMethod: 'PHYSICAL' },
+        { id: 3, businessId: 1, name: 'Tuns & barbă', description: null, price: 120, durationMinutes: 60, active: true, paymentMethod: 'PHYSICAL' },
+        { id: 4, businessId: 1, name: 'Manichiură', description: null, price: 100, durationMinutes: 60, active: true, paymentMethod: 'PHYSICAL' },
     ];
 
-    getLocations(): Location[] {
-        return this.locations;
+    getBusiness(): Business {
+        return this.business;
     }
 
     getServices(): Service[] {

@@ -1,4 +1,4 @@
-import { CalendarAppointment } from '../../../core/models/calendar-appointment.model';
+import { CalendarAppointment } from '../../../core/ui-models/calendar-appointment.model';
 
 export interface PositionedAppointment {
     appointment: CalendarAppointment;
@@ -7,9 +7,7 @@ export interface PositionedAppointment {
 }
 
 export const layoutOverlaps = (items: CalendarAppointment[]): PositionedAppointment[] => {
-    const sorted = [...items].sort(
-        (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
-    );
+    const sorted = [...items].sort((a, b) => Date.parse(a.start) - Date.parse(b.start));
 
     const result: PositionedAppointment[] = [];
     let cluster: PositionedAppointment[] = [];
@@ -24,8 +22,8 @@ export const layoutOverlaps = (items: CalendarAppointment[]): PositionedAppointm
     };
 
     for (const appointment of sorted) {
-        const start = new Date(appointment.start).getTime();
-        const end = new Date(appointment.end).getTime();
+        const start = Date.parse(appointment.start);
+        const end = Date.parse(appointment.end);
 
         if (cluster.length && start >= clusterEnd) flush();
 

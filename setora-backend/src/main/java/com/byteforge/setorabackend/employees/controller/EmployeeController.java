@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
-import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/api/employees")
@@ -25,14 +25,14 @@ public class EmployeeController {
     private final EmployeeService availabilityService;
 
     @GetMapping("/{employeeId}/working-hours")
-    public WorkingHours getWorkingHours(@PathVariable("employeeId") UUID employeeId) {
+    public WorkingHours getWorkingHours(@PathVariable("employeeId") int employeeId) {
         return availabilityService.getWorkingHours(employeeId);
     }
 
     //use ?date=2026-11-20 or ?from=2026-11-16&to=2026-11-22
     @GetMapping("/{employeeId}/unavailable-slots?")
     public UnavailableSlots getUnavailableSlots(
-            @PathVariable("employeeId") UUID employeeId,
+            @PathVariable("employeeId") int employeeId,
             @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam(name = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam(name = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
@@ -41,13 +41,13 @@ public class EmployeeController {
 
     @PostMapping("/{employeeId}/unavailable-slots")
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateSlotResponse createUnavailableSlot(@PathVariable("employeeId") UUID employeeId, @RequestBody UnavailableSlotRequest request) {
+    public CreateSlotResponse createUnavailableSlot(@PathVariable("employeeId") int employeeId, @RequestBody UnavailableSlotRequest request) {
         return availabilityService.createUnavailableSlot(employeeId, request);
     }
 
     @DeleteMapping("/{employeeId}/unavailable-slots/{slotId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUnavailableSlot(@PathVariable("employeeId") UUID employeeId, @PathVariable("slotId") UUID slotId) {
+    public void deleteUnavailableSlot(@PathVariable("employeeId") int employeeId, @PathVariable("slotId") int slotId) {
         availabilityService.deleteUnavailableSlot(employeeId, slotId);
     }
 }
