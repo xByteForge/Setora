@@ -103,40 +103,40 @@ export class AppointmentCalendarComponent {
     readonly day = computed(() => String(this.selectedDate().getDate()).padStart(2, '0'));
 
     readonly columns = computed<CalendarColumn[]>(() => {
-        const all = this.appointments();
-        const tz = this.timezone();
+    const all = this.appointments();
+    const tz = this.timezone();
 
-        if (this.view() === 'week') {
-            return this.weekDays().map((date) => {
-                const iso = toIsoDate(date);
-                const items = all.filter(
-                    (a) => a.employeeId === this.selectedEmployeeId() && businessDate(a.startsAt, tz) === iso,
-                );
-                return {
-                    id: iso,
-                    initials: String(date.getDate()).padStart(2, '0'),
-                    title: date.toLocaleDateString(this.lang(), { weekday: 'long' }),
-                    count: countReal(items),
-                    appointments: layoutOverlaps(items),
-                };
-            });
-        }
-
-        const iso = toIsoDate(this.selectedDate());
-        return this.employees().map((employee) => {
+    if (this.view() === 'week') {
+        return this.weekDays().map((date) => {
+            const iso = toIsoDate(date);
             const items = all.filter(
-                (a) => a.employeeId === employee.id && businessDate(a.startsAt, tz) === iso,
+                (a) => a.employeeId === this.selectedEmployeeId() && businessDate(a.start, tz) === iso,
             );
             return {
-                id: employee.id,
-                initials: initialsOf(employee.name),
-                title: employee.name,
-                subtitle: employee.employmentRole,
-                count: countReal(items),
+                id: iso,
+                initials: String(date.getDate()).padStart(2, '0'),
+                title: date.toLocaleDateString(this.lang(), { weekday: 'long' }),
+                count: items.length,
                 appointments: layoutOverlaps(items),
             };
         });
+    }
+
+    const iso = toIsoDate(this.selectedDate());
+    return this.employees().map((employee) => {
+        const items = all.filter(
+            (a) => a.employeeId === employee.id && businessDate(a.start, tz) === iso,
+        );
+        return {
+            id: employee.id,
+            initials: initialsOf(employee.name),
+            title: employee.name,
+            subtitle: employee.employmentRole,
+            count: items.length,
+            appointments: layoutOverlaps(items),
+        };
     });
+});
 
     readonly selectedId = input<number | null>(null);
     readonly appointmentSelected = output<number>();
@@ -168,7 +168,6 @@ export class AppointmentCalendarComponent {
     }
 
     select(a: CalendarAppointment): void {
-        if (a.status === 'UNAVAILABLE') return; // intervalele blocate n-au detalii
         this.appointmentSelected.emit(a.id);
     }
 }

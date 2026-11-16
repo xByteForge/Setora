@@ -82,8 +82,8 @@ const buildAppointment = (i: AppointmentInit): Appointment => ({
     employeeName: i.employee.name,
     serviceId: i.service.id,
     serviceName: i.service.name,
-    startsAt: i.startsAt,
-    endsAt: addMinutes(i.startsAt, i.service.durationMinutes),
+    start: i.startsAt,
+    end: addMinutes(i.startsAt, i.service.durationMinutes),
     status: i.status,
     priceAtAppointment: i.service.price,
     paymentMethod: i.service.paymentMethod,
@@ -199,15 +199,15 @@ export class CalendarService {
     }
 
     /** Un angajat e liber daca nu are o programare non-anulata care se suprapune. */
-    private isEmployeeFree(employeeId: number, startsAt: string, endsAt: string): boolean {
-        const start = Date.parse(startsAt);
-        const end = Date.parse(endsAt);
+    private isEmployeeFree(employeeId: number, start: string, end: string): boolean {
+        const from = Date.parse(start);
+        const to = Date.parse(end);
         return !this.appointments().some(
             (a) =>
                 a.employeeId === employeeId &&
                 a.status !== 'CANCELLED' &&
-                Date.parse(a.startsAt) < end &&
-                Date.parse(a.endsAt) > start,
+                Date.parse(a.start) < to &&
+                Date.parse(a.end) > from,
         );
     }
 

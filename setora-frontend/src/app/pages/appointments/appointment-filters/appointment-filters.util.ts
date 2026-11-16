@@ -2,12 +2,12 @@ import { AppointmentStatus } from '../../../core/models/enums/appointment-status
 import { AppointmentFilters, FilterEmployee } from '../../../core/ui-models/appointment-filters.model';
 import { BUSINESS_TIMEZONE, businessMinutesOfDay } from '../../../core/utils/date.util';
 
-/** Campurile pe care se filtreaza. CalendarAppointment le are pe toate. */
+/** Campurile pe care se filtreaza. Appointment (si CalendarAppointment) le are pe toate. */
 export interface FilterableAppointment {
   employeeId: number;
   status: AppointmentStatus;
-  startsAt: string;
-  endsAt: string;
+  start: string;
+  end: string;
 }
 
 /** Minutul de final in fusul businessului. 00:00 inseamna sfarsitul zilei (1440). */
@@ -26,9 +26,8 @@ export function filterAppointments<T extends FilterableAppointment>(
     if (f.employeeId !== null && a.employeeId !== f.employeeId) return false;
     if (f.status && a.status !== f.status) return false;
 
-    const start = businessMinutesOfDay(a.startsAt, tz);
-    const end = endMinutes(a.endsAt, tz);
-    // Raman si programarile care se suprapun doar partial cu intervalul ales.
+    const start = businessMinutesOfDay(a.start, tz);
+    const end = endMinutes(a.end, tz);
     return start < f.timeRange.to && end > f.timeRange.from;
   });
 }

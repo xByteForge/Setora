@@ -38,18 +38,18 @@ export class CalendarAppointmentBlockComponent {
 
     readonly top = computed(
         () =>
-            (businessMinutesOfDay(this.appointment().startsAt, this.timezone()) - this.startHour() * 60) *
+            (businessMinutesOfDay(this.appointment().start, this.timezone()) - this.startHour() * 60) *
             this.pxPerMinute(),
     );
 
     readonly height = computed(
-        () => minutesBetween(this.appointment().startsAt, this.appointment().endsAt) * this.pxPerMinute(),
+        () => minutesBetween(this.appointment().start, this.appointment().end) * this.pxPerMinute(),
     );
 
     readonly timeRange = computed(() => {
         const a = this.appointment();
         const tz = this.timezone();
-        return `${businessTime(a.startsAt, tz)}–${businessTime(a.endsAt, tz)}`;
+        return `${businessTime(a.start, tz)}–${businessTime(a.end, tz)}`;
     });
 
     readonly left = computed(() => `calc(6px + (100% - 12px) * ${this.lane()} / ${this.lanes()})`);

@@ -7,7 +7,7 @@ export interface UnavailableSlot {
   type: UnavailableType;
   reason: string | null;
   specificDate: string | null; 
-  dayOfWeek: DayOfWeek | null; 
+  dayOfWeek: DayOfWeek | null; // null for one-off slots
   startTime: string;           
   endTime: string;
 }

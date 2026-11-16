@@ -23,7 +23,7 @@ export class CancelAppointmentDialogComponent {
     readonly confirmed = output<void>();
 
     readonly durationMinutes = computed(() =>
-        minutesBetween(this.appointment().startsAt, this.appointment().endsAt),
+        minutesBetween(this.appointment().start, this.appointment().end),
     );
 
     readonly when = computed(() => {
@@ -32,8 +32,8 @@ export class CancelAppointmentDialogComponent {
         const locale = this.transloco.getActiveLang() === 'ro' ? 'ro-RO' : 'en-GB';
         const date = new Intl.DateTimeFormat(locale, {
             weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-        }).format(new Date(`${businessDate(a.startsAt, tz)}T00:00:00`));
-        return `${date} · ${businessTime(a.startsAt, tz)}–${businessTime(a.endsAt, tz)}`;
+        }).format(new Date(`${businessDate(a.start, tz)}T00:00:00`));
+        return `${date} · ${businessTime(a.start, tz)}–${businessTime(a.end, tz)}`;
     });
 
     close(): void {

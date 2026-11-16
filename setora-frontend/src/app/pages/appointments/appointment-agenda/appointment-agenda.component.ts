@@ -29,8 +29,8 @@ export class AppointmentAgendaComponent {
     const iso = toIsoDate(this.selectedDate());
     const tz = this.timezone();
     return this.appointments()
-      .filter((a) => businessDate(a.startsAt, tz) === iso)
-      .sort((a, b) => Date.parse(a.startsAt) - Date.parse(b.startsAt));
+      .filter((a) => businessDate(a.start, tz) === iso)
+      .sort((a, b) => Date.parse(a.start) - Date.parse(b.start));
   });
 
   readonly dateLabel = computed(() =>
@@ -45,7 +45,7 @@ export class AppointmentAgendaComponent {
 
   timeLabel(a: CalendarAppointment): string {
     const tz = this.timezone();
-    return `${businessTime(a.startsAt, tz)}–${businessTime(a.endsAt, tz)}`;
+    return `${businessTime(a.start, tz)}–${businessTime(a.end, tz)}`;
   }
 
   shift(direction: 1 | -1): void {

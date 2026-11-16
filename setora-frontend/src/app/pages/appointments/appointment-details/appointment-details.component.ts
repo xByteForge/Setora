@@ -37,11 +37,11 @@ export class AppointmentDetailsComponent {
   readonly canModify = computed(() => this.appointment().status !== 'CANCELLED');
 
   readonly durationMinutes = computed(() =>
-    minutesBetween(this.appointment().startsAt, this.appointment().endsAt),
+    minutesBetween(this.appointment().start, this.appointment().end),
   );
 
   readonly dateLabel = computed(() => {
-    const date = businessDate(this.appointment().startsAt, this.timezone());
+    const date = businessDate(this.appointment().start, this.timezone());
     const text = new Date(`${date}T00:00:00`).toLocaleDateString(this.lang(), {
       weekday: 'long', day: 'numeric', month: 'long',
     });
@@ -51,7 +51,7 @@ export class AppointmentDetailsComponent {
   readonly timeLabel = computed(() => {
     const a = this.appointment();
     const tz = this.timezone();
-    return `${businessTime(a.startsAt, tz)}–${businessTime(a.endsAt, tz)}`;
+    return `${businessTime(a.start, tz)}–${businessTime(a.end, tz)}`;
   });
 
   readonly statusKey = computed(() => `APPOINTMENTS.CALENDAR.STATUS.${this.appointment().status}`);

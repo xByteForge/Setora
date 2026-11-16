@@ -66,7 +66,7 @@ export class AppointmentsComponent {
   readonly summary = computed<AppointmentSummary>(() => {
     const tz = this.business().timezone;
     const today = todayIn(tz);
-    const items = this.appointments().filter((a) => businessDate(a.startsAt, tz) === today);
+    const items = this.appointments().filter((a) => businessDate(a.start, tz) === today);
 
     return {
       total: items.length,
@@ -99,7 +99,7 @@ export class AppointmentsComponent {
 
   onAppointmentCreated(created: Appointment): void {
     this.addOpen.set(false);
-    const [y, m, d] = businessDate(created.startsAt, this.business().timezone).split('-').map(Number);
+    const [y, m, d] = businessDate(created.start, this.business().timezone).split('-').map(Number);
     this.selectedDate.set(new Date(y, m - 1, d));
     this.selectedId.set(created.id);
     this.showToast('APPOINTMENTS.FORM.SUCCESS');

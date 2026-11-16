@@ -14,16 +14,17 @@ export interface Appointment {
   clientNote: string | null;
 
   employeeId: number;
-  employeeName: string;    // DTO only
-
+  employeeName: string;     // DTO only
+  
   serviceId: number;
-  serviceName: string;     // DTO only
-
-  startsAt: string;        
-  endsAt: string;
-
+  serviceName: string;      // DTO only
+  
+  start: string;
+  end: string;
+  
   status: AppointmentStatus;
   priceAtAppointment: number;
   paymentMethod: PaymentMethod;
+  
   createdAt: string;
 }
