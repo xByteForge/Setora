@@ -7,10 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
-public interface UnavailableSlotRepository extends JpaRepository<UnavailableSlot, UUID> {
-    List<UnavailableSlot> findByEmployeeId(UUID employeeId);
 
 public interface UnavailableSlotRepository extends JpaRepository<UnavailableSlot, Integer> {
     List<UnavailableSlot> findByEmployeeId(int employeeId);
@@ -33,7 +30,7 @@ public interface UnavailableSlotRepository extends JpaRepository<UnavailableSlot
                OR (u.specificDate >= :startDate AND u.specificDate <= :endDate))
    \s""")
     List<UnavailableSlot> findByBusinessIdAndDateRangeOrDayNotNull(
-            @Param("businessId") UUID businessId,
+            @Param("businessId") Integer businessId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );

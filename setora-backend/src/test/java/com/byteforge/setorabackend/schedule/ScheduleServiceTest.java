@@ -23,7 +23,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
@@ -52,7 +51,7 @@ class ScheduleServiceTest {
 
     @Test
     void getBusinessSchedules_ReturnsEmployeeEvenWithZeroAppointmentsOrSlots() {
-        UUID businessId = UUID.randomUUID();
+        int businessId = 1;
         Instant start = Instant.parse("2026-11-12T00:00:00Z");
         Instant end = Instant.parse("2026-11-13T00:00:00Z");
         ZoneId zoneId = ZoneId.of("Europe/Bucharest");
@@ -64,7 +63,7 @@ class ScheduleServiceTest {
         business.setTimezone(zoneId);
 
         Employee employee = new Employee();
-        employee.setId(UUID.randomUUID());
+        employee.setId(1);
 
         WorkSchedule schedule = new WorkSchedule();
         schedule.setEmployee(employee);
@@ -99,7 +98,7 @@ class ScheduleServiceTest {
 
     @Test
     void getBusinessSchedules_GroupsMultipleEmployeesAndAppointmentsCorrectly() {
-        UUID businessId = UUID.randomUUID();
+        int businessId = 1;
         Instant start = Instant.parse("2026-11-12T00:00:00Z");
         Instant end = Instant.parse("2026-11-13T00:00:00Z");
         ZoneId zoneId = ZoneId.of("Europe/Bucharest");
@@ -111,33 +110,33 @@ class ScheduleServiceTest {
         business.setTimezone(zoneId);
 
         Employee emp1 = new Employee();
-        emp1.setId(UUID.randomUUID());
+        emp1.setId(2);
 
         WorkSchedule ws1Emp1 = new WorkSchedule();
-        ws1Emp1.setId(UUID.randomUUID());
+        ws1Emp1.setId(3);
         ws1Emp1.setEmployee(emp1);
 
         WorkSchedule ws2Emp1 = new WorkSchedule();
-        ws2Emp1.setId(UUID.randomUUID());
+        ws2Emp1.setId(4);
         ws2Emp1.setEmployee(emp1);
 
         Appointment appt1Emp1 = new Appointment();
-        appt1Emp1.setId(UUID.randomUUID());
+        appt1Emp1.setId(5);
         appt1Emp1.setEmployee(emp1);
 
         Appointment appt2Emp1 = new Appointment();
-        appt2Emp1.setId(UUID.randomUUID());
+        appt2Emp1.setId(6);
         appt2Emp1.setEmployee(emp1);
 
         UnavailableSlot slotEmp1 = new UnavailableSlot();
-        slotEmp1.setId(UUID.randomUUID());
+        slotEmp1.setId(7);
         slotEmp1.setEmployee(emp1);
 
         Employee emp2 = new Employee();
-        emp2.setId(UUID.randomUUID());
+        emp2.setId(8);
 
         WorkSchedule ws1Emp2 = new WorkSchedule();
-        ws1Emp2.setId(UUID.randomUUID());
+        ws1Emp2.setId(9);
         ws1Emp2.setEmployee(emp2);
 
         when(businessService.findById(businessId)).thenReturn(business);
@@ -193,7 +192,7 @@ class ScheduleServiceTest {
 
     @Test
     void getBusinessSchedules_ThrowsEntityNotFoundException_WhenBusinessDoesNotExist() {
-        UUID businessId = UUID.randomUUID();
+        int businessId = 1;
         Instant start = Instant.parse("2026-11-12T00:00:00Z");
         Instant end = Instant.parse("2026-11-13T00:00:00Z");
 

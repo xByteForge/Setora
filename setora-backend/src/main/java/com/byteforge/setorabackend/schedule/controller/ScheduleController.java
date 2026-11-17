@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
@@ -20,7 +19,7 @@ public class ScheduleController {
 
     @GetMapping("businesses/{businessId}/schedules")
     public ResponseEntity<List<EmployeeScheduleDto>> getEmployeesSchedules(
-            @PathVariable UUID businessId,
+            @PathVariable Integer businessId,
             @Valid BusinessScheduleRequest request
     ) {
         List<EmployeeScheduleDto> response =

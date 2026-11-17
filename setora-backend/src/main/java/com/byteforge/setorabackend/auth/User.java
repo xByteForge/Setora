@@ -60,7 +60,7 @@ public class User {
     }
 
     public String getNameInitials() {
-        String name = getFullName();
+        String name = getName();
         if (name == null || name.isBlank()) {
             return "";
         }
@@ -75,4 +75,5 @@ public class User {
 
         return (parts[0].substring(0, 1) + parts[parts.length - 1].charAt(0)).toUpperCase();
     }
+
 }

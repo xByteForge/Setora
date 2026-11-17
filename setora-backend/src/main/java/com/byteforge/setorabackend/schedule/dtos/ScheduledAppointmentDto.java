@@ -1,26 +1,26 @@
 package com.byteforge.setorabackend.schedule.dtos;
 
+import com.byteforge.setorabackend.appointment.AppointmentStatus;
 import com.byteforge.setorabackend.appointment.PaymentMethod;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.UUID;
 
 public record ScheduledAppointmentDto(
-        UUID appointmentId,
-        UUID clientId,
+        int appointmentId,
+        Integer clientId,
         String clientName,
         String clientPhone,
         String clientEmail,
-        UUID serviceId,
-        String serviceName,
-        Instant startsAt,
-        Instant endsAt,
-        String status,
-        Integer durationMinutes,
-        BigDecimal price,
-        String currency,
+        String clientNote,
+        Instant start,
+        Instant end,
+        Instant createdAt,
+        int durationMinutes,
+        String location,
+        AppointmentStatus status,
+        BigDecimal priceAtAppointment,
         PaymentMethod paymentMethod,
-        Boolean isPaid,
-        String clientNote
+        int serviceId,
+        String serviceName
 ) {}
