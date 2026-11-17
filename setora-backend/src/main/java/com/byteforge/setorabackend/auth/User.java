@@ -58,4 +58,22 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.passwordHash = passwordHash;
     }
+
+    public String getNameInitials() {
+        String name = getName();
+        if (name == null || name.isBlank()) {
+            return "";
+        }
+
+        String[] parts = name.trim().split("[\\s\\-]+");
+        if (parts.length == 0 || parts[0].isEmpty()) {
+            return "";
+        }
+        if (parts.length == 1) {
+            return parts[0].substring(0, 1).toUpperCase();
+        }
+
+        return (parts[0].substring(0, 1) + parts[parts.length - 1].charAt(0)).toUpperCase();
+    }
+
 }
