@@ -7,6 +7,7 @@ import java.time.ZoneId;
 import java.util.List;
 
 
+
 //request and response bodies of the availability endpoints
 //all times are local times in the timezone of the business, the end is exclusive
 public final class AvailabilityDtos {
