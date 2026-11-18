@@ -210,5 +210,81 @@
   },
   "ERRORS": {
     "GENERIC": "Something went wrong. Please try again."
+  },
+
+  "SETTINGS": {
+  "COMMON": { "CANCEL": "Cancel" },
+  "HEADER": {
+    "PROFILE_TITLE": "Profile details",
+    "PROFILE_SUBTITLE": "Update your personal details and how you appear in bookings.",
+    "SETTINGS_TITLE": "Settings",
+    "SETTINGS_SUBTITLE": "Manage your account, security and app appearance."
+  },
+  "NAV": {
+    "TITLE": "My account",
+    "PROFILE": "Profile details",
+    "SETTINGS": "Settings"
+  },
+  "PROFILE": {
+    "TITLE": "Personal information",
+    "VIEW_HINT": "Your details used for bookings.",
+    "EDIT_HINT": "Edit the details below, then save.",
+    "EDIT": "Edit profile",
+    "CHANGE_PHOTO": "Change photo",
+    "PHOTO_HINT": "JPG or PNG, maximum 5 MB.",
+    "FIRST_NAME": "First name",
+    "LAST_NAME": "Last name",
+    "USERNAME": "Username",
+    "PHONE": "Phone number",
+    "EMAIL": "Email address",
+    "EMAIL_HINT": "The login email is changed from Settings.",
+    "SAVE": "Save changes"
+  },
+  "ACCOUNT": {
+    "TITLE": "Account",
+    "SUBTITLE": "Your basic account details.",
+    "LOGIN_EMAIL": "Login email",
+    "CHANGE": "Change",
+    "PERSONAL": "Personal details",
+    "PERSONAL_HINT": "Name, photo, phone and username",
+    "EDIT_PROFILE": "Edit profile"
+  },
+  "PASSWORD": {
+    "TITLE": "Change password",
+    "HINT": "Use at least 8 characters, with letters and numbers.",
+    "CURRENT": "Current password",
+    "NEW": "New password",
+    "CONFIRM": "Confirm new password",
+    "TOGGLE": "Show or hide password",
+    "UPDATE": "Update password"
+  },
+  "NOTIFICATIONS": {
+    "TITLE": "Notifications",
+    "SUBTITLE": "Choose how you want to be notified.",
+    "EMAIL": "Email",
+    "SMS": "SMS",
+    "PUSH": "Push",
+    "CONFIRMED": "Booking confirmed",
+    "CONFIRMED_HINT": "Right after the business confirms",
+    "CHANGED": "Booking cancelled or moved",
+    "CHANGED_HINT": "When something changes with your appointment",
+    "REMINDER": "Reminder",
+    "REMINDER_HINT": "1 hour before the start"
+  },
+  "APPEARANCE": {
+    "TITLE": "Appearance",
+    "SUBTITLE": "Choose the app theme on this device.",
+    "LIGHT": "Light",
+    "DARK": "Dark"
+  },
+  "DELETE": {
+    "TITLE": "Delete account",
+    "DESCRIPTION": "Permanently delete your account. This action cannot be undone.",
+    "ITEM_HISTORY": "You lose your booking history",
+    "ITEM_BOOKINGS": "Upcoming bookings are cancelled automatically",
+    "BUTTON": "Delete account",
+    "CONFIRM": "Are you sure? Your account and data will be permanently deleted.",
+    "CONFIRM_BUTTON": "Yes, delete account"
   }
+}
 }
