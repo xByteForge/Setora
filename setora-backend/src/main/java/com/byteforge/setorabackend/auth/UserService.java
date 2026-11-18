@@ -209,4 +209,10 @@ public class UserService {
             );
         }
     }
+
+    public void updateAvatarPathByUsername(int userId, String filename) {
+        User user = userRepository.findById(userId).orElseThrow();
+        user.setAvatarPath(filename);//TODO maybe you can get user directly in controller
+        userRepository.save(user);
+    }
 }
