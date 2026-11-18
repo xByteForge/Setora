@@ -1,4 +1,4 @@
-## Upload avatar
+### Upload avatar
 POST http://localhost:8080/api/avatar/upload
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
@@ -8,3 +8,17 @@ Content-Type: image/jpeg
 
 < ../src/test/resources/cat.jpg
 --WebAppBoundary--
+
+### Upload other avatar
+POST http://localhost:8080/api/avatar/upload
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="cat_on_snow.jpg"
+Content-Type: image/jpeg
+
+< ../src/test/resources/cat_on_snow.jpg
+--WebAppBoundary--
+
+### Get avatar
+GET http://localhost:8080/api/avatar/1
