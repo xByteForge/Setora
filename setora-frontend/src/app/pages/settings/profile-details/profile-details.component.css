@@ -18,19 +18,7 @@
   font-size: 2rem;
   font-weight: 700;
 }
-.avatar__badge {
-  position: absolute;
-  right: -2px;
-  bottom: -2px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--brand-mint);
-  color: #052e27;
-  display: grid;
-  place-items: center;
-  border: 3px solid var(--paper);
-}
+
 
 .details {
   display: grid;
@@ -85,4 +73,17 @@
 .phone__prefix-select option {
   background: var(--paper);
   color: var(--ink);
+}
+
+.avatar {
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }

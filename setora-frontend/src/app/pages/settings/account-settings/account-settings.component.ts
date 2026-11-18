@@ -1,40 +1,33 @@
-import { ChangeDetectionStrategy, Component, inject, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslocoModule } from '@ngneat/transloco';
 import { User } from '../../../core/models/user.model';
 import {
   NotificationChannel,
   NotificationEvent,
-  NotificationPreferences,
-  UserService,
-} from '../../../core/services/user.service';
+  UserNotificationPreference,
+} from '../../../core/models/enums/notification-type.model';
+import { UserService } from '../../../core/services/user.service';
 import { ThemeService, Theme } from '../../../core/services/theme.service';
 
 export type ThemeMode = 'light' | 'dark';
 type PasswordField = 'current' | 'new' | 'confirm';
 
 const NOTIFICATION_ROWS: { event: NotificationEvent; titleKey: string; hintKey: string }[] = [
-  { event: 'bookingConfirmed', titleKey: 'SETTINGS.NOTIFICATIONS.CONFIRMED', hintKey: 'SETTINGS.NOTIFICATIONS.CONFIRMED_HINT' },
-  { event: 'bookingChanged', titleKey: 'SETTINGS.NOTIFICATIONS.CHANGED', hintKey: 'SETTINGS.NOTIFICATIONS.CHANGED_HINT' },
-  { event: 'reminder', titleKey: 'SETTINGS.NOTIFICATIONS.REMINDER', hintKey: 'SETTINGS.NOTIFICATIONS.REMINDER_HINT' },
+  { event: 'BOOKING_CONFIRMED', titleKey: 'SETTINGS.NOTIFICATIONS.CONFIRMED', hintKey: 'SETTINGS.NOTIFICATIONS.CONFIRMED_HINT' },
+  { event: 'BOOKING_CHANGED', titleKey: 'SETTINGS.NOTIFICATIONS.CHANGED', hintKey: 'SETTINGS.NOTIFICATIONS.CHANGED_HINT' },
+  { event: 'REMINDER', titleKey: 'SETTINGS.NOTIFICATIONS.REMINDER', hintKey: 'SETTINGS.NOTIFICATIONS.REMINDER_HINT' },
 ];
 
-// Push channel removed; only email and sms remain.
 const CHANNELS: { id: NotificationChannel; labelKey: string }[] = [
-  { id: 'email', labelKey: 'SETTINGS.NOTIFICATIONS.EMAIL' },
-  { id: 'sms', labelKey: 'SETTINGS.NOTIFICATIONS.SMS' },
+  { id: 'EMAIL', labelKey: 'SETTINGS.NOTIFICATIONS.EMAIL' },
+  { id: 'SMS', labelKey: 'SETTINGS.NOTIFICATIONS.SMS' },
 ];
 
 const THEME_OPTIONS: { value: ThemeMode; labelKey: string }[] = [
   { value: 'light', labelKey: 'SETTINGS.APPEARANCE.LIGHT' },
   { value: 'dark', labelKey: 'SETTINGS.APPEARANCE.DARK' },
 ];
-
-const DEFAULT_NOTIFICATIONS: NotificationPreferences = {
-  bookingConfirmed: { email: true, sms: true, push: false },
-  bookingChanged: { email: true, sms: false, push: false },
-  reminder: { email: false, sms: true, push: false },
-};
 
 @Component({
   selector: 'app-account-settings',
@@ -61,7 +54,7 @@ export class AccountSettingsComponent {
     this.themeService.currentTheme.set(mode);
   }
 
-  readonly notifications = signal<NotificationPreferences>(DEFAULT_NOTIFICATIONS);
+  readonly notifications = signal<UserNotificationPreference[]>([]);
 
   readonly passwordForm = this.fb.nonNullable.group({
     currentPassword: '',
@@ -75,6 +68,13 @@ export class AccountSettingsComponent {
   });
 
   readonly confirmingDelete = signal(false);
+
+  constructor() {
+    effect(() => {
+      const u = this.user();
+      this.notifications.set(u.notificationPreferences ?? []);
+    });
+  }
 
   changeLoginEmail(): void {
     // TODO: login email change flow
@@ -90,15 +90,19 @@ export class AccountSettingsComponent {
   }
 
   isChecked(event: NotificationEvent, channel: NotificationChannel): boolean {
-    return this.notifications()[event][channel];
+    return this.notifications().some((p) => p.event === event && p.channel === channel);
   }
 
   toggleNotification(event: NotificationEvent, channel: NotificationChannel): void {
-    this.notifications.update((n) => ({
-      ...n,
-      [event]: { ...n[event], [channel]: !n[event][channel] },
-    }));
-    this.userService.updateNotificationPreferences(this.notifications()).subscribe();
+    this.notifications.update((prefs) => {
+      const exists = prefs.some((p) => p.event === event && p.channel === channel);
+      const updated = exists
+        ? prefs.filter((p) => !(p.event === event && p.channel === channel))
+        : [...prefs, { event, channel }];
+
+      this.userService.updateNotificationPreferences(updated).subscribe();
+      return updated;
+    });
   }
 
   deleteAccount(): void {

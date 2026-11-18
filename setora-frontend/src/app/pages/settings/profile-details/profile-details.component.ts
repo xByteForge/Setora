@@ -42,6 +42,7 @@ export class ProfileDetailsComponent {
 
   readonly user = input.required<User>();
   readonly editing = signal(false);
+  readonly imageError = signal(false);
 
   readonly countries = COUNTRY_OPTIONS;
 
@@ -59,7 +60,12 @@ export class ProfileDetailsComponent {
   });
 
   constructor() {
-    effect(() => this.patchForm(this.user()));
+     effect(() => {
+      const user = this.user();
+
+      this.patchForm(user);
+      this.imageError.set(false);
+    });
   }
 
   startEditing(): void {
