@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslocoModule } from '@ngneat/transloco';
 import { User } from '../../../core/models/user.model';
 import {
@@ -9,6 +8,8 @@ import {
 } from '../../../core/models/enums/notification-type.model';
 import { UserService } from '../../../core/services/user.service';
 import { ThemeService, Theme } from '../../../core/services/theme.service';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { finalize } from 'rxjs';
 
 export type ThemeMode = 'light' | 'dark';
 type PasswordField = 'current' | 'new' | 'confirm';
@@ -50,17 +51,25 @@ export class AccountSettingsComponent {
   private readonly themeService = inject(ThemeService);
   readonly theme = this.themeService.currentTheme;
 
+  readonly showEmailForm = signal(false);
+  readonly emailLoading = signal(false);
+  readonly emailSuccess = signal(false);
+  readonly emailError = signal('');
+
+  readonly deleteForm = this.fb.nonNullable.group({
+    currentPassword: ['', Validators.required],
+  });
+
+  readonly deleteLoading = signal(false);
+  readonly deleteError = signal('');
+
   setTheme(mode: Theme): void {
     this.themeService.currentTheme.set(mode);
   }
 
   readonly notifications = signal<UserNotificationPreference[]>([]);
 
-  readonly passwordForm = this.fb.nonNullable.group({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: '',
-  });
+  
   readonly visible = signal<Record<PasswordField, boolean>>({
     current: false,
     new: false,
@@ -77,16 +86,110 @@ export class AccountSettingsComponent {
   }
 
   changeLoginEmail(): void {
-    // TODO: login email change flow
+    this.emailForm.markAllAsTouched();
+    this.emailSuccess.set(false);
+    this.emailError.set('');
+
+    if (this.emailForm.invalid) {
+      return;
+    }
+
+    const { newEmail, confirmEmail, currentPassword } =
+      this.emailForm.getRawValue();
+
+    if (newEmail.trim().toLowerCase() !== confirmEmail.trim().toLowerCase()) {
+      this.emailError.set('Email addresses do not match.');
+      return;
+    }
+
+    if (newEmail.trim().toLowerCase() === this.user().email.toLowerCase()) {
+      this.emailError.set('Your new email must be different from your current email.');
+      return;
+    }
+
+    this.emailLoading.set(true);
+
+    this.userService.changeEmail({
+      newEmail: newEmail.trim(),
+      currentPassword,
+    }).subscribe({
+      next: () => {
+        this.emailLoading.set(false);
+        this.emailSuccess.set(true);
+        this.showEmailForm.set(false);
+        this.emailForm.reset();
+      },
+      error: () => {
+        this.emailLoading.set(false);
+        this.emailError.set('Unable to update your email. Please check your password and try again.');
+      },
+    });
+  }
+
+  cancelEmailChange(): void {
+    this.showEmailForm.set(false);
+    this.emailForm.reset();
+    this.emailError.set('');
+    this.emailSuccess.set(false);
   }
 
   toggleVisible(field: PasswordField): void {
     this.visible.update((v) => ({ ...v, [field]: !v[field] }));
   }
 
-  changePassword(): void {
-    const { currentPassword, newPassword } = this.passwordForm.getRawValue();
-    this.userService.changePassword({ currentPassword, newPassword }).subscribe();
+  readonly passwordForm = this.fb.nonNullable.group({
+    currentPassword: ['', Validators.required],
+    newPassword: ['', [
+      Validators.required,
+      Validators.minLength(8),
+    ]],
+    confirmPassword: ['', Validators.required],
+  });
+
+  readonly passwordLoading = signal(false);
+  readonly passwordSuccess = signal(false);
+  readonly passwordError = signal('');
+
+changePassword(): void {
+    this.passwordForm.markAllAsTouched();
+    this.passwordSuccess.set(false);
+    this.passwordError.set('');
+
+    if (this.passwordForm.invalid) {
+      return;
+    }
+
+    const { currentPassword, newPassword, confirmPassword } =
+      this.passwordForm.getRawValue();
+
+    if (newPassword !== confirmPassword) {
+      this.passwordError.set('Passwords do not match.');
+      return;
+    }
+
+    if (currentPassword === newPassword) {
+      this.passwordError.set('New password must be different from the current password.');
+      return;
+    }
+
+    this.passwordLoading.set(true);
+
+    this.userService.changePassword({ currentPassword, newPassword })
+      .pipe(finalize(() => this.passwordLoading.set(false)))
+      .subscribe({
+        next: () => {
+          this.passwordSuccess.set(true);
+          this.passwordForm.reset();
+          this.visible.set({
+            current: false,
+            new: false,
+            confirm: false,
+          });
+        },
+        error: () => {
+          this.passwordError.set('Unable to change password. Please check your current password and try again.');
+        },
+      });
   }
 
   isChecked(event: NotificationEvent, channel: NotificationChannel): boolean {
@@ -106,6 +209,45 @@ export class AccountSettingsComponent {
   }
 
   deleteAccount(): void {
-    this.userService.deleteAccount().subscribe();
+    this.deleteForm.markAllAsTouched();
+    this.deleteError.set('');
+
+    if (this.deleteForm.invalid) {
+      return;
+    }
+
+    const { currentPassword } = this.deleteForm.getRawValue();
+
+    this.deleteLoading.set(true);
+
+    this.userService.deleteAccount({ currentPassword }).subscribe({
+      next: () => {
+        this.deleteLoading.set(false);
+
+        // Account deletion succeeded.
+        // TODO: Log out and redirect to the login page.
+      },
+      error: () => {
+        this.deleteLoading.set(false);
+        this.deleteError.set(
+          'Unable to delete your account. Please check your password and try again.'
+        );
+      },
+    });
   }
+
+  cancelDelete(): void {
+    this.confirmingDelete.set(false);
+    this.deleteForm.reset();
+    this.deleteError.set('');
+    this.visible.update(v => ({ ...v, current: false }));
+  }
+
+  
+
+  readonly emailForm = this.fb.nonNullable.group({
+    newEmail: ['', [Validators.required, Validators.email]],
+    confirmEmail: ['', [Validators.required, Validators.email]],
+    currentPassword: ['', Validators.required],
+  });
 }
