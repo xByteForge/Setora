@@ -1,8 +1,11 @@
-import { ChangeDetectionStrategy, Component, HostListener, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoModule } from '@ngneat/transloco';
 import { ThemeService } from '../../services/theme.service';
 import { MobileMenuService } from '../../services/mobile-menu.service';
+import { UserService } from '../../services/user.service';
+
 
 interface NavItem {
   path: string;
@@ -22,12 +25,48 @@ interface NavItem {
 export class SidebarComponent {
   readonly menu = inject(MobileMenuService);
   readonly theme = inject(ThemeService);
+  private readonly userService = inject(UserService);
 
   businessName = 'Studio Armonia';
   businessSubtitle = 'Spațiu business · București';
-  userName = 'Emma Pavel';
-  userRole = 'Administrator';
-  userInitials = 'EP';
+
+  readonly currentUser = toSignal(
+    this.userService.getCurrentUser(),
+    { initialValue: null }
+  );
+
+  readonly userName = computed(() => {
+    const u = this.currentUser();
+    return u ? `${u.firstName} ${u.lastName}` : '';
+  });
+
+  readonly userRole = computed(() => {
+    const role = this.currentUser()?.role;
+
+    switch (role) {
+      case 'ADMIN':
+        return 'Administrator';
+      case 'EMPLOYEE':
+        return 'Employee';
+      case 'CLIENT':
+        return 'Client';
+      default:
+        return '';
+    }
+  });
+
+  readonly userInitials = computed(() => {
+    const u = this.currentUser();
+
+    if (!u) return '';
+
+    return `${u.firstName?.charAt(0) ?? ''}${u.lastName?.charAt(0) ?? ''}`.toUpperCase();
+  });
+
+  readonly userAvatarUrl = computed(() =>
+    this.currentUser()?.profilePictureUrl ?? null
+  );
+
 
   navItems: NavItem[] = [
     { path: '/discover', labelKey: 'NAV.DISCOVER', iconClass: 'fa-regular fa-compass' },
