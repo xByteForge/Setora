@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -260,5 +261,9 @@ public class AppointmentService {
                 .stream()
                 .map(AppointmentMapper::toResponseDto)
                 .toList();
+    }
+
+    public List<Appointment> findByBusinessIdAndDateRange(Integer businessId, Instant start, Instant end) {
+        return appointmentRepository.findByBusinessIdAndDateRange(businessId, start, end);
     }
 }

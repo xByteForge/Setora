@@ -21,7 +21,6 @@ import lombok.Setter;
 import java.util.HashSet;
 import java.util.Set;
 
-
 @Entity
 @Table(name = "employees")
 @Getter
@@ -51,4 +50,7 @@ public class Employee {
             inverseJoinColumns = @JoinColumn(name = "service_id")
     )
     private Set<ServiceItem> serviceItems = new HashSet<>();
+
+    @Column(name = "employment_role")
+    private String employmentRole;
 }

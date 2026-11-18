@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AppointmentsHeaderComponent } from './appointment-header/appointment-header.component';
 import { AppointmentFiltersComponent } from './appointment-filters/appointment-filters.component';
@@ -38,7 +38,7 @@ export class AppointmentsComponent {
 
   // Pagina deține datele; calendarul doar le afișează.
   readonly business = signal(this.catalog.getBusiness());
-  readonly employees = signal(this.calendarService.getEmployees());
+  readonly employees = computed(() => this.calendarService.getEmployees());
   readonly appointments = computed(() => this.calendarService.getAppointments());
 
   /** Locația e a businessului, deci e aceeași pentru toate programările. */
@@ -49,7 +49,7 @@ export class AppointmentsComponent {
 
   readonly filters = signal<AppointmentFilters>(DEFAULT_FILTERS);
   /** Ziua afișată în calendar (sincronizată cu acesta). */
-  readonly selectedDate = signal(new Date(2026, 10, 7));
+  readonly selectedDate = signal(new Date(2026, 10, 23));
   readonly view = signal<CalendarView>('day');
 
   // Se recalculează automat la orice schimbare de filtru.
@@ -58,22 +58,16 @@ export class AppointmentsComponent {
   );
   readonly visibleEmployees = computed(() => filterEmployees(this.employees(), this.filters()));
 
+  /** Sumarul programărilor pentru ziua curentă (astăzi), obținut din backend conform GET /api/appointments/summary */
+  readonly summary = signal<AppointmentSummary>({ total: 0, confirmed: 0, cancelled: 0 });
 
-  /**
-   * Cardurile de sumar arată totalul pentru azi (în fusul businessului),
-   * ignorând ziua selectată în calendar și filtrele.
-   */
-  readonly summary = computed<AppointmentSummary>(() => {
-    const tz = this.business().timezone;
-    const today = todayIn(tz);
-    const items = this.appointments().filter((a) => businessDate(a.start, tz) === today);
-
-    return {
-      total: items.length,
-      confirmed: items.filter((a) => a.status === 'CONFIRMED').length,
-      cancelled: items.filter((a) => a.status === 'CANCELLED').length,
-    };
-  });
+  loadSummary(): void {
+    const today = todayIn(this.business().timezone);
+    this.calendarService.getSummary(this.business().id, today).subscribe({
+      next: (data) => this.summary.set(data),
+      error: (err) => console.error('Eroare la încărcarea sumarului:', err),
+    });
+  }
 
   onViewChange(view: CalendarView): void {
     this.view.set(view);
@@ -102,6 +96,7 @@ export class AppointmentsComponent {
     const [y, m, d] = businessDate(created.start, this.business().timezone).split('-').map(Number);
     this.selectedDate.set(new Date(y, m - 1, d));
     this.selectedId.set(created.id);
+    this.loadSummary();
     this.showToast('APPOINTMENTS.FORM.SUCCESS');
   }
 
@@ -147,7 +142,7 @@ export class AppointmentsComponent {
       next: () => {
         this.cancelBusy.set(false);
         this.cancelingId.set(null);
-        // selectedId rămâne setat, deci panoul arată statusul anulat
+        this.loadSummary();
         this.showToast('APPOINTMENTS.CANCEL.SUCCESS');
       },
       error: () => {
@@ -169,5 +164,11 @@ export class AppointmentsComponent {
     const onChange = (e: MediaQueryListEvent) => this.isMobile.set(e.matches);
     this.mql.addEventListener('change', onChange);
     inject(DestroyRef).onDestroy(() => this.mql.removeEventListener('change', onChange));
+
+    // Încărcare automată a sumarului pentru ziua curentă (astăzi) când se schimbă business-ul
+    effect(() => {
+      this.business();
+      this.loadSummary();
+    });
   }
 }

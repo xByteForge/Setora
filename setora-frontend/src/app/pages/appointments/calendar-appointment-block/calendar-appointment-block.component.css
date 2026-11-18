@@ -7,12 +7,21 @@
     position: absolute;
     box-sizing: border-box;
     min-width: 0;
-    padding: 7px 10px;
+    padding: 4px 8px;
     border: 1px solid var(--tone-border);
-    border-radius: 4px;
+    border-radius: 6px;
     background: var(--tone-bg);
     color: var(--ink);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    cursor: pointer;
+    transition: box-shadow 0.15s ease;
+}
+
+:host(:hover) {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 :host(.confirmed) {
@@ -21,20 +30,15 @@
     --tone-text: var(--appt-confirmed-text);
 }
 
-:host(.pending) {
-    --tone-bg: var(--appt-pending-bg);
-    --tone-border: var(--appt-pending-border);
-    --tone-text: var(--appt-pending-text);
-}
-
 :host(.cancelled) {
     --tone-bg: var(--appt-cancelled-bg);
     --tone-border: var(--appt-cancelled-border);
     --tone-text: var(--appt-cancelled-text);
 }
 
-/* Clasa vine din status ('blocked'), nu 'unavailable'. */
-:host(.blocked) {
+/* Clasa vine din status ('blocked' sau 'unavailable'). */
+:host(.blocked),
+:host(.unavailable) {
     --tone-bg: var(--appt-blocked-bg);
     --tone-border: var(--appt-blocked-border);
     --tone-text: var(--appt-blocked-text);
@@ -42,35 +46,38 @@
 
 /* Programarea deschisă în panoul de detalii (se activează cu [class.selected]). */
 :host(.selected) {
-    outline: 2px solid black;
-    outline-offset: 2px;
+    outline: 2px solid var(--ink);
+    outline-offset: 1px;
 }
 
 p {
     margin: 0;
-    font-size: 12px;
+    font-size: 11px;
     line-height: 1.25;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-:host(.compact) {
-    padding: 3px 6px;
-    border-radius: 4px;
+.block__time {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--tone-text);
 }
 
-p {
-    margin: 0;
+.block__client {
     font-size: 12px;
-    line-height: 1.25;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.block__meta {
+    font-size: 11px;
+    color: var(--tone-text);
 }
 
 :host(.compact) {
-    padding: 3px 6px;
+    padding: 2px 6px;
     border-radius: 4px;
 }
 
@@ -79,24 +86,10 @@ p {
 }
 
 :host(.compact) p {
-    font-size: 11px;
+    font-size: 10px;
+    line-height: 1.15;
 }
 
 :host(.compact) .block__client {
-    font-size: 12px;
-}
-
-.block__time {
-    font-weight: 600;
-    color: var(--tone-text);
-}
-
-.block__client {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--ink);
-}
-
-.block__meta {
-    color: var(--tone-text);
+    font-size: 11px;
 }
