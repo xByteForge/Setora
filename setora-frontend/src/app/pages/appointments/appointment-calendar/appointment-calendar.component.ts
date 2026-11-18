@@ -56,7 +56,7 @@ export class AppointmentCalendarComponent {
     readonly selectedEmployeeId = computed(() => this.employees()[0]?.id ?? null);
 
     /** Two-way cu pagina, ca sumarul sa numere ziua afisata. */
-    readonly selectedDate = model(new Date(2026, 10, 7));
+    readonly selectedDate = model(new Date(2026, 10, 23));
     /** Two-way cu pagina, ca filtrele sa stie ce vedere e activa. */
     readonly view = model<CalendarView>('day');
 
