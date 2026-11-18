@@ -27,10 +27,6 @@ public class DatabaseUserDetailsService implements UserDetailsService { // this 
         if ("ghost@gmail.com".equalsIgnoreCase(user.getEmail()))
             throw new UsernameNotFoundException("Invalid credentials");
 
-        return org.springframework.security.core.userdetails.User
-                .withUsername(user.getEmail())
-                .password(user.getPasswordHash())
-                .roles(user.getRole().name())
-                .build();
+        return new CustomUserDetails(user);
     }
 }
