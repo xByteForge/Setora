@@ -8,8 +8,6 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.time.Instant;
-import java.util.List;
-
 
 public interface AppointmentRepository
         extends JpaRepository<Appointment, Integer>,
@@ -34,5 +32,21 @@ public interface AppointmentRepository
             @Param("confirmed") AppointmentStatus confirmed,
             @Param("pending") AppointmentStatus pending,
             @Param("cancelled") AppointmentStatus cancelled
+    );
+
+    @Query("""
+        SELECT a FROM Appointment a
+        JOIN FETCH a.employee e
+        JOIN FETCH a.client c
+        JOIN FETCH a.serviceItem s
+        WHERE s.business.id = :businessId
+        AND a.interval.start >= :startDate
+        AND a.interval.end <= :endDate
+        ORDER BY a.interval.start ASC
+    """)
+    List<Appointment> findByBusinessIdAndDateRange(
+            @Param("businessId") Integer businessId,
+            @Param("startDate") Instant startDate,
+            @Param("endDate") Instant endDate
     );
 }

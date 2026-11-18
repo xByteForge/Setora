@@ -97,5 +97,6 @@ public class Appointment {
     @Column(nullable = true)
     private String clientNote;
 
+
 }
 
