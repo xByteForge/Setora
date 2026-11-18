@@ -1,4 +1,6 @@
+
 import { Injectable, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { Observable, of } from 'rxjs';
 import { User } from '../models/user.model';
 import { UserRole } from '../models/enums/user-role.model';
@@ -37,45 +39,50 @@ const INITIAL_USER: User = {
 export class UserService {
   private readonly currentUserSignal = signal<User>(INITIAL_USER);
 
-  // TODO: GET /api/me
   getCurrentUser(): Observable<User> {
-    return of(this.currentUserSignal());
+    return toObservable(this.currentUserSignal);
   }
 
-  // TODO: PUT /api/me/profile
   updateProfile(update: ProfileUpdate): Observable<User> {
     const updatedUser: User = {
       ...this.currentUserSignal(),
       ...update,
     };
+
     this.currentUserSignal.set(updatedUser);
     return of(updatedUser);
   }
 
-  // TODO: POST /api/me/avatar (multipart/form-data)
-  uploadAvatar(file: File): Observable<string> {
+  updateProfilePicture(file: File): Observable<string> {
     const previewUrl = URL.createObjectURL(file);
-    this.currentUserSignal.update((u) => ({ ...u, profilePictureUrl: previewUrl }));
+
+    this.currentUserSignal.update(user => ({
+      ...user,
+      profilePictureUrl: previewUrl,
+    }));
+
     return of(previewUrl);
   }
 
-  // TODO: PUT /api/me/password
   changePassword(_change: PasswordChange): Observable<void> {
     return of(void 0);
   }
 
-  // TODO: GET /api/me/notification-preferences
   getNotificationPreferences(): Observable<UserNotificationPreference[]> {
     return of(this.currentUserSignal().notificationPreferences ?? []);
   }
 
-  // TODO: PUT /api/me/notification-preferences
-  updateNotificationPreferences(prefs: UserNotificationPreference[]): Observable<UserNotificationPreference[]> {
-    this.currentUserSignal.update((u) => ({ ...u, notificationPreferences: prefs }));
+  updateNotificationPreferences(
+    prefs: UserNotificationPreference[]
+  ): Observable<UserNotificationPreference[]> {
+    this.currentUserSignal.update(user => ({
+      ...user,
+      notificationPreferences: prefs,
+    }));
+
     return of(prefs);
   }
 
-  // TODO: DELETE /api/me
   deleteAccount(): Observable<void> {
     return of(void 0);
   }
