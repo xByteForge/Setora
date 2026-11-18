@@ -105,3 +105,55 @@
   .theme-options { grid-template-columns: 1fr; }
   .notif-row { grid-template-columns: minmax(0, 1fr) 48px 48px 48px; }
 }
+
+.password-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  margin-bottom: 16px;
+}
+
+.password-message--success {
+  color: #15803d;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+
+.password-message--error {
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
+.field__error {
+  display: block;
+  color: #dc2626;
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
+
+.form-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.delete-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.delete-confirm .field {
+  max-width: 420px;
+  width: 100%;
+}
+
+.delete-confirm .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}

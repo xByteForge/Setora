@@ -5,6 +5,7 @@ import { Observable, of } from 'rxjs';
 import { User } from '../models/user.model';
 import { UserRole } from '../models/enums/user-role.model';
 import { UserNotificationPreference } from '../models/enums/notification-type.model';
+import { EmailChange } from '../ui-models/email-change.model';
 
 export interface ProfileUpdate {
   firstName: string;
@@ -83,7 +84,19 @@ export class UserService {
     return of(prefs);
   }
 
-  deleteAccount(): Observable<void> {
+  deleteAccount(change: { currentPassword: string }): Observable<void> {
+    
     return of(void 0);
+  }
+
+  changeEmail(change: EmailChange): Observable<User> {
+    const updatedUser: User = {
+      ...this.currentUserSignal(),
+      email: change.newEmail,
+    };
+
+    this.currentUserSignal.set(updatedUser);
+
+    return of(updatedUser);
   }
 }
