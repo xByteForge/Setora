@@ -20,20 +20,22 @@ import java.util.UUID;
 class AvatarService {
     final private UserService userService;
 
+    static Path uploadDir = Paths.get("uploads", "user-avatars")
+            .toAbsolutePath()
+            .normalize();
+
     public void storeAvatar(MultipartFile file, int userId) {
         validateImage(file);
 
         String ext = switch (Objects.requireNonNullElse(file.getContentType(), "")) {
-            case "image/png"  -> "png";
+            case "image/png" -> "png";
             case "image/webp" -> "webp";
-            default           -> "jpg";
+            default -> "jpg";
         };
 
         String filename = UUID.randomUUID().toString() + "." + ext;
 
-        Path uploadDir = Paths.get("uploads", "user-avatars")
-                .toAbsolutePath()
-                .normalize();
+
         Path fullPath = uploadDir.resolve(filename);
 
         try {
@@ -43,8 +45,19 @@ class AvatarService {
             throw new RuntimeException("Could not store avatar", ex);
         }
 
-        userService.updateAvatarPathByUsername(userId, filename);
+        String oldPath = userService.updateAvatarPathByUserId(userId, filename);
+        try {
+            deleteOldAvatarPath(oldPath, filename);
+        } catch (IOException e) {
+            throw new RuntimeException("Error deleting old avatar", e);
+        }
     }
+
+    public String getAvatarPathByUser(int userId) {
+        return userService.getAvatarPathByUser(userId);
+    }
+
+    // --------- helpers -------------
     private void validateImage(MultipartFile file) {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("No file received");
@@ -55,7 +68,7 @@ class AvatarService {
         }
 
         String contentType = file.getContentType();
-        if (!List.of("image/jpeg", "image/png","image/webp").contains(contentType)) {
+        if (!List.of("image/jpeg", "image/png", "image/webp").contains(contentType)) {
             throw new IllegalArgumentException("Unsupported image type");
         }
 
@@ -67,5 +80,12 @@ class AvatarService {
         } catch (IOException ex) {
             throw new IllegalStateException("Could not read uploaded file");
         }
+    }
+
+    private void deleteOldAvatarPath(String oldAvatarPath, String newAvatarPath) throws IOException {
+        if (oldAvatarPath != null && !oldAvatarPath.equals(newAvatarPath)) {
+            Files.deleteIfExists(uploadDir.resolve(oldAvatarPath));
+        }
+
     }
 }
