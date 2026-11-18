@@ -27,6 +27,7 @@ const formatterFor = (tz: string): Intl.DateTimeFormat => {
 /** Componentele ceasului din fusul dat, pentru un moment (ms). */
 const wallParts = (ms: number, tz: string): Record<string, number> => {
     const parts: Record<string, number> = {};
+    if (isNaN(ms)) return parts;
     for (const part of formatterFor(tz).formatToParts(new Date(ms))) {
         if (part.type !== 'literal') parts[part.type] = Number(part.value);
     }
@@ -36,6 +37,7 @@ const wallParts = (ms: number, tz: string): Record<string, number> => {
 /** Ceasul din fusul dat, exprimat ca UTC "fals". Folosit doar pentru calculul offsetului. */
 const wallClockMs = (ms: number, tz: string): number => {
     const p = wallParts(ms, tz);
+    if (p['year'] === undefined) return ms;
     return Date.UTC(p['year'], p['month'] - 1, p['day'], p['hour'], p['minute'], p['second']);
 };
 
@@ -51,20 +53,32 @@ export const toIsoDate = (d: Date): string =>
     `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 
 /** Data (YYYY-MM-DD) in fusul businessului, pentru un Instant. */
-export const businessDate = (instant: string, tz: string = BUSINESS_TIMEZONE): string => {
-    const p = wallParts(Date.parse(instant), tz);
+export const businessDate = (instant: string | null | undefined, tz: string = BUSINESS_TIMEZONE): string => {
+    if (!instant) return '';
+    const ms = Date.parse(instant);
+    if (isNaN(ms)) return '';
+    const p = wallParts(ms, tz);
+    if (!p['year']) return '';
     return `${p['year']}-${pad(p['month'])}-${pad(p['day'])}`;
 };
 
 /** Ora (HH:mm) in fusul businessului, pentru un Instant. */
-export const businessTime = (instant: string, tz: string = BUSINESS_TIMEZONE): string => {
-    const p = wallParts(Date.parse(instant), tz);
+export const businessTime = (instant: string | null | undefined, tz: string = BUSINESS_TIMEZONE): string => {
+    if (!instant) return '';
+    const ms = Date.parse(instant);
+    if (isNaN(ms)) return '';
+    const p = wallParts(ms, tz);
+    if (p['hour'] === undefined) return '';
     return `${pad(p['hour'])}:${pad(p['minute'])}`;
 };
 
 /** Minutele de la miezul noptii, in fusul businessului. 00:00 inseamna 0. */
-export const businessMinutesOfDay = (instant: string, tz: string = BUSINESS_TIMEZONE): number => {
-    const p = wallParts(Date.parse(instant), tz);
+export const businessMinutesOfDay = (instant: string | null | undefined, tz: string = BUSINESS_TIMEZONE): number => {
+    if (!instant) return 0;
+    const ms = Date.parse(instant);
+    if (isNaN(ms)) return 0;
+    const p = wallParts(ms, tz);
+    if (p['hour'] === undefined) return 0;
     return p['hour'] * 60 + p['minute'];
 };
 
