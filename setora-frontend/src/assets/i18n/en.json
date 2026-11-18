@@ -6,7 +6,9 @@
     "CLIENTS": "Clients",
     "LOCATIONS": "Locations",
     "WORKING_HOURS": "Working hours",
-    "SETTINGS": "Settings"
+    "SETTINGS": "Settings",
+    "DISCOVER": "Discover",
+    "BOOKINGS": "My bookings"
   },
   "HINT": {
     "PHONE_BOOKINGS": "Phone bookings can be added directly to the calendar.",
@@ -133,6 +135,69 @@
       "CONFIRM": "Yes, cancel",
       "CANCELLING": "Cancelling…",
       "SUCCESS": "Appointment cancelled."
+    }
+  },
+  "DISCOVER": {
+    "TITLE": "Time for what matters.",
+    "SUBTITLE": "Find the right service and choose where to book.",
+    "RESULTS_SUBTITLE": "Pick the right place for your next appointment.",
+    "DISCLAIMER": "Demo examples • Fictional businesses and illustrative images.",
+    "CHIPS": {
+      "ACTIVE": "Active filters",
+      "TEXT": "“{{value}}”",
+      "PRICE_RANGE": "{{min}}–{{max}} lei",
+      "PRICE_MIN": "min {{min}} lei",
+      "PRICE_MAX": "max {{max}} lei",
+      "REMOVE": "Remove filter {{label}}",
+      "CLEAR_ALL": "Clear filters"
+    },
+    "RESULTS_COUNT": "{{count}} businesses in {{city}}",
+    "FROM_PRICE": "from {{price}} lei",
+    "VIEW_BUSINESS": "View business",
+    "EMPTY": "We couldn't find any businesses for the selected filters.",
+    "RANGE": "{{start}}–{{end}} of {{total}} businesses",
+    "PER_PAGE": "{{count}} / page",
+    "PAGE_SIZE_LABEL": "Results per page",
+    "PAGINATION": "Pagination",
+    "PREV": "Previous page",
+    "NEXT": "Next page",
+    "PAGE_OF": "Page {{page}} of {{pages}}",
+    "SEARCH": {
+      "LABEL": "Service or business",
+      "PLACEHOLDER": "E.g. haircut, pilates, car wash",
+      "BUTTON": "Search"
+    },
+    "SORT": {
+      "relevance": "Relevance",
+      "priceAsc": "Price: low to high",
+      "priceDesc": "Price: high to low",
+      "nameAsc": "Name (A–Z)"
+    },
+    "FILTERS": {
+      "TITLE": "Filter results",
+      "CITY": "Location",
+      "SORT": "Sort by",
+      "CATEGORY": "Category",
+      "ALL_CATEGORIES": "All categories",
+      "SERVICE": "Service",
+      "ALL_SERVICES": "All services",
+      "PRICE": "Price per service (lei)",
+      "MIN": "Min",
+      "MAX": "Max",
+      "DATE": "Date",
+      "TIME_LABEL": "Time range",
+      "TIME": {
+        "any": "Any time",
+        "morning": "Morning (06:00–12:00)",
+        "afternoon": "Afternoon (12:00–18:00)",
+        "evening": "Evening (18:00–23:00)"
+      },
+      "APPLY": "Apply filters",
+      "RESET": "Reset",
+      "BUTTON": "Filters",
+      "BUTTON_COUNT": "Filters ({{count}})",
+      "SHOW_RESULTS": "Show results ({{count}})",
+      "CLOSE": "Close filters"
     }
   },
   "MENU": {

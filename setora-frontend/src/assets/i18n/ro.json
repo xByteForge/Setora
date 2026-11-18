@@ -6,7 +6,9 @@
     "CLIENTS": "Clienți",
     "LOCATIONS": "Locații",
     "WORKING_HOURS": "Program de lucru",
-    "SETTINGS": "Setări"
+    "SETTINGS": "Setări",
+    "DISCOVER": "Descoperă",
+    "BOOKINGS": "Rezervările mele"
   },
   "HEADER": {
     "SEARCH": "Caută un client sau un serviciu...",
@@ -135,6 +137,69 @@
       "SUCCESS": "Programarea a fost anulată."
     }
     
+  },
+  "DISCOVER": {
+    "TITLE": "Timp pentru ce contează.",
+    "SUBTITLE": "Găsește serviciul potrivit și alege unde te programezi.",
+    "RESULTS_SUBTITLE": "Alege locul potrivit pentru următoarea programare.",
+    "DISCLAIMER": "Exemple demonstrative • Businessuri fictive și imagini ilustrative.",
+    "CHIPS": {
+      "ACTIVE": "Filtre active",
+      "TEXT": "„{{value}}”",
+      "PRICE_RANGE": "{{min}}–{{max}} lei",
+      "PRICE_MIN": "minim {{min}} lei",
+      "PRICE_MAX": "maxim {{max}} lei",
+      "REMOVE": "Elimină filtrul {{label}}",
+      "CLEAR_ALL": "Șterge filtrele"
+    },
+    "RESULTS_COUNT": "{{count}} businessuri în {{city}}",
+    "FROM_PRICE": "de la {{price}} lei",
+    "VIEW_BUSINESS": "Vezi businessul",
+    "EMPTY": "Nu am găsit businessuri pentru filtrele alese.",
+    "RANGE": "{{start}}–{{end}} din {{total}} businessuri",
+    "PER_PAGE": "{{count}} / pagină",
+    "PAGE_SIZE_LABEL": "Rezultate pe pagină",
+    "PAGINATION": "Paginare",
+    "PREV": "Pagina anterioară",
+    "NEXT": "Pagina următoare",
+    "PAGE_OF": "Pagina {{page}} din {{pages}}",
+    "SEARCH": {
+      "LABEL": "Serviciu sau business",
+      "PLACEHOLDER": "Ex. tuns, pilates, spălătorie auto",
+      "BUTTON": "Caută"
+    },
+    "SORT": {
+      "relevance": "Relevanță",
+      "priceAsc": "Preț crescător",
+      "priceDesc": "Preț descrescător",
+      "nameAsc": "Nume (A–Z)"
+    },
+    "FILTERS": {
+      "TITLE": "Filtrează rezultatele",
+      "CITY": "Localitate",
+      "SORT": "Sortează după",
+      "CATEGORY": "Categorie",
+      "ALL_CATEGORIES": "Toate categoriile",
+      "SERVICE": "Serviciu",
+      "ALL_SERVICES": "Toate serviciile",
+      "PRICE": "Preț pe serviciu (lei)",
+      "MIN": "Minim",
+      "MAX": "Maxim",
+      "DATE": "Data",
+      "TIME_LABEL": "Interval orar",
+      "TIME": {
+        "any": "Orice oră",
+        "morning": "Dimineața (06:00–12:00)",
+        "afternoon": "După-amiaza (12:00–18:00)",
+        "evening": "Seara (18:00–23:00)"
+      },
+      "APPLY": "Aplică filtrele",
+      "RESET": "Resetează",
+      "BUTTON": "Filtre",
+      "BUTTON_COUNT": "Filtre ({{count}})",
+      "SHOW_RESULTS": "Afișează rezultatele ({{count}})",
+      "CLOSE": "Închide filtrele"
+    }
   },
   "MENU": {
     "TITLE": "Meniu",

@@ -1,0 +1,25 @@
+<article class="card">
+    <div class="card__media">
+        @if (business().thumbnailUrl && !imageFailed()) {
+            <img [src]="business().thumbnailUrl" [alt]="business().name" loading="lazy" (error)="imageFailed.set(true)" />
+        } @else {
+            <div class="card__placeholder" aria-hidden="true">
+                <span>{{ initials() }}</span>
+            </div>
+        }
+    </div>
+
+    <div class="card__body">
+        <span class="card__category">{{ business().category }}</span>
+        <h3 class="card__title">{{ business().name }}</h3>
+        <p class="card__location">{{ business().location.locationName }} · {{ business().city }}</p>
+        <p class="card__description">{{ business().description }}</p>
+
+        <div class="card__footer">
+            <strong class="card__price">{{ 'DISCOVER.FROM_PRICE' | transloco: { price: business().minPrice } }}</strong>
+            <button type="button" class="card__cta" (click)="view.emit(business().id)">
+                {{ 'DISCOVER.VIEW_BUSINESS' | transloco }}
+            </button>
+        </div>
+    </div>
+</article>

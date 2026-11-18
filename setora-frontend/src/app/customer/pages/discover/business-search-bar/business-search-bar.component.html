@@ -1,0 +1,12 @@
+<form class="search-bar" role="search" *transloco="let t"
+      (submit)="$event.preventDefault(); onSubmit(q.value)">
+    <label for="discover-search">{{ t('DISCOVER.SEARCH.LABEL') }}</label>
+    <div class="row">
+        <div class="input-wrap">
+            <svg lucideSearch [size]="16" aria-hidden="true"></svg>
+            <input #q id="discover-search" type="search"
+                   [value]="text()" [placeholder]="t('DISCOVER.SEARCH.PLACEHOLDER')" />
+        </div>
+        <button type="submit" class="btn">{{ t('DISCOVER.SEARCH.BUTTON') }}</button>
+    </div>
+</form>

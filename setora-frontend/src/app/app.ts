@@ -1,13 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { SidebarComponent } from './core/layout/sidebar/sidebar.component';
 import { ThemeService } from './core/services/theme.service';
-import { TopbarComponent } from './core/layout/topbar/topbar.component';
 import { BusinessService } from './core/services/business.service';
 import { CatalogService } from './core/services/catalog.service';
 
 @Component({
-  imports: [RouterOutlet, SidebarComponent, TopbarComponent],
+  imports: [RouterOutlet],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',

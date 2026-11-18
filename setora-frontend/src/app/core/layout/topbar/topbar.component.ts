@@ -66,21 +66,23 @@ export interface Breadcrumb {
       </nav>
 
       <div class="actions">
-        <form class="search hide-mobile" role="search" (submit)="$event.preventDefault(); onSearch(q.value)">
-          <svg lucideSearch [size]="16" aria-hidden="true"></svg>
-          <input
-            #q
-            type="search"
-            [placeholder]="t('HEADER.SEARCH')"
-            [attr.aria-label]="t('HEADER.SEARCH')"
-          />
-        </form>
+        @if (!isCustomerArea()) {
+          <form class="search hide-mobile" role="search" (submit)="$event.preventDefault(); onSearch(q.value)">
+            <svg lucideSearch [size]="16" aria-hidden="true"></svg>
+            <input
+                #q
+                type="search"
+                [placeholder]="t('HEADER.SEARCH')"
+                [attr.aria-label]="t('HEADER.SEARCH')"
+            />
+          </form>
+        }
 
         <button
-          type="button"
-          class="icon-btn hide-mobile"
-          (click)="theme.toggleTheme()"
-          [attr.aria-label]="
+            type="button"
+            class="icon-btn hide-mobile"
+            (click)="theme.toggleTheme()"
+            [attr.aria-label]="
             theme.currentTheme() === 'light' ? t('HEADER.THEME_TO_DARK') : t('HEADER.THEME_TO_LIGHT')
           "
         >
@@ -92,10 +94,10 @@ export interface Breadcrumb {
         </button>
 
         <button
-          type="button"
-          class="icon-btn hide-mobile"
-          (click)="notificationsClicked.emit()"
-          [attr.aria-label]="t('HEADER.NOTIFICATIONS')"
+            type="button"
+            class="icon-btn hide-mobile"
+            (click)="notificationsClicked.emit()"
+            [attr.aria-label]="t('HEADER.NOTIFICATIONS')"
         >
           <svg lucideBell [size]="20" aria-hidden="true"></svg>
           @if (unreadCount() > 0) {
@@ -105,12 +107,12 @@ export interface Breadcrumb {
 
         <div class="lang">
           <button
-            type="button"
-            class="lang-btn"
-            aria-haspopup="listbox"
-            [attr.aria-expanded]="langMenuOpen()"
-            [attr.aria-label]="t('HEADER.LANGUAGE')"
-            (click)="langMenuOpen.set(!langMenuOpen())"
+              type="button"
+              class="lang-btn"
+              aria-haspopup="listbox"
+              [attr.aria-expanded]="langMenuOpen()"
+              [attr.aria-label]="t('HEADER.LANGUAGE')"
+              (click)="langMenuOpen.set(!langMenuOpen())"
           >
             {{ activeLang().toUpperCase() }}
           </button>
@@ -126,11 +128,11 @@ export interface Breadcrumb {
         </div>
 
         <button
-          type="button"
-          class="menu-btn"
-          (click)="menu.toggle()"
-          aria-haspopup="dialog"
-          [attr.aria-expanded]="menu.open()"
+            type="button"
+            class="menu-btn"
+            (click)="menu.toggle()"
+            aria-haspopup="dialog"
+            [attr.aria-expanded]="menu.open()"
         >
           {{ t('MENU.TITLE') }}
         </button>
@@ -150,21 +152,35 @@ export class TopbarComponent {
   readonly searched = output<string>();
   readonly notificationsClicked = output<void>();
 
-  // paginile din rutele active, recalculate la fiecare navigare
-  private readonly routeCrumbs = toSignal(
-    this.router.events.pipe(
-      filter((e) => e instanceof NavigationEnd),
-      startWith(null),
-      map(() => this.buildCrumbs()),
-    ),
-    { initialValue: [] as Breadcrumb[] },
+  // URL-ul curent, actualizat la fiecare navigare
+  private readonly currentUrl = toSignal(
+      this.router.events.pipe(
+          filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+          map((e) => e.urlAfterRedirects),
+          startWith(this.router.url),
+      ),
+      { initialValue: this.router.url },
   );
 
-  // numele business-ului + paginile curente
+  // zona de client: fara numele business-ului in breadcrumb
+  protected readonly isCustomerArea = computed(() => this.currentUrl().startsWith('/customer'));
+
+  // paginile din rutele active, recalculate la fiecare navigare
+  private readonly routeCrumbs = toSignal(
+      this.router.events.pipe(
+          filter((e) => e instanceof NavigationEnd),
+          startWith(null),
+          map(() => this.buildCrumbs()),
+      ),
+      { initialValue: [] as Breadcrumb[] },
+  );
+
+  // numele business-ului (doar in zona de business) + paginile curente
   protected readonly items = computed<Breadcrumb[]>(() => {
     const business = this.businessService.current();
+    const showBusiness = !!business && !this.isCustomerArea();
     return [
-      ...(business ? [{ label: business.name, url: '/' }] : []),
+      ...(showBusiness ? [{ label: business!.name, url: '/' }] : []),
       ...this.routeCrumbs(),
     ];
   });

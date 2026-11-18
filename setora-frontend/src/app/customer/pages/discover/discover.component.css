@@ -1,0 +1,48 @@
+.discover {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-family: Arimo, Arial, Helvetica, sans-serif;
+    color: var(--ink);
+}
+
+.intro h1 {
+    margin: 0;
+    font-size: 36px;
+    line-height: 1.15;
+}
+
+.subtitle {
+    margin: 6px 0 0;
+    font-size: 16px;
+    color: var(--text-secondary);
+}
+
+.results {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.results--panel { grid-template-columns: minmax(0, 1fr) 300px; }
+
+.demo-note {
+    margin-top: 12px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.demo-note p { margin: 0 0 4px; }
+.demo-note strong { color: var(--ink); }
+
+/* sub 900px panoul devine bottom sheet, deci lista ramane pe toata latimea */
+@media (max-width: 900px) {
+    .results--panel { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 640px) {
+    .intro h1 { font-size: 28px; }
+}
