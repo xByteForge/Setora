@@ -25,7 +25,7 @@ const MOCK_USER = {
   lastName: 'Popescu',
   username: 'irina.popescu',
   email: 'irina@example.com',
-  phoneNumber: '700 000 123',
+  phoneNumber: '+40 700 000 123',
 } as User;
 
 @Injectable({ providedIn: 'root' })

@@ -69,3 +69,20 @@
   .identity { flex-direction: column; align-items: flex-start; gap: 16px; }
   .details { grid-template-columns: 1fr; }
 }
+
+.phone__prefix-select {
+  appearance: none;
+  background-color: transparent;
+  border: 0;
+  border-right: 1px solid var(--border-color);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9375rem;
+  padding: 0 12px 0 12px;
+  cursor: pointer;
+  outline: none;
+}
+.phone__prefix-select option {
+  background: var(--paper);
+  color: var(--ink);
+}

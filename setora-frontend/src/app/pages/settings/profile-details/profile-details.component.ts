@@ -12,6 +12,23 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { User } from '../../../core/models/user.model';
 import { UserService } from '../../../core/services/user.service';
 
+export interface CountryOption {
+  code: string;
+  flag: string;
+  name: string;
+}
+
+const COUNTRY_OPTIONS: CountryOption[] = [
+  { code: '+40', flag: '🇷🇴', name: 'Romania' },
+  { code: '+373', flag: '🇲🇩', name: 'Moldova' },
+  { code: '+44', flag: '🇬🇧', name: 'UK' },
+  { code: '+1', flag: '🇺🇸', name: 'USA / Canada' },
+  { code: '+33', flag: '🇫🇷', name: 'France' },
+  { code: '+49', flag: '🇩🇪', name: 'Germany' },
+  { code: '+39', flag: '🇮🇹', name: 'Italy' },
+  { code: '+34', flag: '🇪🇸', name: 'Spain' },
+];
+
 @Component({
   selector: 'app-profile-details',
   imports: [ReactiveFormsModule, TranslocoModule],
@@ -26,6 +43,8 @@ export class ProfileDetailsComponent {
   readonly user = input.required<User>();
   readonly editing = signal(false);
 
+  readonly countries = COUNTRY_OPTIONS;
+
   readonly initials = computed(() => {
     const u = this.user();
     return `${u.firstName.charAt(0)}${u.lastName.charAt(0)}`.toUpperCase();
@@ -35,6 +54,7 @@ export class ProfileDetailsComponent {
     firstName: '',
     lastName: '',
     username: '',
+    countryCode: '+40',
     phoneNumber: '',
   });
 
@@ -52,20 +72,45 @@ export class ProfileDetailsComponent {
   }
 
   save(): void {
-    this.userService.updateProfile(this.form.getRawValue()).subscribe();
+    const raw = this.form.getRawValue();
+    const cleanPhone = raw.phoneNumber.trim();
+    const fullPhoneNumber = cleanPhone ? `${raw.countryCode} ${cleanPhone}` : '';
+
+    const payload = {
+      firstName: raw.firstName,
+      lastName: raw.lastName,
+      username: raw.username,
+      phoneNumber: fullPhoneNumber,
+    };
+
+    this.userService.updateProfile(payload).subscribe();
     this.editing.set(false);
   }
 
   changePhoto(): void {
-    // TODO: file picker, then userService.uploadAvatar(file). The User model has no avatar field yet.
+    // TODO: photo upload flow
   }
 
   private patchForm(u: User): void {
-    this.form.reset({
-      firstName: u.firstName,
-      lastName: u.lastName,
-      username: u.username,
-      phoneNumber: u.phoneNumber ?? '',
-    });
+    const phone = u.phoneNumber ?? '';
+    const matchedCountry = this.countries.find((c) => phone.startsWith(c.code));
+
+    if (matchedCountry) {
+      this.form.reset({
+        firstName: u.firstName,
+        lastName: u.lastName,
+        username: u.username,
+        countryCode: matchedCountry.code,
+        phoneNumber: phone.replace(matchedCountry.code, '').trim(),
+      });
+    } else {
+      this.form.reset({
+        firstName: u.firstName,
+        lastName: u.lastName,
+        username: u.username,
+        countryCode: '+40',
+        phoneNumber: phone,
+      });
+    }
   }
 }
