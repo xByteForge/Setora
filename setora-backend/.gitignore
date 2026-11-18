@@ -43,3 +43,5 @@ out/
 .env
 application-local.properties
 *.log
+/uploads/user-avatars/*
+!/uploads/user-avatars/.gitkeep

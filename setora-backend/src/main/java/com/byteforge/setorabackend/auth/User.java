@@ -40,6 +40,9 @@ public class User {
     @Column
     private UserRole role=UserRole.CLIENT;
 
+    @Column
+    private String avatarPath;
+
     //add the rest later on
 
     public void setEmail(String email) {
