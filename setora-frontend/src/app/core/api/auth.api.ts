@@ -15,12 +15,12 @@ export class AuthApi {
     return this.http.post<AuthResponse>(`${this.base}/auth/login`, body);
   }
 
-  /** POST /api/auth/refresh (folosit în iterația următoare) */
+  
   refresh(body: RefreshTokenRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.base}/auth/refresh`, body);
   }
 
-  /** POST /api/auth/logout (folosit în iterația următoare) */
+  
   logout(body: LogoutRequest): Observable<void> {
     return this.http.post<void>(`${this.base}/auth/logout`, body);
   }
