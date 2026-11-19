@@ -17,77 +17,54 @@
     }
   </div>
 
-  
-<div class="identity">
-  <div class="avatar">
-    @if (previewUrl() && !imageError()) {
-      <img
-        [src]="previewUrl()!"
-        [alt]="user().firstName + ' ' + user().lastName"
-        class="avatar__image"
-        (error)="imageError.set(true)"
-      />
-    } @else {
-      <span aria-hidden="true">{{ initials() }}</span>
-    }
+  <div class="identity">
+    <div class="avatar">
+      @if (avatarSrc(); as src) {
+        <img
+          class="avatar__image"
+          [src]="src"
+          alt=""
+          (error)="brokenSrc.set(src)"
+        />
+      } @else {
+        <span aria-hidden="true">{{ initials() }}</span>
+      }
+    </div>
+
+    <div class="identity__text">
+      <p class="identity__name">{{ user().firstName }} {{ user().lastName }}</p>
+      <p class="identity__email">{{ user().email }}</p>
+
+      @if (editing()) {
+        <button type="button" class="btn btn--sm" (click)="photoInput.click()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M4 8h3l2-3h6l2 3h3v11H4z" /><circle cx="12" cy="13" r="3.5" />
+          </svg>
+          {{ 'SETTINGS.PROFILE.CHANGE_PHOTO' | transloco }}
+        </button>
+
+        <input
+          #photoInput
+          type="file"
+          accept="image/jpeg,image/png"
+          hidden
+          (change)="onPhotoSelected($event)"
+        />
+
+        <p class="hint">{{ 'SETTINGS.PROFILE.PHOTO_HINT' | transloco }}</p>
+
+        @if (photoError(); as err) {
+          <p class="form-error" role="alert">{{ err | transloco }}</p>
+        }
+
+        @if (selectedPhoto()) {
+          <p class="hint">{{ 'SETTINGS.PROFILE.PHOTO_SELECTED' | transloco }}</p>
+        }
+      }
+    </div>
   </div>
 
-  <div class="identity__text">
-    <p class="identity__name">
-      {{ user().firstName }} {{ user().lastName }}
-    </p>
-
-    <p class="identity__email">{{ user().email }}</p>
-
-    @if (editing()) {
-      <button
-        type="button"
-        class="btn btn--sm"
-        (click)="photoInput.click()"
-      >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          aria-hidden="true"
-        >
-          <path d="M4 8h3l2-3h6l2 3h3v11H4z" />
-          <circle cx="12" cy="13" r="3.5" />
-        </svg>
-
-        {{ 'SETTINGS.PROFILE.CHANGE_PHOTO' | transloco }}
-      </button>
-
-      <input
-        #photoInput
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-        hidden
-        (change)="onPhotoSelected($event)"
-      />
-
-      <p class="hint">
-        {{ 'SETTINGS.PROFILE.PHOTO_HINT' | transloco }}
-      </p>
-
-      @if (photoError()) {
-        <p class="hint photo-error">{{ photoError() }}</p>
-      }
-
-      @if (selectedPhoto()) {
-        <p class="hint">
-          New profile picture selected. Save changes to apply.
-        </p>
-      }
-    }
-  </div>
-</div>
-
-<hr class="divider" />
-
+  <hr class="divider" />
 
   @if (!editing()) {
     <dl class="details">
@@ -138,7 +115,7 @@
         <label class="field">
           <span class="field__label">{{ 'SETTINGS.PROFILE.PHONE' | transloco }}</span>
           <div class="phone">
-            <select class="phone__prefix-select" formControlName="countryCode">
+            <select class="phone__prefix-select" formControlName="countryCode" aria-label="+">
               @for (c of countries; track c.code) {
                 <option [value]="c.code">{{ c.flag }} {{ c.code }}</option>
               }
@@ -150,11 +127,15 @@
 
       <hr class="divider" />
 
+      @if (saveFailed()) {
+        <p class="form-error" role="alert">{{ 'ERRORS.GENERIC' | transloco }}</p>
+      }
+
       <div class="form-actions">
-        <button type="button" class="btn" (click)="cancel()">
+        <button type="button" class="btn" (click)="cancel()" [disabled]="saving()">
           {{ 'SETTINGS.COMMON.CANCEL' | transloco }}
         </button>
-        <button type="submit" class="btn btn--primary">
+        <button type="submit" class="btn btn--primary" [disabled]="saving()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M5 12l5 5 9-10" />
           </svg>

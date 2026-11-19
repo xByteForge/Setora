@@ -18,7 +18,7 @@ export type SettingsTab = 'profile' | 'settings';
 export class SettingsComponent {
   private readonly userService = inject(UserService);
 
-  readonly user = toSignal(this.userService.getCurrentUser(), { initialValue: null });
+  readonly user = this.userService.currentUser;
   readonly activeTab = signal<SettingsTab>('profile');
 
   

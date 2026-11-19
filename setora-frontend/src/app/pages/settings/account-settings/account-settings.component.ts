@@ -220,12 +220,10 @@ changePassword(): void {
 
     this.deleteLoading.set(true);
 
-    this.userService.deleteAccount({ currentPassword }).subscribe({
+    this.userService.deleteAccount().subscribe({
       next: () => {
         this.deleteLoading.set(false);
 
-        // Account deletion succeeded.
-        // TODO: Log out and redirect to the login page.
       },
       error: () => {
         this.deleteLoading.set(false);

@@ -9,6 +9,5 @@ export interface User {
   email: string;
   phoneNumber: string | null;
   role: UserRole;
-  profilePictureUrl?: string | null; 
   notificationPreferences?: UserNotificationPreference[]; 
 }
