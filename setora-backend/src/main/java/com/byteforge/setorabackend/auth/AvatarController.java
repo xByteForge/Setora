@@ -4,6 +4,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,8 +25,8 @@ public class AvatarController {
 
     @PostMapping("/upload")
     public ResponseEntity<@NonNull String> uploadAvatar(@RequestParam("file") MultipartFile file,
-                                                 Principal principal) {
-        int userId = 1;//principal.getId(); //TODO When this is setup change accordingly
+                                                        @AuthenticationPrincipal Jwt jwt) {
+        int userId = Integer.parseInt(jwt.getSubject()); //TODO When this is setup change accordingly
         avatarService.storeAvatar(file, userId);
         return ResponseEntity.ok("Upload successful");
     }
