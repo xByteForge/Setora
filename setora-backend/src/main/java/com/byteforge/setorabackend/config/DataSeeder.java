@@ -1,3 +1,4 @@
+
 /*
  * DEVELOPMENT DATABASE SEEDER
  *
@@ -5,16 +6,16 @@
  *
  * Dataset:
  * - 10 businesses, each with a unique owner and location.
- * - 30 services (3 per business).
- * - 20 employees (2 per business).
- * - 40 users (10 clients, 10 business owners, 20 employees).
- * - 100 work schedules (5 weekdays per employee).
- * - 20 appointments (2 per business), with different statuses.
- * - 120 unavailable slots (5 recurring breaks and 1 specific
+ * - 40 services (4 per business).
+ * - 40 employees (4 per business).
+ * - 60 users (10 clients, 10 business owners, 40 employees).
+ * - 200 work schedules (5 weekdays per employee).
+ * - 110 appointments (11 per business).
+ *   - 6 appointments next Monday.
+ *   - 5 appointments next Tuesday.
+ * - 240 unavailable slots (5 recurring breaks and 1 specific
  *   unavailable slot per employee).
  *
- * Appointments are scheduled for next Monday.
- * Specific unavailable slots are scheduled for next Wednesday.
  * All businesses use the Europe/Bucharest timezone.
  *
  * The dataset is generated only when no businesses exist.
@@ -62,7 +63,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class DataSeeder implements CommandLineRunner {
 
-    private static final ZoneId ZONE = ZoneId.of("Europe/Bucharest");
+    private static final ZoneId ZONE =
+            ZoneId.of("Europe/Bucharest");
 
     private static final List<DayOfWeek> WORK_DAYS = List.of(
             DayOfWeek.MONDAY,
@@ -127,11 +129,10 @@ public class DataSeeder implements CommandLineRunner {
 
         List<Employee> allEmployees = new ArrayList<>();
 
-        List<AppointmentStatus> statuses = List.of(
-                AppointmentStatus.CONFIRMED,
-                AppointmentStatus.CANCELLED,
-                AppointmentStatus.CONFIRMED
-        );
+        LocalDate nextMonday = LocalDate.now(ZONE)
+                .with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+
+        LocalDate nextTuesday = nextMonday.plusDays(1);
 
         for (int i = 0; i < BUSINESS_NAMES.size(); i++) {
 
@@ -145,44 +146,152 @@ public class DataSeeder implements CommandLineRunner {
             // Create business.
             Business business = seedBusiness(owner, i);
 
-            // Create three services.
+            // Create four services.
             List<ServiceItem> services = seedServices(business);
 
-            // Create two employees.
-            Employee employee1 = seedEmployee(
-                    business,
-                    seedEmployeeUser(i * 2),
-                    Set.of(services.get(0), services.get(1)),
-                    LocalTime.of(9, 0),
-                    LocalTime.of(17, 0)
+            // Create four employees with different service assignments.
+            List<Employee> employees = List.of(
+
+                    seedEmployee(
+                            business,
+                            seedEmployeeUser(i * 4),
+                            Set.of(services.get(0), services.get(1)),
+                            LocalTime.of(9, 0),
+                            LocalTime.of(17, 0)
+                    ),
+
+                    seedEmployee(
+                            business,
+                            seedEmployeeUser(i * 4 + 1),
+                            Set.of(services.get(1), services.get(2)),
+                            LocalTime.of(10, 0),
+                            LocalTime.of(18, 0)
+                    ),
+
+                    seedEmployee(
+                            business,
+                            seedEmployeeUser(i * 4 + 2),
+                            Set.of(services.get(0), services.get(2), services.get(3)),
+                            LocalTime.of(8, 0),
+                            LocalTime.of(16, 0)
+                    ),
+
+                    seedEmployee(
+                            business,
+                            seedEmployeeUser(i * 4 + 3),
+                            Set.of(services.get(1), services.get(3)),
+                            LocalTime.of(12, 0),
+                            LocalTime.of(20, 0)
+                    )
             );
 
-            Employee employee2 = seedEmployee(
-                    business,
-                    seedEmployeeUser(i * 2 + 1),
-                    Set.of(services.get(1), services.get(2)),
-                    LocalTime.of(12, 0),
-                    LocalTime.of(20, 0)
-            );
+            allEmployees.addAll(employees);
 
-            allEmployees.add(employee1);
-            allEmployees.add(employee2);
+            // ==========================================
+            // MONDAY - 6 APPOINTMENTS
+            // ==========================================
 
-            // Create appointments with different clients and statuses.
             seedAppointment(
                     clients.get(i % clients.size()),
-                    employee1,
+                    employees.get(0),
                     services.get(0),
-                    LocalTime.of(10, 0),
-                    statuses.get((i * 2) % statuses.size())
+                    nextMonday,
+                    LocalTime.of(9, 0),
+                    AppointmentStatus.CONFIRMED
             );
 
             seedAppointment(
                     clients.get((i + 1) % clients.size()),
-                    employee2,
+                    employees.get(1),
+                    services.get(1),
+                    nextMonday,
+                    LocalTime.of(12, 0),
+                    AppointmentStatus.CONFIRMED
+            );
+
+            seedAppointment(
+                    clients.get((i + 2) % clients.size()),
+                    employees.get(2),
                     services.get(2),
+                    nextMonday,
+                    LocalTime.of(10, 0),
+                    AppointmentStatus.CANCELLED
+            );
+
+            seedAppointment(
+                    clients.get((i + 3) % clients.size()),
+                    employees.get(3),
+                    services.get(3),
+                    nextMonday,
                     LocalTime.of(15, 0),
-                    statuses.get((i * 2 + 1) % statuses.size())
+                    AppointmentStatus.CONFIRMED
+            );
+
+            seedAppointment(
+                    clients.get((i + 4) % clients.size()),
+                    employees.get(0),
+                    services.get(1),
+                    nextMonday,
+                    LocalTime.of(14, 0),
+                    AppointmentStatus.CONFIRMED
+            );
+
+            seedAppointment(
+                    clients.get((i + 5) % clients.size()),
+                    employees.get(2),
+                    services.get(0),
+                    nextMonday,
+                    LocalTime.of(15, 0),
+                    AppointmentStatus.CANCELLED
+            );
+
+            // ==========================================
+            // TUESDAY - 5 APPOINTMENTS
+            // ==========================================
+
+            seedAppointment(
+                    clients.get((i + 6) % clients.size()),
+                    employees.get(0),
+                    services.get(0),
+                    nextTuesday,
+                    LocalTime.of(9, 0),
+                    AppointmentStatus.CONFIRMED
+            );
+
+            seedAppointment(
+                    clients.get((i + 7) % clients.size()),
+                    employees.get(1),
+                    services.get(1),
+                    nextTuesday,
+                    LocalTime.of(10, 0),
+                    AppointmentStatus.CONFIRMED
+            );
+
+            seedAppointment(
+                    clients.get((i + 8) % clients.size()),
+                    employees.get(2),
+                    services.get(2),
+                    nextTuesday,
+                    LocalTime.of(10, 0),
+                    AppointmentStatus.CONFIRMED
+            );
+
+            seedAppointment(
+                    clients.get((i + 9) % clients.size()),
+                    employees.get(3),
+                    services.get(3),
+                    nextTuesday,
+                    LocalTime.of(14, 0),
+                    AppointmentStatus.CANCELLED
+            );
+
+            seedAppointment(
+                    clients.get((i + 5) % clients.size()),
+                    employees.get(0),
+                    services.get(1),
+                    nextTuesday,
+                    LocalTime.of(15, 0),
+                    AppointmentStatus.CONFIRMED
             );
         }
 
@@ -199,7 +308,11 @@ public class DataSeeder implements CommandLineRunner {
         log.info("Users: {}", userRepository.count());
     }
 
-    private User seedUser(String surname, String firstname, String email) {
+    private User seedUser(
+            String surname,
+            String firstname,
+            String email
+    ) {
 
         userCounter++;
 
@@ -291,6 +404,14 @@ public class DataSeeder implements CommandLineRunner {
                 120
         ));
 
+        services.add(seedService(
+                business,
+                "Express Service",
+                "A shorter appointment for quick treatments.",
+                "50.00",
+                30
+        ));
+
         return services;
     }
 
@@ -347,12 +468,12 @@ public class DataSeeder implements CommandLineRunner {
             User client,
             Employee employee,
             ServiceItem serviceItem,
+            LocalDate date,
             LocalTime at,
             AppointmentStatus status
     ) {
 
-        Instant start = LocalDate.now(ZONE)
-                .with(TemporalAdjusters.next(DayOfWeek.MONDAY))
+        Instant start = date
                 .atTime(at)
                 .atZone(ZONE)
                 .toInstant();
