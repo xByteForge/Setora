@@ -145,4 +145,84 @@
   "ERRORS": {
     "GENERIC": "A apărut o eroare. Încearcă din nou."
   }
+  ,
+
+  "SETTINGS": {
+    "COMMON": { "CANCEL": "Anulează" },
+    "HEADER": {
+      "PROFILE_TITLE": "Detalii profil",
+      "PROFILE_SUBTITLE": "Actualizează datele tale personale și modul în care apari la rezervări.",
+      "SETTINGS_TITLE": "Setări",
+      "SETTINGS_SUBTITLE": "Gestionează contul, securitatea și aspectul aplicației."
+    },
+    "NAV": {
+      "TITLE": "Contul meu",
+      "PROFILE": "Detalii profil",
+      "SETTINGS": "Setări"
+    },
+    "PROFILE": {
+      "TITLE": "Informații personale",
+    "VIEW_HINT": "Datele tale folosite la rezervări.",
+    "EDIT_HINT": "Modifică datele de mai jos, apoi salvează.",
+    "EDIT": "Editează profilul",
+    "CHANGE_PHOTO": "Schimbă fotografia",
+    "PHOTO_HINT": "JPG sau PNG, maximum 5 MB.",
+    "PHOTO_SELECTED": "Fotografie nouă selectată",
+    "PHOTO_TYPE_ERROR": "Sunt permise doar imagini JPG și PNG.",
+    "PHOTO_SIZE_ERROR": "Imaginea trebuie să aibă maximum 5 MB.",
+    "FIRST_NAME": "Prenume",
+    "LAST_NAME": "Nume",
+    "USERNAME": "Nume de utilizator",
+    "PHONE": "Număr de telefon",
+    "EMAIL": "Adresă de email",
+    "EMAIL_HINT": "Emailul de autentificare se schimbă din Setări.",
+    "SAVE": "Salvează modificările"
+    },
+    "ACCOUNT": {
+      "TITLE": "Cont",
+      "SUBTITLE": "Datele de bază ale contului tău.",
+      "LOGIN_EMAIL": "Email de autentificare",
+      "CHANGE": "Schimbă",
+      "PERSONAL": "Date personale",
+      "PERSONAL_HINT": "Nume, fotografie, telefon și nume de utilizator",
+      "EDIT_PROFILE": "Editează profilul"
+    },
+    "PASSWORD": {
+      "TITLE": "Schimbă parola",
+      "HINT": "Folosește cel puțin 8 caractere, cu litere și cifre.",
+      "CURRENT": "Parola actuală",
+      "NEW": "Parolă nouă",
+      "CONFIRM": "Confirmă parola nouă",
+      "TOGGLE": "Arată sau ascunde parola",
+      "UPDATE": "Actualizează parola"
+    },
+    "NOTIFICATIONS": {
+      "TITLE": "Notificări",
+      "SUBTITLE": "Alege cum vrei să fii anunțat.",
+      "EMAIL": "Email",
+      "SMS": "SMS",
+      "PUSH": "Push",
+      "CONFIRMED": "Rezervare confirmată",
+      "CONFIRMED_HINT": "Imediat după ce business-ul confirmă",
+      "CHANGED": "Rezervare anulată sau mutată",
+      "CHANGED_HINT": "Când se schimbă ceva la programarea ta",
+      "REMINDER": "Reamintire",
+      "REMINDER_HINT": "Cu 1 oră înainte de începere"
+    },
+    "APPEARANCE": {
+      "TITLE": "Aspect",
+      "SUBTITLE": "Alege tema aplicației pe acest dispozitiv.",
+      "LIGHT": "Luminos",
+      "DARK": "Întunecat"
+    },
+    "DELETE": {
+      "TITLE": "Ștergere cont",
+      "DESCRIPTION": "Șterge definitiv contul tău. Acțiunea nu poate fi anulată.",
+      "ITEM_HISTORY": "Pierzi istoricul rezervărilor",
+      "ITEM_BOOKINGS": "Rezervările viitoare sunt anulate automat",
+      "BUTTON": "Șterge contul",
+      "CONFIRM": "Ești sigur? Contul și datele tale vor fi șterse definitiv.",
+      "CONFIRM_BUTTON": "Da, șterge contul"
+    }
+  }
 }
