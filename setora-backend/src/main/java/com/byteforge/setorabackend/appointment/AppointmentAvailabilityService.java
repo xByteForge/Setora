@@ -10,6 +10,7 @@ import com.byteforge.setorabackend.serviceItem.ServiceItem;
 import com.byteforge.setorabackend.serviceItem.ServiceItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -38,6 +39,7 @@ public class AppointmentAvailabilityService {
      * @throws RuntimeException if the service is inactive, does not belong to the
      *         specified business, or the specified employee is not eligible
      */
+    @Transactional(readOnly = true)
     public List<LocalTime> getAllAvailableAppointmentTimesForToday(int businessId, LocalDate date, int serviceId, Integer employeeId) {
         //check business and service match
         ServiceItem serviceItem = serviceItemService.findById(serviceId);

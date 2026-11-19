@@ -21,7 +21,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Locale;
@@ -267,13 +266,23 @@ public class AppointmentService {
         return appointmentRepository.findByBusinessIdAndDateRange(businessId, start, end);
     }
 
-    public List<Appointment> findByEmployeeIdInDateInterval(int employeeId, LocalDateTime start, LocalDateTime end) {
-        return appointmentRepository.findByEmployee_IdOnDate(employeeId,start,start);
-    }
-    public List<Appointment> findByEmployeeIdOnDate(int employeeId, LocalDate date) {
-        var start=date.atStartOfDay();
-        var end=date.plusDays(1).atStartOfDay();
+    public List<Appointment> findByEmployeeIdInInterval(int employeeId, Instant start, Instant end) {
+        if (start == null || end == null || !start.isBefore(end)) {
+            throw new IllegalArgumentException("Invalid date interval");
+        }
         return appointmentRepository.findByEmployee_IdOnDate(employeeId,start,end);
+    }
 
+    @Transactional(readOnly = true)
+    public List<Appointment> findByEmployeeIdOnDate(int employeeId, LocalDate date) {
+        Employee employee = employeeService.findById(employeeId);
+        ZoneId zone = employee.getBusiness().getTimezone();
+
+        Instant start = date.atStartOfDay(zone).toInstant();
+        Instant end = date.plusDays(1).atStartOfDay(zone).toInstant();
+
+        return appointmentRepository.findByEmployee_IdOnDate(
+                employeeId, start, end
+        );
     }
 }

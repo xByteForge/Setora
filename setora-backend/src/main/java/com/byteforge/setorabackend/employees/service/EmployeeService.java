@@ -239,7 +239,9 @@ public class EmployeeService {
         return employeeRepository.findAllByActiveTrueAndServiceItems_Id(serviceId);
     }
     public Optional<WorkSchedule> findWorkScheduleByEmployeeId(int employeeId, DayOfWeek dayOfWeek) {
-        return workScheduleRepository.findByIdAndDayOfWeek(employeeId,dayOfWeek);
+        return workScheduleRepository.findByEmployee_IdAndDayOfWeek(
+                employeeId, dayOfWeek
+        );
     }
     public Optional<WorkSchedule> findWorkScheduleByEmployeeId(int employeeId) {
         return workScheduleRepository.findById(employeeId);

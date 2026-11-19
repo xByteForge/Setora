@@ -23,5 +23,5 @@ public interface WorkScheduleRepository extends JpaRepository<WorkSchedule, Inte
     """)
     List<WorkSchedule> findByBusinessId(@Param("businessId") Integer businessId);
 
-    Optional<WorkSchedule> findByIdAndDayOfWeek(int id, DayOfWeek dayOfWeek);
+    Optional<WorkSchedule> findByEmployee_IdAndDayOfWeek(int employeeId, DayOfWeek dayOfWeek);
 }
