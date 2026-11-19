@@ -1,0 +1,125 @@
+@clientAccessToken = eyJraWQiOiJBMmlncjU5SVZIZjNFVkJ1RUpac2V3UFp3WUgxUURTc2lHVS1XU0E4SVFvIiwiYWxnIjoiSFMyNTYifQ.eyJ0b2tlbl92ZXJzaW9uIjowLCJzdWIiOiI0MSIsInJvbGUiOiJDTElFTlQiLCJpc3MiOiJzZXRvcmEiLCJleHAiOjE3OTUwNTUwOTYsInRva2VuX3R5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3OTUwNTQxOTYsImp0aSI6ImQyYzdiYjAxLWM3ODctNDE4MC1iM2ViLWQzNmVmMmU3NzUyZSJ9.qsCSFAcr2hAlJe5T9br4PsEl0OSGWOR5o2hsyhOwIOw
+@clientRefreshToken = eyJraWQiOiJBMmlncjU5SVZIZjNFVkJ1RUpac2V3UFp3WUgxUURTc2lHVS1XU0E4SVFvIiwiYWxnIjoiSFMyNTYifQ.eyJ0b2tlbl92ZXJzaW9uIjowLCJzdWIiOiI0MSIsImlzcyI6InNldG9yYSIsImV4cCI6MTc5NTY1ODk5NiwidG9rZW5fdHlwZSI6InJlZnJlc2giLCJpYXQiOjE3OTUwNTQxOTYsImp0aSI6ImNhNDcwYjliLTQ3ZjctNGZmNi04YjJiLTk3YjIwMDlkMTZhNCJ9.wIDac0oEXKvoKd5MF7rIlxN8JfHsvYW8FeFXB36XvoY
+@adminAccessToken = PASTE_ADMIN_ACCESS_TOKEN_HERE
+@userId = 41
+
+
+### register (automatically client, admin has to modify its role for anything else)
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "firstName": "Test",
+  "lastName": "Client",
+  "email": "client@gmail.com",
+  "phoneNumber": "0712345678",
+  "password": "GottaBeAtLeast8"
+}
+
+
+### login
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "client@gmail.com",
+  "password": "GottaBeAtLeast8"
+}
+
+
+### get the currently logged-in user
+GET http://localhost:8080/api/auth/me
+Authorization: Bearer {{clientAccessToken}}
+
+
+### create (only admin can create another user)
+POST http://localhost:8080/api/users
+Authorization: Bearer {{adminAccessToken}}
+Content-Type: application/json
+
+{
+  "firstName": "Managed",
+  "lastName": "Person",
+  "email": "managed.step10@setora.test",
+  "phoneNumber": "0700000000",
+  "password": "TestManagedPass123!",
+  "role": "CLIENT"
+}
+
+
+### get all users (only admin can get all users)
+GET http://localhost:8080/api/users
+Authorization: Bearer {{adminAccessToken}}
+
+
+### get by ID
+GET http://localhost:8080/api/users/{{userId}}
+Authorization: Bearer {{adminAccessToken}}
+
+
+### update (only admin can update another user)
+PUT http://localhost:8080/api/users/{{userId}}
+Authorization: Bearer {{adminAccessToken}}
+Content-Type: application/json
+
+{
+  "firstName": "Managed",
+  "lastName": "Updated",
+  "username": "Managed",
+  "email": "managed.updated.step10@setora.test",
+  "phoneNumber": "0799999999"
+}
+
+
+### delete (only admin can delete another uder)
+DELETE http://localhost:8080/api/users/{{userId}}
+Authorization: Bearer {{adminAccessToken}}
+
+
+### refresh client access tokens
+POST http://localhost:8080/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{clientRefreshToken}}"
+}
+
+
+### logout
+POST http://localhost:8080/api/auth/logout
+Authorization: Bearer {{clientAccessToken}}
+Content-Type: application/json
+
+{
+  "refreshToken": "{{clientRefreshToken}}"
+}
+
+
+### change password (expect 501 for now)
+PUT http://localhost:8080/api/auth/change-password
+Authorization: Bearer {{adminAccessToken}}
+Content-Type: application/json
+
+{
+  "currentPassword": "TestAdminPass123!",
+  "newPassword": "A_Different_Password123!"
+}
+
+
+### forgot password placeholder (expect 501 for now)
+POST http://localhost:8080/api/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "client@gmail.com"
+}
+
+
+### reset password placeholder (expect 501 for now)
+POST http://localhost:8080/api/auth/reset-password
+Content-Type: application/json
+
+{
+  "token": "not-implemented",
+  "newPassword": "SomeNewPassword123!"
+}
