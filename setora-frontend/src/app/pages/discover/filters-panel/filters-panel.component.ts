@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, HostListener, computed, inject, output, signal } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
-import { BusinessDiscoveryService } from '../../../../core/services/business-discovery.service';
-import { BusinessQuery } from '../../../../core/ui-models/business-query.model';
-import { TIME_SLOTS, TIME_SLOT_KEYS, TimeSlot, slotOf } from '../../../../core/ui-models/time-slots.model';
+import { BusinessDiscoveryService } from '../../../core/services/business-discovery.service';
+import { BusinessQuery } from '../../../core/ui-models/business-query.model';
+import { TIME_SLOTS, TIME_SLOT_KEYS, TimeSlot, slotOf } from '../../../core/ui-models/time-slots.model';
 
 interface Draft {
     category: string;

@@ -71,6 +71,16 @@
     color: var(--text-secondary);
 }
 
+.card__location {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.card__location svg {
+    flex-shrink: 0;
+}
+
 .card__footer {
     margin-top: auto;
     padding-top: 12px;

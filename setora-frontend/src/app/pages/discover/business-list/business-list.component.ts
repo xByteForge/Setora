@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
-import { BusinessListItem } from '../../../../core/ui-models/business-list-item.model';
+import { BusinessListItem } from '../../../core/ui-models/business-list-item.model';
 import { BusinessCardComponent } from '../business-card/business-card.component';
 
 @Component({

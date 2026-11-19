@@ -63,6 +63,23 @@ export class BusinessDiscoveryService {
         return { items: items.slice(start, start + q.pageSize), total: items.length, page: q.page, pageSize: q.pageSize };
     });
 
+    private matchesText(b: BusinessListItem, text: string): boolean {
+        return norm([
+            b.name,
+            b.description ?? '',
+            b.category,
+            b.city,
+            b.location.locationName ?? '',
+            ...b.services.map(s => s.name),
+        ].join(' ')).includes(text);
+    }
+
+    /** Pentru search-ul universal din topbar. */
+    searchByText(raw: string): BusinessListItem[] {
+        const text = norm(raw.trim());
+        return text ? this.businesses.filter(b => this.matchesText(b, text)) : [];
+    }
+
     /** Cate filtre din panou sunt active (fara localitate, sortare si text). */
     readonly activeFilterCount = computed(() => {
         const q = this.query();
@@ -128,7 +145,7 @@ export class BusinessDiscoveryService {
             b.services.some(s =>
                 (q.minPrice == null || s.price >= q.minPrice) &&
                 (q.maxPrice == null || s.price <= q.maxPrice)) &&
-            (!text || norm([b.name, b.description ?? '', b.category, ...b.services.map(s => s.name)].join(' ')).includes(text))
+            (!text || this.matchesText(b, text))
         );
 
         // date / timeFrom / timeTo sunt ignorate în mock (le va rezolva backend-ul prin disponibilitate)

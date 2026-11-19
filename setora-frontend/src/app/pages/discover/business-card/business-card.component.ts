@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
-import { BusinessListItem } from '../../../../core/ui-models/business-list-item.model';
+import { BusinessListItem } from '../../../core/ui-models/business-list-item.model';
+import { LucideMapPin } from '@lucide/angular';
 
 @Component({
     selector: 'app-business-card',
     standalone: true,
-    imports: [TranslocoModule],
+    imports: [TranslocoModule, LucideMapPin],
     templateUrl: './business-card.component.html',
     styleUrl: './business-card.component.css',
     changeDetection: ChangeDetectionStrategy.OnPush

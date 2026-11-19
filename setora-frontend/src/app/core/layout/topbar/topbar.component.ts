@@ -8,6 +8,7 @@ import {
   input,
   output,
   signal,
+  viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
@@ -23,6 +24,8 @@ import {
 import { ThemeService } from '../../services/theme.service';
 import { BusinessService } from '../../services/business.service';
 import { MobileMenuService } from '../../services/mobile-menu.service';
+import { SearchService } from '../../services/search.service';
+import { SearchResult } from '../../models/search-results.model';
 
 export interface Breadcrumb {
   label?: string;     // text brut (ex: numele business-ului)
@@ -66,17 +69,55 @@ export interface Breadcrumb {
       </nav>
 
       <div class="actions">
-        @if (!isCustomerArea()) {
-          <form class="search hide-mobile" role="search" (submit)="$event.preventDefault(); onSearch(q.value)">
-            <svg lucideSearch [size]="16" aria-hidden="true"></svg>
-            <input
-                #q
-                type="search"
-                [placeholder]="t('HEADER.SEARCH')"
-                [attr.aria-label]="t('HEADER.SEARCH')"
-            />
-          </form>
-        }
+        <div class="search hide-mobile">
+          <svg lucideSearch [size]="16" aria-hidden="true"></svg>
+          <input
+              #q
+              type="search"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-controls="search-panel"
+              [attr.aria-expanded]="searchOpen()"
+              [value]="query()"
+              (input)="onQueryInput(q.value)"
+              (keydown)="onSearchKeydown($event)"
+              (focus)="searchOpen.set(query().trim().length > 0)"
+              [placeholder]="t('HEADER.SEARCH')"
+              [attr.aria-label]="t('HEADER.SEARCH')"
+          />
+          <kbd class="shortcut" aria-hidden="true">/</kbd>
+
+          @if (searchOpen()) {
+            <div class="search-panel" id="search-panel" role="listbox">
+              @for (g of groups(); track g.category) {
+                <div class="search-group">
+                  <p class="group-title">{{ t(g.labelKey) }}</p>
+                  @for (item of g.items; track item.id) {
+                    <button
+                        type="button"
+                        role="option"
+                        class="result"
+                        [class.active]="flat()[activeIndex()] === item"
+                        [attr.aria-selected]="flat()[activeIndex()] === item"
+                        (mouseenter)="activeIndex.set(flat().indexOf(item))"
+                        (click)="openResult(item)"
+                    >
+                      <span class="result-title">{{ item.title }}</span>
+                      @if (item.subtitle) {
+                        <span class="result-sub">{{ item.subtitle }}</span>
+                      }
+                    </button>
+                  }
+                </div>
+              } @empty {
+                <p class="no-results">{{ t('SEARCH.NO_RESULTS') }}</p>
+              }
+              <button type="button" class="see-all" (click)="seeAll()">
+                {{ t('SEARCH.SEE_ALL') }} „{{ query().trim() }}"
+              </button>
+            </div>
+          }
+        </div>
 
         <button
             type="button"
@@ -145,25 +186,14 @@ export class TopbarComponent {
   readonly menu = inject(MobileMenuService);
   private readonly transloco = inject(TranslocoService);
   private readonly businessService = inject(BusinessService);
+  private readonly searchService = inject(SearchService);
   private readonly router = inject(Router);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
   readonly unreadCount = input(0);
-  readonly searched = output<string>();
   readonly notificationsClicked = output<void>();
 
-  // URL-ul curent, actualizat la fiecare navigare
-  private readonly currentUrl = toSignal(
-      this.router.events.pipe(
-          filter((e): e is NavigationEnd => e instanceof NavigationEnd),
-          map((e) => e.urlAfterRedirects),
-          startWith(this.router.url),
-      ),
-      { initialValue: this.router.url },
-  );
-
-  // zona de client: fara numele business-ului in breadcrumb
-  protected readonly isCustomerArea = computed(() => this.currentUrl().startsWith('/customer'));
+  readonly searchInput = viewChild<ElementRef<HTMLInputElement>>('q');
 
   // paginile din rutele active, recalculate la fiecare navigare
   private readonly routeCrumbs = toSignal(
@@ -175,12 +205,11 @@ export class TopbarComponent {
       { initialValue: [] as Breadcrumb[] },
   );
 
-  // numele business-ului (doar in zona de business) + paginile curente
+  // numele business-ului + paginile curente
   protected readonly items = computed<Breadcrumb[]>(() => {
     const business = this.businessService.current();
-    const showBusiness = !!business && !this.isCustomerArea();
     return [
-      ...(showBusiness ? [{ label: business!.name, url: '/' }] : []),
+      ...(business ? [{ label: business.name, url: '/' }] : []),
       ...this.routeCrumbs(),
     ];
   });
@@ -188,6 +217,13 @@ export class TopbarComponent {
   readonly languages = ['ro', 'en'];
   readonly langMenuOpen = signal(false);
   readonly activeLang = signal(this.transloco.getActiveLang());
+
+  // ---- search universal ----
+  readonly query = signal('');
+  readonly searchOpen = signal(false);
+  readonly activeIndex = signal(0);
+  readonly groups = computed(() => this.searchService.search(this.query()));
+  readonly flat = computed(() => this.groups().flatMap((g) => g.items));
 
   private buildCrumbs(): Breadcrumb[] {
     const crumbs: Breadcrumb[] = [];
@@ -205,9 +241,45 @@ export class TopbarComponent {
     return crumbs;
   }
 
-  onSearch(value: string): void {
-    const q = value.trim();
-    if (q) this.searched.emit(q);
+  onQueryInput(value: string): void {
+    this.query.set(value);
+    this.activeIndex.set(0);
+    this.searchOpen.set(value.trim().length > 0);
+  }
+
+  onSearchKeydown(e: KeyboardEvent): void {
+    const n = this.flat().length;
+
+    if (e.key === 'ArrowDown' && n > 0) {
+      e.preventDefault();
+      this.activeIndex.update((i) => (i + 1) % n);
+    } else if (e.key === 'ArrowUp' && n > 0) {
+      e.preventDefault();
+      this.activeIndex.update((i) => (i - 1 + n) % n);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      const item = this.flat()[this.activeIndex()];
+      if (item) this.openResult(item);
+      else if (this.query().trim()) this.seeAll();
+    }
+  }
+
+  openResult(item: SearchResult): void {
+    this.router.navigateByUrl(item.url);
+    this.closeSearch();
+  }
+
+  seeAll(): void {
+    const q = this.query().trim();
+    if (!q) return;
+    this.router.navigate(['/discover'], { queryParams: { q } });
+    this.closeSearch();
+  }
+
+  private closeSearch(): void {
+    this.searchOpen.set(false);
+    this.query.set('');
+    this.searchInput()?.nativeElement.blur();
   }
 
   setLang(lang: string): void {
@@ -220,11 +292,28 @@ export class TopbarComponent {
   onDocClick(e: MouseEvent): void {
     if (!this.host.nativeElement.contains(e.target as Node)) {
       this.langMenuOpen.set(false);
+      this.searchOpen.set(false);
     }
   }
 
   @HostListener('document:keydown.escape')
   onEsc(): void {
     this.langMenuOpen.set(false);
+    if (this.searchOpen()) this.closeSearch();
+  }
+
+  // scurtaturi: "/" sau Ctrl/Cmd+K focuseaza search-ul
+  @HostListener('document:keydown', ['$event'])
+  onGlobalKey(e: KeyboardEvent): void {
+    const target = e.target as HTMLElement;
+    const typing = /^(input|textarea|select)$/i.test(target.tagName) || target.isContentEditable;
+
+    const isCmdK = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k';
+    const isSlash = e.key === '/' && !typing;
+
+    if (isCmdK || isSlash) {
+      e.preventDefault();
+      this.searchInput()?.nativeElement.focus();
+    }
   }
 }

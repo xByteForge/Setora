@@ -11,7 +11,7 @@
     "BOOKINGS": "Rezervările mele"
   },
   "HEADER": {
-    "SEARCH": "Caută un client sau un serviciu...",
+    "SEARCH": "Caută businessuri, servicii...",
     "BREADCRUMB": "Navigare",
     "THEME_TO_DARK": "Comută la tema întunecată",
     "THEME_TO_LIGHT": "Comută la tema luminoasă",
@@ -129,7 +129,7 @@
     "CANCEL": {
       "TITLE": "Anulezi programarea?",
       "QUESTION": "Sigur vrei să anulezi această programare?",
-      "NOTIFY": "Clienta va fi notificată prin e-mail, iar intervalul va deveni disponibil.",
+      "NOTIFY": "Clientul va fi notificat prin e-mail, iar intervalul va deveni disponibil.",
       "REFUND": "Orice rambursare se aplică potrivit politicii businessului.",
       "KEEP": "Păstrează programarea",
       "CONFIRM": "Da, anulează",
@@ -163,11 +163,6 @@
     "PREV": "Pagina anterioară",
     "NEXT": "Pagina următoare",
     "PAGE_OF": "Pagina {{page}} din {{pages}}",
-    "SEARCH": {
-      "LABEL": "Serviciu sau business",
-      "PLACEHOLDER": "Ex. tuns, pilates, spălătorie auto",
-      "BUTTON": "Caută"
-    },
     "SORT": {
       "relevance": "Relevanță",
       "priceAsc": "Preț crescător",
@@ -200,6 +195,13 @@
       "SHOW_RESULTS": "Afișează rezultatele ({{count}})",
       "CLOSE": "Închide filtrele"
     }
+  },
+  "SEARCH": {
+    "PAGES": "Pagini",
+    "BUSINESSES": "Businessuri",
+    "SERVICES": "Servicii",
+    "NO_RESULTS": "Niciun rezultat",
+    "SEE_ALL": "Vezi toate rezultatele pentru"
   },
   "MENU": {
     "TITLE": "Meniu",

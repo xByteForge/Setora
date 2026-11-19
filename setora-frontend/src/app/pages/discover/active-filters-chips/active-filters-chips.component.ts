@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
-import { BusinessDiscoveryService } from '../../../../core/services/business-discovery.service';
-import { BusinessQuery } from '../../../../core/ui-models/business-query.model';
-import { slotOf } from '../../../../core/ui-models/time-slots.model';
+import { BusinessDiscoveryService } from '../../../core/services/business-discovery.service';
+import { BusinessQuery } from '../../../core/ui-models/business-query.model';
+import { slotOf } from '../../../core/ui-models/time-slots.model';
 
 interface Chip {
     id: string;
-    label?: string;                    // text brut (categorie, serviciu, dată)
+    label?: string;                    // text brut (localitate, categorie, serviciu, dată)
     labelKey?: string;                 // cheie Transloco
     params?: Record<string, unknown>;
-    clear: Partial<BusinessQuery>;     // ce se reseteaza cand apeși X
+    clear: Partial<BusinessQuery>;     // ce se resetează când apeși X
 }
 
 @Component({
