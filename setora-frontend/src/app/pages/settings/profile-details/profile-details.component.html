@@ -1,0 +1,147 @@
+<section class="card">
+  <div class="card-header">
+    <div>
+      <h2 class="card-title">{{ 'SETTINGS.PROFILE.TITLE' | transloco }}</h2>
+      <p class="card-subtitle">
+        {{ (editing() ? 'SETTINGS.PROFILE.EDIT_HINT' : 'SETTINGS.PROFILE.VIEW_HINT') | transloco }}
+      </p>
+    </div>
+
+    @if (!editing()) {
+      <button type="button" class="btn btn--primary" (click)="startEditing()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
+        </svg>
+        {{ 'SETTINGS.PROFILE.EDIT' | transloco }}
+      </button>
+    }
+  </div>
+
+  <div class="identity">
+    <div class="avatar">
+      @if (avatarSrc(); as src) {
+        <img
+          class="avatar__image"
+          [src]="src"
+          alt=""
+          (error)="brokenSrc.set(src)"
+        />
+      } @else {
+        <span aria-hidden="true">{{ initials() }}</span>
+      }
+    </div>
+
+    <div class="identity__text">
+      <p class="identity__name">{{ user().firstName }} {{ user().lastName }}</p>
+      <p class="identity__email">{{ user().email }}</p>
+
+      @if (editing()) {
+        <button type="button" class="btn btn--sm" (click)="photoInput.click()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M4 8h3l2-3h6l2 3h3v11H4z" /><circle cx="12" cy="13" r="3.5" />
+          </svg>
+          {{ 'SETTINGS.PROFILE.CHANGE_PHOTO' | transloco }}
+        </button>
+
+        <input
+          #photoInput
+          type="file"
+          accept="image/jpeg,image/png"
+          hidden
+          (change)="onPhotoSelected($event)"
+        />
+
+        <p class="hint">{{ 'SETTINGS.PROFILE.PHOTO_HINT' | transloco }}</p>
+
+        @if (photoError(); as err) {
+          <p class="form-error" role="alert">{{ err | transloco }}</p>
+        }
+
+        @if (selectedPhoto()) {
+          <p class="hint">{{ 'SETTINGS.PROFILE.PHOTO_SELECTED' | transloco }}</p>
+        }
+      }
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  @if (!editing()) {
+    <dl class="details">
+      <div>
+        <dt>{{ 'SETTINGS.PROFILE.FIRST_NAME' | transloco }}</dt>
+        <dd>{{ user().firstName }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'SETTINGS.PROFILE.LAST_NAME' | transloco }}</dt>
+        <dd>{{ user().lastName }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'SETTINGS.PROFILE.USERNAME' | transloco }}</dt>
+        <dd>{{ user().username }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'SETTINGS.PROFILE.PHONE' | transloco }}</dt>
+        <dd>{{ user().phoneNumber ?? '—' }}</dd>
+      </div>
+      <div class="details__full">
+        <dt>{{ 'SETTINGS.PROFILE.EMAIL' | transloco }}</dt>
+        <dd>{{ user().email }}</dd>
+      </div>
+    </dl>
+  } @else {
+    <form class="form" [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <div class="form-grid">
+        <label class="field">
+          <span class="field__label">{{ 'SETTINGS.PROFILE.FIRST_NAME' | transloco }}</span>
+          <input class="input" formControlName="firstName" autocomplete="given-name" />
+        </label>
+
+        <label class="field">
+          <span class="field__label">{{ 'SETTINGS.PROFILE.LAST_NAME' | transloco }}</span>
+          <input class="input" formControlName="lastName" autocomplete="family-name" />
+        </label>
+
+        <label class="field">
+          <span class="field__label">{{ 'SETTINGS.PROFILE.USERNAME' | transloco }}</span>
+          <div class="input-group">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" /><path d="M16 8v5a3 3 0 006 0v-1a10 10 0 10-4 8" />
+            </svg>
+            <input class="input" formControlName="username" autocomplete="username" />
+          </div>
+        </label>
+
+        <label class="field">
+          <span class="field__label">{{ 'SETTINGS.PROFILE.PHONE' | transloco }}</span>
+          <div class="phone">
+            <select class="phone__prefix-select" formControlName="countryCode" aria-label="+">
+              @for (c of countries; track c.code) {
+                <option [value]="c.code">{{ c.flag }} {{ c.code }}</option>
+              }
+            </select>
+            <input class="input" formControlName="phoneNumber" inputmode="tel" autocomplete="tel-national" />
+          </div>
+        </label>
+      </div>
+
+      <hr class="divider" />
+
+      @if (saveFailed()) {
+        <p class="form-error" role="alert">{{ 'ERRORS.GENERIC' | transloco }}</p>
+      }
+
+      <div class="form-actions">
+        <button type="button" class="btn" (click)="cancel()" [disabled]="saving()">
+          {{ 'SETTINGS.COMMON.CANCEL' | transloco }}
+        </button>
+        <button type="submit" class="btn btn--primary" [disabled]="saving()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M5 12l5 5 9-10" />
+          </svg>
+          {{ 'SETTINGS.PROFILE.SAVE' | transloco }}
+        </button>
+      </div>
+    </form>
+  }
+</section>

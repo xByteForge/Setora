@@ -1,10 +1,14 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, isDevMode } from '@angular/core';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, isDevMode, inject, provideAppInitializer } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { TranslocoHttpLoader } from './transloco-loader';
 import { provideTransloco } from '@ngneat/transloco';
+import { firstValueFrom } from 'rxjs';
+import { provideApi } from './core/api/api.config';
+import { AuthService } from './core/services/auth.service';
+import { UserService } from './core/services/user.service';
 
 
 function getInitialLang(): string {
@@ -29,6 +33,27 @@ export const appConfig: ApplicationConfig = {
         prodMode: !isDevMode(),
       },
       loader: TranslocoHttpLoader,
+    }),
+    provideApi(),
+    provideAppInitializer(async () => {
+      const auth = inject(AuthService);
+      const users = inject(UserService);
+
+      try {
+        
+        const session = await auth.autoLogin();
+        users.setCurrentUser(session.user);
+      } catch (error) {
+        console.error('Auto-login failed', error);
+        return;
+      }
+
+      try {
+        const user = users.currentUser();
+        if (user) await firstValueFrom(users.loadAvatar(user.id));
+      } catch (error) {
+        console.error('Avatar load failed', error);
+      }
     }),
   ],
 };

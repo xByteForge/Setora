@@ -53,10 +53,20 @@
     </button>
 
     <div class="user-card">
-      <div class="avatar">{{ userInitials }}</div>
+       <div class="avatar">
+          @if (userAvatarUrl()) {
+            <img
+              [src]="userAvatarUrl()!"
+              [alt]="userName()"
+              class="avatar-image"
+            />
+          } @else {
+            <span>{{ userInitials() }}</span>
+          }
+        </div>
       <div class="user-info">
-        <span class="user-name">{{ userName }}</span>
-        <span class="user-role">{{ userRole }}</span>
+        <span class="user-name">{{ userName() }}</span>
+        <span class="user-role">{{ userRole() }}</span>
       </div>
     </div>
   </div>
