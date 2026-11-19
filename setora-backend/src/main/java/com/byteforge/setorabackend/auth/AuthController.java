@@ -14,8 +14,8 @@ import java.net.URI;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
-
     private final AuthService authService;
+    private final UserService userService;
 
     @PostMapping("/register")
     public ResponseEntity<UserResponseDto> register(@Valid @RequestBody RegisterRequestDto request) {
@@ -47,7 +47,14 @@ public class AuthController {
         return ResponseEntity.ok(authService.getCurrentUser(userId));
     }
 
-    @PutMapping("/change-password")                 // these are placeholders, change them when implementing the password change
+    @PutMapping("/me")
+    public ResponseEntity<UserResponseDto> updateCurrentUser(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody UpdateUserRequestDto request) {
+        int userId = Integer.parseInt(jwt.getSubject());
+
+        return ResponseEntity.ok(userService.updateUser(userId, request));
+    }
+
+    @PutMapping("/change-password")                 // these are placeholders, we'll change them when implementing the password change
     public ResponseEntity<Void> changePassword() {
         return ResponseEntity.status(501).build();
     }

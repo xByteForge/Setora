@@ -1,7 +1,7 @@
-@clientAccessToken = eyJraWQiOiJBMmlncjU5SVZIZjNFVkJ1RUpac2V3UFp3WUgxUURTc2lHVS1XU0E4SVFvIiwiYWxnIjoiSFMyNTYifQ.eyJ0b2tlbl92ZXJzaW9uIjowLCJzdWIiOiI0MSIsInJvbGUiOiJDTElFTlQiLCJpc3MiOiJzZXRvcmEiLCJleHAiOjE3OTUwNTUwOTYsInRva2VuX3R5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3OTUwNTQxOTYsImp0aSI6ImQyYzdiYjAxLWM3ODctNDE4MC1iM2ViLWQzNmVmMmU3NzUyZSJ9.qsCSFAcr2hAlJe5T9br4PsEl0OSGWOR5o2hsyhOwIOw
+@clientAccessToken = eyJraWQiOiJBMmlncjU5SVZIZjNFVkJ1RUpac2V3UFp3WUgxUURTc2lHVS1XU0E4SVFvIiwiYWxnIjoiSFMyNTYifQ.eyJ0b2tlbl92ZXJzaW9uIjowLCJzdWIiOiI0MSIsInJvbGUiOiJDTElFTlQiLCJpc3MiOiJzZXRvcmEiLCJleHAiOjE3OTUwNTY3MjMsInRva2VuX3R5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3OTUwNTU4MjMsImp0aSI6IjM0OTc1NWZjLTFjODEtNDFhZi04Y2JlLTgwNmQ1OGM5YWU0MiJ9.w7P8rXu_sJsL1uxoYkuhoPzEDW8mPc-_gouSCJIxs-o
 @clientRefreshToken = eyJraWQiOiJBMmlncjU5SVZIZjNFVkJ1RUpac2V3UFp3WUgxUURTc2lHVS1XU0E4SVFvIiwiYWxnIjoiSFMyNTYifQ.eyJ0b2tlbl92ZXJzaW9uIjowLCJzdWIiOiI0MSIsImlzcyI6InNldG9yYSIsImV4cCI6MTc5NTY1ODk5NiwidG9rZW5fdHlwZSI6InJlZnJlc2giLCJpYXQiOjE3OTUwNTQxOTYsImp0aSI6ImNhNDcwYjliLTQ3ZjctNGZmNi04YjJiLTk3YjIwMDlkMTZhNCJ9.wIDac0oEXKvoKd5MF7rIlxN8JfHsvYW8FeFXB36XvoY
-@adminAccessToken = PASTE_ADMIN_ACCESS_TOKEN_HERE
-@userId = 41
+@adminAccessToken = eyJraWQiOiJBMmlncjU5SVZIZjNFVkJ1RUpac2V3UFp3WUgxUURTc2lHVS1XU0E4SVFvIiwiYWxnIjoiSFMyNTYifQ.eyJ0b2tlbl92ZXJzaW9uIjowLCJzdWIiOiI0MSIsInJvbGUiOiJDTElFTlQiLCJpc3MiOiJzZXRvcmEiLCJleHAiOjE3OTUwNTcwODksInRva2VuX3R5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3OTUwNTYxODksImp0aSI6ImY4MjRlZWQyLTVkZDYtNGE3NC1iODgxLThkMmIzNzcwOTRiYyJ9.7EwY_CmeGP1JDpiH3Y5HjXgfL3UK-3oz1_qxK4_5mIo
+@userId = 42
 
 
 ### register (automatically client, admin has to modify its role for anything else)
@@ -27,9 +27,23 @@ Content-Type: application/json
 }
 
 
-### get the currently logged-in user
+### get the current user's data (as the current user)
 GET http://localhost:8080/api/auth/me
 Authorization: Bearer {{clientAccessToken}}
+
+
+### update the current user's data (as the current user)
+PUT http://localhost:8080/api/auth/me
+Authorization: Bearer {{clientAccessToken}}
+Content-Type: application/json
+
+{
+  "firstName": "Test",
+  "lastName": "Client",
+  "username": "ChangedItFromMyFirstNameSinceLike40%OfTheUsersHadThisAsTheirUsernameForSomeReason",
+  "email": "client@gmail.com",
+  "phoneNumber": "0999999999"
+}
 
 
 ### create (only admin can create another user)
@@ -38,11 +52,11 @@ Authorization: Bearer {{adminAccessToken}}
 Content-Type: application/json
 
 {
-  "firstName": "Managed",
+  "firstName": "New",
   "lastName": "Person",
-  "email": "managed.step10@setora.test",
+  "email": "new@gmail.com",
   "phoneNumber": "0700000000",
-  "password": "TestManagedPass123!",
+  "password": "ANewPasswordWhoa",
   "role": "CLIENT"
 }
 
@@ -63,10 +77,10 @@ Authorization: Bearer {{adminAccessToken}}
 Content-Type: application/json
 
 {
-  "firstName": "Managed",
+  "firstName": "New",
   "lastName": "Updated",
-  "username": "Managed",
-  "email": "managed.updated.step10@setora.test",
+  "username": "New",
+  "email": "reallyNew@gmail.come",
   "phoneNumber": "0799999999"
 }
 
@@ -101,8 +115,8 @@ Authorization: Bearer {{adminAccessToken}}
 Content-Type: application/json
 
 {
-  "currentPassword": "TestAdminPass123!",
-  "newPassword": "A_Different_Password123!"
+  "currentPassword": "LameOldPasswordEw",
+  "newPassword": "VeryCoolNewPassword"
 }
 
 
@@ -121,5 +135,5 @@ Content-Type: application/json
 
 {
   "token": "not-implemented",
-  "newPassword": "SomeNewPassword123!"
+  "newPassword": "VeryCoolNewPassword"
 }
