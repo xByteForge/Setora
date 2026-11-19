@@ -23,10 +23,14 @@ public class DatabaseUserDetailsService implements UserDetailsService { // this 
         if (user.getRole() == null)
             throw new UsernameNotFoundException("Invalid account");
 
-        // shared guest placeholder must not log in
-        if ("ghost@gmail.com".equalsIgnoreCase(user.getEmail()))
+        // guest must not log in, we can change this by deleting here
+        if ("ghost@gmail.com".equalsIgnoreCase(user.getEmail()) || user.isDeleted())
             throw new UsernameNotFoundException("Invalid credentials");
 
-        return new CustomUserDetails(user);
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getEmail())
+                .password(user.getPasswordHash())
+                .roles(user.getRole().name())
+                .build();
     }
 }
