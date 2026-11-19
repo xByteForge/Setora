@@ -16,7 +16,7 @@ import java.util.Locale;
 @AllArgsConstructor
 public class User {
     @Id
-    @GeneratedValue(strategy= GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
     @Column(nullable = false)
@@ -40,7 +40,13 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UserRole role=UserRole.CLIENT;
+    private UserRole role = UserRole.CLIENT;
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
+
+    @Column(name = "token_version", nullable = false)
+    private int tokenVersion = 0;
 
     //add the rest later on
 
@@ -48,7 +54,7 @@ public class User {
         this.email = email == null ? null : email.trim().toLowerCase();
     }
 
-    public String getName(){
+    public String getName() {
         return this.firstName + " " + this.lastName;
     }
 

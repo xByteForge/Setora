@@ -29,7 +29,6 @@ public class RefreshToken {
     @Column(nullable = false)
     private Instant expiresAt;
 
-    @Column(nullable = false)
     private Instant revokedAt;
 
     @CreationTimestamp
