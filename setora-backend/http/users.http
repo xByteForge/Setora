@@ -12,7 +12,7 @@ Content-Type: application/json
   "firstName": "Test",
   "lastName": "Client",
   "email": "client@gmail.com",
-  "phoneNumber": "0712345678",
+  "phoneNumber": "+40712345678",
   "password": "GottaBeAtLeast8"
 }
 
