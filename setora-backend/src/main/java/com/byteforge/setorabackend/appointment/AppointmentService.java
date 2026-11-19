@@ -15,13 +15,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Locale;
@@ -265,5 +265,15 @@ public class AppointmentService {
 
     public List<Appointment> findByBusinessIdAndDateRange(Integer businessId, Instant start, Instant end) {
         return appointmentRepository.findByBusinessIdAndDateRange(businessId, start, end);
+    }
+
+    public List<Appointment> findByEmployeeIdInDateInterval(int employeeId, LocalDateTime start, LocalDateTime end) {
+        return appointmentRepository.findByEmployee_IdOnDate(employeeId,start,start);
+    }
+    public List<Appointment> findByEmployeeIdOnDate(int employeeId, LocalDate date) {
+        var start=date.atStartOfDay();
+        var end=date.plusDays(1).atStartOfDay();
+        return appointmentRepository.findByEmployee_IdOnDate(employeeId,start,end);
+
     }
 }
