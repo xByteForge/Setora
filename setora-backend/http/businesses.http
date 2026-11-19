@@ -68,3 +68,19 @@ GET http://localhost:8080/api/businesses?service=tuns&minPrice=200&maxPrice=50
 
 ### Validation test: past date (expect 400 Bad Request)
 GET http://localhost:8080/api/businesses?service=tuns&date=2020-01-01
+
+
+### Get business by ID
+GET http://localhost:8080/api/businesses/1
+
+
+### Get business by ID (expect 404 Not Found)
+GET http://localhost:8080/api/businesses/999999
+
+
+### Get all businesses (no filters, default pagination: page 0, size 20)
+GET http://localhost:8080/api/businesses/all
+
+
+### Get all businesses (custom pagination)
+GET http://localhost:8080/api/businesses/all?page=0&size=5
