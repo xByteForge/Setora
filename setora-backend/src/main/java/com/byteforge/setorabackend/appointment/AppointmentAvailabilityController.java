@@ -30,7 +30,7 @@ public class AppointmentAvailabilityController {
      * @return sorted list of available appointment start times
      */
     @GetMapping("/{businessId}/availability")
-    public ResponseEntity<@NonNull List<LocalTime>> getAllAvailableServiceItemsForToday(
+    public ResponseEntity<@NonNull List<LocalTime>> getAllAvailableAppointmentTimesForToday(
             @PathVariable int businessId,
             @RequestParam LocalDate date,
             @RequestParam int serviceId,
