@@ -48,6 +48,9 @@ public class User {
     @Column(name = "token_version", nullable = false)
     private int tokenVersion = 0;
 
+    @Column
+    private String avatarPath;
+
     //add the rest later on
 
     public void setEmail(String email) {

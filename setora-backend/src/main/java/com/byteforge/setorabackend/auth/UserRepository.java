@@ -26,4 +26,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     WHERE u.role = :role AND u.isDeleted = false
     """)
     long countActiveByRole(@Param("role") UserRole role);
+
+    Optional<User> findUserById(int id);
 }
