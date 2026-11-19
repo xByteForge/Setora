@@ -1,3 +1,4 @@
+
 /*
  * DEVELOPMENT DATABASE SEEDER
  *
@@ -39,6 +40,12 @@ import com.byteforge.setorabackend.employees.repository.UnavailableSlotRepositor
 import com.byteforge.setorabackend.employees.repository.WorkScheduleRepository;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
 import com.byteforge.setorabackend.serviceItem.ServiceItemRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -50,21 +57,22 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class DataSeeder implements CommandLineRunner {
 
-    private static final ZoneId ZONE = ZoneId.of("Europe/Bucharest");
+    private static final ZoneId ZONE =
+            ZoneId.of("Europe/Bucharest");
 
-    private static final List<DayOfWeek> WORK_DAYS =
-            List.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY);
+    private static final List<DayOfWeek> WORK_DAYS = List.of(
+            DayOfWeek.MONDAY,
+            DayOfWeek.TUESDAY,
+            DayOfWeek.WEDNESDAY,
+            DayOfWeek.THURSDAY,
+            DayOfWeek.FRIDAY
+    );
 
     private static final List<String> BUSINESS_NAMES = List.of(
             "Studio Armonia",
@@ -76,51 +84,24 @@ public class DataSeeder implements CommandLineRunner {
             "Classic Cuts",
             "Aura Wellness",
             "Elite Studio",
-            "Bloom Beauty");
+            "Bloom Beauty"
+    );
 
     private static final List<String> FIRST_NAMES = List.of(
-            "Maria",
-            "Andrei",
-            "Elena",
-            "Alexandru",
-            "Ioana",
-            "Mihai",
-            "Ana",
-            "David",
-            "Sofia",
-            "Gabriel",
-            "Irina",
-            "Vlad",
-            "Diana",
-            "Matei",
-            "Bianca",
-            "Radu",
-            "Cristina",
-            "Paul",
-            "Laura",
-            "Stefan");
+            "Maria", "Andrei", "Elena", "Alexandru",
+            "Ioana", "Mihai", "Ana", "David",
+            "Sofia", "Gabriel", "Irina", "Vlad",
+            "Diana", "Matei", "Bianca", "Radu",
+            "Cristina", "Paul", "Laura", "Stefan"
+    );
 
     private static final List<String> SURNAMES = List.of(
-            "Popescu",
-            "Ionescu",
-            "Dumitru",
-            "Stan",
-            "Radu",
-            "Marin",
-            "Dobre",
-            "Munteanu",
-            "Constantin",
-            "Georgescu",
-            "Stoica",
-            "Ilie",
-            "Preda",
-            "Tudor",
-            "Nistor",
-            "Florea",
-            "Petrescu",
-            "Moldovan",
-            "Enache",
-            "Lazar");
+            "Popescu", "Ionescu", "Dumitru", "Stan",
+            "Radu", "Marin", "Dobre", "Munteanu",
+            "Constantin", "Georgescu", "Stoica", "Ilie",
+            "Preda", "Tudor", "Nistor", "Florea",
+            "Petrescu", "Moldovan", "Enache", "Lazar"
+    );
 
     private final UserRepository userRepository;
     private final BusinessRepository businessRepository;
@@ -148,14 +129,19 @@ public class DataSeeder implements CommandLineRunner {
 
         List<Employee> allEmployees = new ArrayList<>();
 
-        LocalDate nextMonday = LocalDate.now(ZONE).with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+        LocalDate nextMonday = LocalDate.now(ZONE)
+                .with(TemporalAdjusters.next(DayOfWeek.MONDAY));
 
         LocalDate nextTuesday = nextMonday.plusDays(1);
 
         for (int i = 0; i < BUSINESS_NAMES.size(); i++) {
 
             // Create business owner.
-            User owner = seedUser("Owner", "Business" + (i + 1), "owner" + (i + 1) + "@setora.test");
+            User owner = seedUser(
+                    "Owner",
+                    "Business" + (i + 1),
+                    "owner" + (i + 1) + "@setora.test"
+            );
 
             // Create business.
             Business business = seedBusiness(owner, i);
@@ -165,30 +151,39 @@ public class DataSeeder implements CommandLineRunner {
 
             // Create four employees with different service assignments.
             List<Employee> employees = List.of(
+
                     seedEmployee(
                             business,
                             seedEmployeeUser(i * 4),
                             Set.of(services.get(0), services.get(1)),
                             LocalTime.of(9, 0),
-                            LocalTime.of(17, 0)),
+                            LocalTime.of(17, 0)
+                    ),
+
                     seedEmployee(
                             business,
                             seedEmployeeUser(i * 4 + 1),
                             Set.of(services.get(1), services.get(2)),
                             LocalTime.of(10, 0),
-                            LocalTime.of(18, 0)),
+                            LocalTime.of(18, 0)
+                    ),
+
                     seedEmployee(
                             business,
                             seedEmployeeUser(i * 4 + 2),
                             Set.of(services.get(0), services.get(2), services.get(3)),
                             LocalTime.of(8, 0),
-                            LocalTime.of(16, 0)),
+                            LocalTime.of(16, 0)
+                    ),
+
                     seedEmployee(
                             business,
                             seedEmployeeUser(i * 4 + 3),
                             Set.of(services.get(1), services.get(3)),
                             LocalTime.of(12, 0),
-                            LocalTime.of(20, 0)));
+                            LocalTime.of(20, 0)
+                    )
+            );
 
             allEmployees.addAll(employees);
 
@@ -202,7 +197,8 @@ public class DataSeeder implements CommandLineRunner {
                     services.get(0),
                     nextMonday,
                     LocalTime.of(9, 0),
-                    AppointmentStatus.CONFIRMED);
+                    AppointmentStatus.CONFIRMED
+            );
 
             seedAppointment(
                     clients.get((i + 1) % clients.size()),
@@ -210,7 +206,8 @@ public class DataSeeder implements CommandLineRunner {
                     services.get(1),
                     nextMonday,
                     LocalTime.of(12, 0),
-                    AppointmentStatus.CONFIRMED);
+                    AppointmentStatus.CONFIRMED
+            );
 
             seedAppointment(
                     clients.get((i + 2) % clients.size()),
@@ -218,7 +215,8 @@ public class DataSeeder implements CommandLineRunner {
                     services.get(2),
                     nextMonday,
                     LocalTime.of(10, 0),
-                    AppointmentStatus.CANCELLED);
+                    AppointmentStatus.CANCELLED
+            );
 
             seedAppointment(
                     clients.get((i + 3) % clients.size()),
@@ -226,7 +224,8 @@ public class DataSeeder implements CommandLineRunner {
                     services.get(3),
                     nextMonday,
                     LocalTime.of(15, 0),
-                    AppointmentStatus.CONFIRMED);
+                    AppointmentStatus.CONFIRMED
+            );
 
             seedAppointment(
                     clients.get((i + 4) % clients.size()),
@@ -234,7 +233,8 @@ public class DataSeeder implements CommandLineRunner {
                     services.get(1),
                     nextMonday,
                     LocalTime.of(14, 0),
-                    AppointmentStatus.CONFIRMED);
+                    AppointmentStatus.CONFIRMED
+            );
 
             seedAppointment(
                     clients.get((i + 5) % clients.size()),
@@ -242,7 +242,8 @@ public class DataSeeder implements CommandLineRunner {
                     services.get(0),
                     nextMonday,
                     LocalTime.of(15, 0),
-                    AppointmentStatus.CANCELLED);
+                    AppointmentStatus.CANCELLED
+            );
 
             // ==========================================
             // TUESDAY - 5 APPOINTMENTS
@@ -254,7 +255,8 @@ public class DataSeeder implements CommandLineRunner {
                     services.get(0),
                     nextTuesday,
                     LocalTime.of(9, 0),
-                    AppointmentStatus.CONFIRMED);
+                    AppointmentStatus.CONFIRMED
+            );
 
             seedAppointment(
                     clients.get((i + 7) % clients.size()),
@@ -262,7 +264,8 @@ public class DataSeeder implements CommandLineRunner {
                     services.get(1),
                     nextTuesday,
                     LocalTime.of(10, 0),
-                    AppointmentStatus.CONFIRMED);
+                    AppointmentStatus.CONFIRMED
+            );
 
             seedAppointment(
                     clients.get((i + 8) % clients.size()),
@@ -270,7 +273,8 @@ public class DataSeeder implements CommandLineRunner {
                     services.get(2),
                     nextTuesday,
                     LocalTime.of(10, 0),
-                    AppointmentStatus.CONFIRMED);
+                    AppointmentStatus.CONFIRMED
+            );
 
             seedAppointment(
                     clients.get((i + 9) % clients.size()),
@@ -278,7 +282,8 @@ public class DataSeeder implements CommandLineRunner {
                     services.get(3),
                     nextTuesday,
                     LocalTime.of(14, 0),
-                    AppointmentStatus.CANCELLED);
+                    AppointmentStatus.CANCELLED
+            );
 
             seedAppointment(
                     clients.get((i + 5) % clients.size()),
@@ -286,7 +291,8 @@ public class DataSeeder implements CommandLineRunner {
                     services.get(1),
                     nextTuesday,
                     LocalTime.of(15, 0),
-                    AppointmentStatus.CONFIRMED);
+                    AppointmentStatus.CONFIRMED
+            );
         }
 
         // Create recurring breaks and specific unavailable slots.
@@ -302,11 +308,21 @@ public class DataSeeder implements CommandLineRunner {
         log.info("Users: {}", userRepository.count());
     }
 
-    private User seedUser(String surname, String firstname, String email) {
+    private User seedUser(
+            String surname,
+            String firstname,
+            String email
+    ) {
 
         userCounter++;
 
-        User user = new User(surname, firstname, email, String.format("070000%04d", userCounter), "not-a-real-hash");
+        User user = new User(
+                surname,
+                firstname,
+                email,
+                String.format("070000%04d", userCounter),
+                "not-a-real-hash"
+        );
 
         return userRepository.save(user);
     }
@@ -316,7 +332,8 @@ public class DataSeeder implements CommandLineRunner {
         return seedUser(
                 SURNAMES.get(index % SURNAMES.size()),
                 FIRST_NAMES.get(index % FIRST_NAMES.size()),
-                "employee" + (index + 1) + "@setora.test");
+                "employee" + (index + 1) + "@setora.test"
+        );
     }
 
     private List<User> seedClients(int count) {
@@ -328,7 +345,8 @@ public class DataSeeder implements CommandLineRunner {
             clients.add(seedUser(
                     SURNAMES.get((i + 5) % SURNAMES.size()),
                     FIRST_NAMES.get((i + 5) % FIRST_NAMES.size()),
-                    "client" + (i + 1) + "@setora.test"));
+                    "client" + (i + 1) + "@setora.test"
+            ));
         }
 
         return clients;
@@ -346,8 +364,12 @@ public class DataSeeder implements CommandLineRunner {
         business.setEmail("contact" + (index + 1) + "@setora.test");
         business.setSlug(slug);
         business.setDescription("Professional beauty and wellness services.");
-        business.setLocation(
-                new Location("Cluj-Napoca", "Str. Memorandumului " + (10 + index) + ", Cluj-Napoca", 46.7694, 23.5899));
+        business.setLocation(new Location(
+                "Cluj-Napoca",
+                "Str. Memorandumului " + (10 + index) + ", Cluj-Napoca",
+                46.7694,
+                23.5899
+        ));
         business.setPhone("0264000000");
         business.setTimezone(ZONE);
 
@@ -358,21 +380,48 @@ public class DataSeeder implements CommandLineRunner {
 
         List<ServiceItem> services = new ArrayList<>();
 
-        services.add(seedService(business, "Standard Service", "A standard appointment service.", "80.00", 45));
+        services.add(seedService(
+                business,
+                "Standard Service",
+                "A standard appointment service.",
+                "80.00",
+                45
+        ));
 
-        services.add(seedService(business, "Premium Service", "A premium appointment service.", "150.00", 60));
+        services.add(seedService(
+                business,
+                "Premium Service",
+                "A premium appointment service.",
+                "150.00",
+                60
+        ));
 
-        services.add(
-                seedService(business, "Deluxe Service", "An extended premium appointment service.", "250.00", 120));
+        services.add(seedService(
+                business,
+                "Deluxe Service",
+                "An extended premium appointment service.",
+                "250.00",
+                120
+        ));
 
-        services.add(
-                seedService(business, "Express Service", "A shorter appointment for quick treatments.", "50.00", 30));
+        services.add(seedService(
+                business,
+                "Express Service",
+                "A shorter appointment for quick treatments.",
+                "50.00",
+                30
+        ));
 
         return services;
     }
 
     private ServiceItem seedService(
-            Business business, String name, String description, String price, int durationMinutes) {
+            Business business,
+            String name,
+            String description,
+            String price,
+            int durationMinutes
+    ) {
 
         ServiceItem service = new ServiceItem();
 
@@ -386,7 +435,12 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private Employee seedEmployee(
-            Business business, User user, Set<ServiceItem> serviceItems, LocalTime from, LocalTime to) {
+            Business business,
+            User user,
+            Set<ServiceItem> serviceItems,
+            LocalTime from,
+            LocalTime to
+    ) {
 
         Employee employee = new Employee();
 
@@ -416,11 +470,17 @@ public class DataSeeder implements CommandLineRunner {
             ServiceItem serviceItem,
             LocalDate date,
             LocalTime at,
-            AppointmentStatus status) {
+            AppointmentStatus status
+    ) {
 
-        Instant start = date.atTime(at).atZone(ZONE).toInstant();
+        Instant start = date
+                .atTime(at)
+                .atZone(ZONE)
+                .toInstant();
 
-        Instant end = start.plus(Duration.ofMinutes(serviceItem.getDurationMinutes()));
+        Instant end = start.plus(
+                Duration.ofMinutes(serviceItem.getDurationMinutes())
+        );
 
         Appointment appointment = new Appointment();
 
@@ -436,7 +496,8 @@ public class DataSeeder implements CommandLineRunner {
 
     private void seedUnavailableSlots(List<Employee> employees) {
 
-        LocalDate nextWednesday = LocalDate.now(ZONE).with(TemporalAdjusters.next(DayOfWeek.WEDNESDAY));
+        LocalDate nextWednesday = LocalDate.now(ZONE)
+                .with(TemporalAdjusters.next(DayOfWeek.WEDNESDAY));
 
         for (Employee employee : employees) {
 
@@ -450,7 +511,8 @@ public class DataSeeder implements CommandLineRunner {
                         null,
                         day,
                         LocalTime.of(13, 0),
-                        LocalTime.of(14, 0));
+                        LocalTime.of(14, 0)
+                );
             }
 
             // One specific unavailable slot.
@@ -461,7 +523,8 @@ public class DataSeeder implements CommandLineRunner {
                     nextWednesday,
                     null,
                     LocalTime.of(15, 0),
-                    LocalTime.of(16, 0));
+                    LocalTime.of(16, 0)
+            );
         }
     }
 
@@ -472,7 +535,8 @@ public class DataSeeder implements CommandLineRunner {
             LocalDate date,
             DayOfWeek dayOfWeek,
             LocalTime from,
-            LocalTime to) {
+            LocalTime to
+    ) {
 
         UnavailableSlot slot = new UnavailableSlot();
 
