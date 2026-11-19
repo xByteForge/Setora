@@ -1,11 +1,9 @@
 import { ChangeDetectionStrategy, Component, HostListener, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoModule } from '@ngneat/transloco';
 import { ThemeService } from '../../services/theme.service';
 import { MobileMenuService } from '../../services/mobile-menu.service';
 import { UserService } from '../../services/user.service';
-
 
 interface NavItem {
   path: string;
@@ -30,10 +28,8 @@ export class SidebarComponent {
   businessName = 'Studio Armonia';
   businessSubtitle = 'Spațiu business · București';
 
-  readonly currentUser = toSignal(
-    this.userService.getCurrentUser(),
-    { initialValue: null }
-  );
+  
+  readonly currentUser = this.userService.currentUser;
 
   readonly userName = computed(() => {
     const u = this.currentUser();
@@ -41,9 +37,7 @@ export class SidebarComponent {
   });
 
   readonly userRole = computed(() => {
-    const role = this.currentUser()?.role;
-
-    switch (role) {
+    switch (this.currentUser()?.role) {
       case 'ADMIN':
         return 'Administrator';
       case 'EMPLOYEE':
@@ -57,16 +51,12 @@ export class SidebarComponent {
 
   readonly userInitials = computed(() => {
     const u = this.currentUser();
-
     if (!u) return '';
-
     return `${u.firstName?.charAt(0) ?? ''}${u.lastName?.charAt(0) ?? ''}`.toUpperCase();
   });
 
-  readonly userAvatarUrl = computed(() =>
-    this.currentUser()?.profilePictureUrl ?? null
-  );
-
+  
+  readonly userAvatarUrl = this.userService.avatarUrl;
 
   navItems: NavItem[] = [
     { path: '/discover', labelKey: 'NAV.DISCOVER', iconClass: 'fa-regular fa-compass' },
