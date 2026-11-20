@@ -11,7 +11,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      JWT_SECRET: test-secret-key-for-ci-only #TODO: modify this when putting in production
+      JWT_SECRET: dGVzdC1zZWNyZXQta2V5LWZvci1jaS0zMi1ieXRlcyEh #TODO: modify this when putting in production
 
     services:
       postgres:
