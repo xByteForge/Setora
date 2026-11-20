@@ -82,7 +82,6 @@ public class User {
         if (role == null)
             role = UserRole.CLIENT;
     }
-}
 
     public String getNameInitials() {
         String name = getName();
