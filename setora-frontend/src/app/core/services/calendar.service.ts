@@ -5,8 +5,10 @@ import { Appointment } from '../models/appointment.model';
 import { Employee } from '../models/employee.model';
 import { CreateAppointmentPayload } from '../ui-models/create-appointment-payload.model';
 import { AppointmentSummary } from '../ui-models/appointment-summary.model';
-import { addMinutes, businessLocalToInstant, toIsoDate } from '../utils/date.util';
+import { addMinutes, businessLocalToInstant } from '../utils/date.util';
 import { CatalogService } from './catalog.service';
+import {PaymentMethod} from "../models/enums/payment-method.model";
+import {AppointmentStatus} from "../models/enums/appointment-status.model";
 
 const WORK_START = 9 * 60; // 09:00
 const WORK_END = 18 * 60; // 18:00
@@ -51,9 +53,9 @@ export interface BackendAppointmentDto {
   date: string;
   startTime: string;
   endTime: string;
-  status: any;
+  status: AppointmentStatus;
   price: number;
-  paymentMethod: any;
+  paymentMethod: PaymentMethod;
   clientNote: string | null;
 }
 
@@ -78,7 +80,7 @@ export class CalendarService {
   }
 
   /** Încarcă programările din backend pentru business-ul dat */
-  loadAppointments(businessId: number = 1): void {
+  loadAppointments(businessId = 1): void {
     const params = new HttpParams().set('businessId', businessId);
     const tz = this.timezone();
 

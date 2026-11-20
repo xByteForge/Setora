@@ -37,10 +37,6 @@ const initialsOf = (name: string): string =>
     .slice(0, 2)
     .map((p) => p[0].toUpperCase())
     .join('');
-
-const countReal = (items: CalendarAppointment[]): number =>
-  items.filter((a) => a.status !== 'UNAVAILABLE').length;
-
 @Component({
   selector: 'app-appointment-calendar',
   imports: [TranslocoModule, CalendarAppointmentBlockComponent, CalendarToolbarComponent],
