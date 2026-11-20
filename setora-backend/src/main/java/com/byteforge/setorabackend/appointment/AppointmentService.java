@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -164,7 +163,6 @@ public class AppointmentService {
 
         Business business = service.getBusiness();
 
-        User client = userService.findByEmail("ghost@gmail.com");
 
         // Validate business, employee and service compatibility.
         // TODO: Check time slots to prevent double bookings.
@@ -172,18 +170,15 @@ public class AppointmentService {
                 request,
                 employee,
                 service,
-                client,
+                null,
                 business.getTimezone()
         );
 
-        String note = "";
-        note += "Appointment for: " + request.clientName() + "\n";
-        note += "Email: " + request.clientEmail() + "\n";
-        note += "Phone number: " + request.clientPhone() + "\n";
-        note += "\n --- Details ---\n";
-        note += request.clientName() + "\n";
+        appointment.setClientName(request.clientName());
+        appointment.setClientEmail(request.clientEmail());
+        appointment.setClientPhone(request.clientPhone());
 
-        appointment.setClientNote(note);
+        appointment.setClientNote(request.clientNote());
 
         return AppointmentMapper.toResponseDto(
                 appointmentRepository.save(appointment)
