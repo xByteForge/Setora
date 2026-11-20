@@ -15,6 +15,7 @@ import { CancelAppointmentDialogComponent } from './cancel-appointment-dialog/ca
 import { Appointment } from '../../core/models/appointment.model';
 import { businessDate, todayIn } from '../../core/utils/date.util';
 import { filterAppointments, filterEmployees } from './appointment-filters/appointment-filters.util';
+import { UniversalSearchComponent } from "../../core/layout/universal-search/universal-search.component";
 
 @Component({
   imports: [
@@ -26,6 +27,7 @@ import { filterAppointments, filterEmployees } from './appointment-filters/appoi
     AppointmentAgendaComponent,
     AppointmentFormDialogComponent,
     CancelAppointmentDialogComponent,
+    UniversalSearchComponent,
   ],
   selector: 'app-appointments',
   templateUrl: './appointments.component.html',

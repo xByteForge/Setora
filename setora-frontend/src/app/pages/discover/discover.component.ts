@@ -9,6 +9,7 @@ import { ResultsHeaderComponent } from './results-header/results-header.componen
 import { ActiveFiltersChipsComponent } from './active-filters-chips/active-filters-chips.component';
 import { FiltersPanelComponent } from './filters-panel/filters-panel.component';
 import { BusinessQuery } from '../../core/ui-models/business-query.model';
+import { UniversalSearchComponent } from "../../core/layout/universal-search/universal-search.component";
 
 @Component({
     selector: 'app-discover',
@@ -20,6 +21,7 @@ import { BusinessQuery } from '../../core/ui-models/business-query.model';
         ActiveFiltersChipsComponent,
         FiltersPanelComponent,
         TranslocoModule,
+        UniversalSearchComponent,
     ],
     templateUrl: './discover.component.html',
     styleUrl: './discover.component.css',
