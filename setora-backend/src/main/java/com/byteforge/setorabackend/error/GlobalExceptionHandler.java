@@ -1,6 +1,8 @@
 package com.byteforge.setorabackend.error;
 
 import jakarta.persistence.EntityNotFoundException;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -9,27 +11,18 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleInvalidParameter(
-            EntityNotFoundException ex
-    ) {
-        return ResponseEntity
-                .badRequest()
-                .body(Map.of("message", "Entity not found:  " + ex.getMessage()));
+    public ResponseEntity<Map<String, String>> handleInvalidParameter(EntityNotFoundException ex) {
+        return ResponseEntity.badRequest().body(Map.of("message", "Entity not found:  " + ex.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Map<String, String>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
         String message = String.format("Invalid value '%s' for parameter '%s'", ex.getValue(), ex.getName());
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", message));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", message));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -40,8 +33,6 @@ public class GlobalExceptionHandler {
                         : error.getDefaultMessage())
                 .collect(Collectors.joining("; "));
 
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", message));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", message));
     }
 }

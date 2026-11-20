@@ -6,12 +6,11 @@ import com.byteforge.setorabackend.employees.model.UnavailableSlot;
 import com.byteforge.setorabackend.employees.model.WorkSchedule;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
 import jakarta.persistence.criteria.*;
-import org.springframework.data.jpa.domain.Specification;
-
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.data.jpa.domain.Specification;
 
 public final class BusinessSpecification {
 
@@ -34,19 +33,14 @@ public final class BusinessSpecification {
                 Path<Location> loc = root.get("location");
                 predicates.add(cb.or(
                         cb.like(cb.lower(loc.get("locationName")), pattern),
-                        cb.like(cb.lower(loc.get("address")), pattern)
-                ));
+                        cb.like(cb.lower(loc.get("address")), pattern)));
             }
 
             if (criteria.tags() != null && !criteria.tags().isEmpty()) {
                 for (String tag : criteria.tags()) {
                     if (tag != null && !tag.isBlank()) {
-                        Expression<Integer> pos = cb.function(
-                                "array_position",
-                                Integer.class,
-                                root.get("tags"),
-                                cb.literal(tag.trim())
-                        );
+                        Expression<Integer> pos =
+                                cb.function("array_position", Integer.class, root.get("tags"), cb.literal(tag.trim()));
                         predicates.add(cb.isNotNull(pos));
                     }
                 }
@@ -83,9 +77,7 @@ public final class BusinessSpecification {
 
             priceSubquery.select(aggPrice).where(subPredicates);
 
-            Order priceOrder = (sortBy == BusinessSortBy.PRICE_ASC)
-                    ? cb.asc(priceSubquery)
-                    : cb.desc(priceSubquery);
+            Order priceOrder = (sortBy == BusinessSortBy.PRICE_ASC) ? cb.asc(priceSubquery) : cb.desc(priceSubquery);
 
             query.orderBy(priceOrder, cb.asc(root.get("id")));
             return cb.conjunction();
@@ -93,26 +85,17 @@ public final class BusinessSpecification {
     }
 
     private static Predicate hasMatchingService(
-            Root<Business> root,
-            CriteriaQuery<?> query,
-            CriteriaBuilder cb,
-            BusinessFilterCriteria criteria
-    ) {
+            Root<Business> root, CriteriaQuery<?> query, CriteriaBuilder cb, BusinessFilterCriteria criteria) {
         Subquery<Integer> subquery = query.subquery(Integer.class);
         Root<ServiceItem> serviceRoot = subquery.from(ServiceItem.class);
 
-        subquery.select(cb.literal(1))
-                .where(buildServicePredicates(root, serviceRoot, cb, criteria));
+        subquery.select(cb.literal(1)).where(buildServicePredicates(root, serviceRoot, cb, criteria));
 
         return cb.exists(subquery);
     }
 
     private static Predicate hasAvailableSchedule(
-            Root<Business> root,
-            CriteriaQuery<?> query,
-            CriteriaBuilder cb,
-            BusinessFilterCriteria criteria
-    ) {
+            Root<Business> root, CriteriaQuery<?> query, CriteriaBuilder cb, BusinessFilterCriteria criteria) {
         Subquery<Integer> scheduleSubquery = query.subquery(Integer.class);
         Root<WorkSchedule> wsRoot = scheduleSubquery.from(WorkSchedule.class);
 
@@ -134,8 +117,7 @@ public final class BusinessSpecification {
             Predicate sameEmployee = cb.equal(slotRoot.get("employee"), wsRoot.get("employee"));
             Predicate matchesDateOrDay = cb.or(
                     cb.equal(slotRoot.get("specificDate"), criteria.date()),
-                    cb.equal(slotRoot.get("dayOfWeek"), criteria.date().getDayOfWeek())
-            );
+                    cb.equal(slotRoot.get("dayOfWeek"), criteria.date().getDayOfWeek()));
             Predicate timeBlocked = coversTime(slotRoot.get("interval"), criteria.time(), cb);
 
             unavailableSubquery.select(cb.literal(1)).where(sameEmployee, matchesDateOrDay, timeBlocked);
@@ -150,8 +132,7 @@ public final class BusinessSpecification {
             Root<Business> businessRoot,
             Root<ServiceItem> serviceRoot,
             CriteriaBuilder cb,
-            BusinessFilterCriteria criteria
-    ) {
+            BusinessFilterCriteria criteria) {
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(cb.equal(serviceRoot.get("business"), businessRoot));
         predicates.add(cb.isTrue(serviceRoot.get("active")));
@@ -173,8 +154,7 @@ public final class BusinessSpecification {
     private static Predicate coversTime(Path<?> intervalPath, LocalTime time, CriteriaBuilder cb) {
         return cb.and(
                 cb.lessThanOrEqualTo(intervalPath.get("startTime"), time),
-                cb.greaterThan(intervalPath.get("endTime"), time)
-        );
+                cb.greaterThan(intervalPath.get("endTime"), time));
     }
 
     private static String containsPattern(String value) {

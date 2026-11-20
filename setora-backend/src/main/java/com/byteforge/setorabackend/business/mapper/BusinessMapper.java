@@ -4,10 +4,9 @@ import com.byteforge.setorabackend.business.Business;
 import com.byteforge.setorabackend.business.Location;
 import com.byteforge.setorabackend.business.dtos.BusinessLocationDto;
 import com.byteforge.setorabackend.business.dtos.BusinessResponseDto;
-import org.springframework.stereotype.Component;
-
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.stereotype.Component;
 
 @Component
 public class BusinessMapper {
@@ -26,8 +25,7 @@ public class BusinessMapper {
                 business.getCreatedAt(),
                 toList(business.getPhotoUrls()),
                 business.getThumbnailUrl(),
-                toList(business.getTags())
-        );
+                toList(business.getTags()));
     }
 
     private BusinessLocationDto toLocationDto(Location location) {
@@ -35,11 +33,7 @@ public class BusinessMapper {
             return new BusinessLocationDto(null, null, null, null);
         }
         return new BusinessLocationDto(
-                location.getLocationName(),
-                location.getAddress(),
-                location.getLatitude(),
-                location.getLongitude()
-        );
+                location.getLocationName(), location.getAddress(), location.getLatitude(), location.getLongitude());
     }
 
     private List<String> toList(String[] array) {

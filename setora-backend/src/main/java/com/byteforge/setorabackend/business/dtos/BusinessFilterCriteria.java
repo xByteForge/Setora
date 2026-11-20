@@ -3,12 +3,11 @@ package com.byteforge.setorabackend.business.dtos;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.PositiveOrZero;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import org.springframework.format.annotation.DateTimeFormat;
 
 public record BusinessFilterCriteria(
         Integer ownerId,
@@ -17,9 +16,11 @@ public record BusinessFilterCriteria(
         String service,
         @PositiveOrZero BigDecimal minPrice,
         @PositiveOrZero BigDecimal maxPrice,
-        @FutureOrPresent @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-        @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime time
-) {
+
+        @FutureOrPresent @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+        LocalDate date,
+
+        @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime time) {
     @AssertTrue(message = "minPrice must be less than or equal to maxPrice")
     public boolean isPriceRangeValid() {
         if (minPrice == null || maxPrice == null) {

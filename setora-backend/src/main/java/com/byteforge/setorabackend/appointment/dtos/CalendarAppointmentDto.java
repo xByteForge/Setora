@@ -4,7 +4,6 @@ import com.byteforge.setorabackend.appointment.Appointment;
 import com.byteforge.setorabackend.auth.User;
 import com.byteforge.setorabackend.employees.model.Employee;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Locale;
@@ -22,8 +21,7 @@ public record CalendarAppointmentDto(
         Instant endsAt,
         String status,
         BigDecimal priceAtAppointment,
-        String clientNote
-) {
+        String clientNote) {
     public static CalendarAppointmentDto from(Appointment appointment) {
         User client = appointment.getClient();
         Employee employee = appointment.getEmployee();
@@ -43,7 +41,6 @@ public record CalendarAppointmentDto(
                 appointment.getInterval().getEnd(),
                 appointment.getStatus().name().toLowerCase(Locale.ROOT),
                 appointment.getPriceAtAppointment(),
-                appointment.getClientNote()
-        );
+                appointment.getClientNote());
     }
 }

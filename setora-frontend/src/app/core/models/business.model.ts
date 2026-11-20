@@ -1,6 +1,5 @@
 import { BusinessLocation } from './business-location.model';
 
-
 export interface Business {
   id: number;
   ownerId: number;
