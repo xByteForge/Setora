@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, HostListener, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { ThemeService } from '../../services/theme.service';
 import { MobileMenuService } from '../../services/mobile-menu.service';
 import { UserService } from '../../services/user.service';
+import { ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, signal } from '@angular/core';
 
 interface NavItem {
   path: string;
@@ -25,11 +25,21 @@ export class SidebarComponent {
   readonly theme = inject(ThemeService);
   private readonly userService = inject(UserService);
 
+  readonly avatarFailed = signal(false);
+  readonly showAvatarImage = computed(() => !!this.userAvatarUrl() && !this.avatarFailed());
+
   businessName = 'Studio Armonia';
   businessSubtitle = 'Spațiu business · București';
 
   
   readonly currentUser = this.userService.currentUser;
+
+  constructor() {
+    effect(() => {
+      this.userAvatarUrl();
+      this.avatarFailed.set(false);
+    });
+  }
 
   readonly userName = computed(() => {
     const u = this.currentUser();

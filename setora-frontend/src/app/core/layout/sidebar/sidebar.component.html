@@ -54,14 +54,15 @@
 
     <div class="user-card">
        <div class="avatar">
-          @if (userAvatarUrl()) {
+          @if (showAvatarImage()) {
             <img
-              [src]="userAvatarUrl()!"
-              [alt]="userName()"
-              class="avatar-image"
+              class="avatar__image"
+              [src]="userAvatarUrl()"
+              alt=""
+              (error)="avatarFailed.set(true)"
             />
           } @else {
-            <span>{{ userInitials() }}</span>
+            {{ userInitials() }}
           }
         </div>
       <div class="user-info">
