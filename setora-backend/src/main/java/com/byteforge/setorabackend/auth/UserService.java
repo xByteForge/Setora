@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.List;
 
@@ -209,11 +208,11 @@ public class UserService {
             );
         }
     }
-
+    @Transactional
     public String updateAvatarPathByUserId(int userId, String filename) {
         User user = userRepository.findById(userId).orElseThrow();
         String oldPath = user.getAvatarPath();
-        user.setAvatarPath(filename);//TODO maybe you can get user directly in controller
+        user.setAvatarPath(filename);
         userRepository.save(user);
         return oldPath;
     }

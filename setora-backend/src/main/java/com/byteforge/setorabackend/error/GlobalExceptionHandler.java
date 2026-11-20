@@ -1,22 +1,17 @@
 package com.byteforge.setorabackend.error;
 
-import com.byteforge.setorabackend.error.exceptions.InvalidStateException;
-import com.byteforge.setorabackend.error.exceptions.PriceChangedException;
-import com.byteforge.setorabackend.error.exceptions.SlotTakenException;
+import com.byteforge.setorabackend.error.exceptions.*;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.http.HttpStatus;
-import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.nio.file.AccessDeniedException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -72,6 +67,19 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(InvalidAvatarException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidAvatarException (
+            InvalidAvatarException ex
+    ){
+        return error(HttpStatus.BAD_REQUEST, "INVALID_AVATAR", ex.getMessage(), "");
+    }
+    @ExceptionHandler(AvatarStorageException.class)
+    public ResponseEntity<ApiErrorResponse> handleAvatarStorage(
+            AvatarStorageException ex
+    ){
+        return error(HttpStatus.INTERNAL_SERVER_ERROR, "AVATAR_STORAGE_PROBLEM", ex.getMessage(), "");
+    }
+
     // ==========================================
     // STANDARD EXCEPTIONS
     // ==========================================
@@ -87,7 +95,11 @@ public class GlobalExceptionHandler {
         );
     }
 
-
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    ResponseEntity<ApiErrorResponse> tooLarge(MaxUploadSizeExceededException e) {
+        return error(HttpStatus.CONTENT_TOO_LARGE,
+                "UPLOAD_SIZE_ERROR", "Image is too large, max size is 2MB","");
+    }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiErrorResponse> handleForbidden(
@@ -104,19 +116,6 @@ public class GlobalExceptionHandler {
     // FALLBACK
     // ==========================================
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiErrorResponse> handleUnexpected(
-            Exception ex) {
-
-        //log.error("Unexpected server error", ex);
-
-        return error(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                "UNKNOWN",
-                "An unexpected error occurred.",
-                ""
-        );
-    }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Map<String, String>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
@@ -138,4 +137,21 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("error", message));
     }
+
+
+
+
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<ApiErrorResponse> handleUnexpected(
+//            Exception ex) {
+//
+//        //log.error("Unexpected server error", ex);
+//
+//        return error(
+//                HttpStatus.INTERNAL_SERVER_ERROR,
+//                "UNKNOWN",
+//                "An unexpected error occurred.",
+//                ""
+//        );
+//    }
 }
