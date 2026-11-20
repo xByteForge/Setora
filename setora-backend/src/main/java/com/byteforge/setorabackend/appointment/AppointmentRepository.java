@@ -1,17 +1,15 @@
 package com.byteforge.setorabackend.appointment;
 
 import com.byteforge.setorabackend.appointment.dtos.AppointmentsTodaySummaryProjection;
+import java.time.Instant;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-import java.time.Instant;
-
 public interface AppointmentRepository
-        extends JpaRepository<Appointment, Integer>,
-        JpaSpecificationExecutor<Appointment> {
+        extends JpaRepository<Appointment, Integer>, JpaSpecificationExecutor<Appointment> {
     List<Appointment> findByEmployeeIdAndStatusNot(int employeeId, AppointmentStatus status);
 
     @Query("""
@@ -31,8 +29,7 @@ public interface AppointmentRepository
             @Param("end") Instant end,
             @Param("confirmed") AppointmentStatus confirmed,
             @Param("pending") AppointmentStatus pending,
-            @Param("cancelled") AppointmentStatus cancelled
-    );
+            @Param("cancelled") AppointmentStatus cancelled);
 
     @Query("""
         SELECT a FROM Appointment a
@@ -47,6 +44,5 @@ public interface AppointmentRepository
     List<Appointment> findByBusinessIdAndDateRange(
             @Param("businessId") Integer businessId,
             @Param("startDate") Instant startDate,
-            @Param("endDate") Instant endDate
-    );
+            @Param("endDate") Instant endDate);
 }

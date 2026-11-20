@@ -1,0 +1,10 @@
+<div class="header" *transloco="let t">
+  <div class="titles">
+    <h2>
+      {{
+        t('DISCOVER.RESULTS_COUNT', { count: service.result().total, city: service.query().city })
+      }}
+    </h2>
+    <p>{{ t('DISCOVER.RESULTS_SUBTITLE') }}</p>
+  </div>
+</div>

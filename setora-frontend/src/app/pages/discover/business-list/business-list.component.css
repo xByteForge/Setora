@@ -1,0 +1,22 @@
+.list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  grid-auto-rows: 1fr;
+  gap: 16px;
+}
+
+.list--single {
+  grid-template-columns: 1fr;
+}
+
+.empty {
+  padding: 48px 16px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 640px) {
+  .list {
+    grid-template-columns: 1fr;
+  }
+}

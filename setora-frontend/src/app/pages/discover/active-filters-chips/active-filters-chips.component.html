@@ -1,0 +1,33 @@
+@if (chips().length > 0) {
+  <div class="chips" *transloco="let t" role="group" [attr.aria-label]="t('DISCOVER.CHIPS.ACTIVE')">
+    @for (chip of chips(); track chip.id) {
+      <span class="chip">
+        <span>{{ chip.labelKey ? t(chip.labelKey, chip.params) : chip.label }}</span>
+        <button
+          type="button"
+          (click)="remove(chip)"
+          [attr.aria-label]="
+            t('DISCOVER.CHIPS.REMOVE', {
+              label: chip.labelKey ? t(chip.labelKey, chip.params) : chip.label,
+            })
+          "
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </span>
+    }
+    <button type="button" class="clear" (click)="service.clearFilters()">
+      {{ t('DISCOVER.CHIPS.CLEAR_ALL') }}
+    </button>
+  </div>
+}

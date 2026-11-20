@@ -30,7 +30,13 @@ export class SidebarComponent {
   userInitials = 'EP';
 
   navItems: NavItem[] = [
-    { path: '/appointments', labelKey: 'NAV.APPOINTMENTS', iconClass: 'fa-regular fa-calendar', badge: 9 },
+    { path: '/discover', labelKey: 'NAV.DISCOVER', iconClass: 'fa-regular fa-compass' },
+    {
+      path: '/appointments',
+      labelKey: 'NAV.APPOINTMENTS',
+      iconClass: 'fa-regular fa-calendar',
+      badge: 9,
+    },
     { path: '/services', labelKey: 'NAV.SERVICES', iconClass: 'fa-solid fa-briefcase' },
     { path: '/employees', labelKey: 'NAV.EMPLOYEES', iconClass: 'fa-solid fa-users' },
     { path: '/clients', labelKey: 'NAV.CLIENTS', iconClass: 'fa-regular fa-id-card' },

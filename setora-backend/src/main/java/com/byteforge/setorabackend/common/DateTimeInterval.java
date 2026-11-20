@@ -2,12 +2,11 @@ package com.byteforge.setorabackend.common;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import java.time.Instant;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.Instant;
 
 @Embeddable
 @Getter
