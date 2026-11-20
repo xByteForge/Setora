@@ -6,7 +6,9 @@ import com.byteforge.setorabackend.auth.User;
 import com.byteforge.setorabackend.auth.UserService;
 import com.byteforge.setorabackend.business.Business;
 import com.byteforge.setorabackend.business.BusinessService;
+import com.byteforge.setorabackend.common.DateTimeInterval;
 import com.byteforge.setorabackend.employees.model.Employee;
+import com.byteforge.setorabackend.employees.model.WorkSchedule;
 import com.byteforge.setorabackend.employees.service.EmployeeService;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
 import com.byteforge.setorabackend.serviceItem.ServiceItemService;
@@ -19,9 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.List;
 import java.util.Locale;
 
@@ -175,14 +175,11 @@ public class AppointmentService {
                 business.getTimezone()
         );
 
-        String note = "";
-        note += "Appointment for: " + request.clientName() + "\n";
-        note += "Email: " + request.clientEmail() + "\n";
-        note += "Phone number: " + request.clientPhone() + "\n";
-        note += "\n --- Details ---\n";
-        note += request.clientName() + "\n";
+        appointment.setClientName(request.clientName());
+        appointment.setClientEmail(request.clientEmail());
+        appointment.setClientPhone(request.clientPhone());
 
-        appointment.setClientNote(note);
+        appointment.setClientNote(request.clientNote());
 
         return AppointmentMapper.toResponseDto(
                 appointmentRepository.save(appointment)
@@ -270,7 +267,7 @@ public class AppointmentService {
         if (start == null || end == null || !start.isBefore(end)) {
             throw new IllegalArgumentException("Invalid date interval");
         }
-        return appointmentRepository.findByEmployee_IdOnDate(employeeId,start,end);
+        return appointmentRepository.findByEmployee_IdOnDate(employeeId, start, end);
     }
 
     @Transactional(readOnly = true)
