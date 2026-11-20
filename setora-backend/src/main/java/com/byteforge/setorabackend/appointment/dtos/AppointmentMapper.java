@@ -19,27 +19,24 @@ public class AppointmentMapper {
         var client = appointment.getClient();
         var employee = appointment.getEmployee();
 
-        ZoneId timezone = business.getTimezone();
-
         Instant startsAt = appointment.getInterval().getStart();
         Instant endsAt = appointment.getInterval().getEnd();
 
-        ZonedDateTime start = startsAt.atZone(timezone);
-        ZonedDateTime end = endsAt.atZone(timezone);
+        ZonedDateTime start = startsAt.atZone(business.getTimezone());
+        ZonedDateTime end = endsAt.atZone(business.getTimezone());
 
         return new AppointmentResponseDto(
                 appointment.getId(),
-
                 business.getId(),
 
                 service.getId(),
                 service.getName(),
                 Math.toIntExact(Duration.between(startsAt, endsAt).toMinutes()),
 
-                client.getId(),
-                client.getName(),
-                client.getPhoneNumber(),
-                client.getEmail(),
+                client != null ? client.getId() : null,
+                client != null ? client.getName() : appointment.getClientName(),
+                client != null ? client.getPhoneNumber() : appointment.getClientPhone(),
+                client != null ? client.getEmail() : appointment.getClientEmail(),
 
                 employee.getId(),
                 employee.getUser().getName(),
@@ -49,14 +46,13 @@ public class AppointmentMapper {
                 end.toLocalTime(),
 
                 appointment.getStatus(),
-
                 appointment.getPriceAtAppointment(),
-
                 appointment.getPaymentMethod(),
-
                 appointment.getClientNote()
         );
     }
+
+
 
     public static Appointment toEntity(
             CreateAppointmentGhostClientRequestDto request,
@@ -89,5 +85,7 @@ public class AppointmentMapper {
 
         return appointment;
     }
+
+
 
 }
