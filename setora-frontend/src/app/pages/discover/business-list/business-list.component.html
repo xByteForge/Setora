@@ -1,9 +1,9 @@
 @if (items().length) {
-    <div class="list" [class.list--single]="single()">
-        @for (b of items(); track b.id) {
-            <app-business-card [business]="b" (view)="view.emit($event)" />
-        }
-    </div>
+  <div class="list" [class.list--single]="single()">
+    @for (b of items(); track b.id) {
+      <app-business-card [business]="b" (view)="view.emit($event)" />
+    }
+  </div>
 } @else {
-    <p class="empty">{{ 'DISCOVER.EMPTY' | transloco }}</p>
+  <p class="empty">{{ 'DISCOVER.EMPTY' | transloco }}</p>
 }

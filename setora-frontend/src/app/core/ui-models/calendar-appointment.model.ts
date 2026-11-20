@@ -1,6 +1,4 @@
-import { Appointment } from "../models/appointment.model";
-
-
+import { Appointment } from '../models/appointment.model';
 
 export type CalendarAppointment = Pick<
   Appointment,

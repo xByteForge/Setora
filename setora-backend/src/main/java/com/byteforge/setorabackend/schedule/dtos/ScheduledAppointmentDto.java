@@ -2,7 +2,6 @@ package com.byteforge.setorabackend.schedule.dtos;
 
 import com.byteforge.setorabackend.appointment.AppointmentStatus;
 import com.byteforge.setorabackend.appointment.PaymentMethod;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 
@@ -22,5 +21,4 @@ public record ScheduledAppointmentDto(
         BigDecimal priceAtAppointment,
         PaymentMethod paymentMethod,
         int serviceId,
-        String serviceName
-) {}
+        String serviceName) {}

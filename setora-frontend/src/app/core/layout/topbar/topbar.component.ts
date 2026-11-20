@@ -28,8 +28,8 @@ import { SearchService } from '../../services/search.service';
 import { SearchResult } from '../../models/search-results.model';
 
 export interface Breadcrumb {
-  label?: string;     // text brut (ex: numele business-ului)
-  labelKey?: string;  // cheie Transloco (ex: 'NAV.APPOINTMENTS')
+  label?: string; // text brut (ex: numele business-ului)
+  labelKey?: string; // cheie Transloco (ex: 'NAV.APPOINTMENTS')
   url?: string;
 }
 
@@ -72,18 +72,18 @@ export interface Breadcrumb {
         <div class="search hide-mobile">
           <svg lucideSearch [size]="16" aria-hidden="true"></svg>
           <input
-              #q
-              type="search"
-              role="combobox"
-              aria-autocomplete="list"
-              aria-controls="search-panel"
-              [attr.aria-expanded]="searchOpen()"
-              [value]="query()"
-              (input)="onQueryInput(q.value)"
-              (keydown)="onSearchKeydown($event)"
-              (focus)="searchOpen.set(query().trim().length > 0)"
-              [placeholder]="t('HEADER.SEARCH')"
-              [attr.aria-label]="t('HEADER.SEARCH')"
+            #q
+            type="search"
+            role="combobox"
+            aria-autocomplete="list"
+            aria-controls="search-panel"
+            [attr.aria-expanded]="searchOpen()"
+            [value]="query()"
+            (input)="onQueryInput(q.value)"
+            (keydown)="onSearchKeydown($event)"
+            (focus)="searchOpen.set(query().trim().length > 0)"
+            [placeholder]="t('HEADER.SEARCH')"
+            [attr.aria-label]="t('HEADER.SEARCH')"
           />
           <kbd class="shortcut" aria-hidden="true">/</kbd>
 
@@ -94,13 +94,13 @@ export interface Breadcrumb {
                   <p class="group-title">{{ t(g.labelKey) }}</p>
                   @for (item of g.items; track item.id) {
                     <button
-                        type="button"
-                        role="option"
-                        class="result"
-                        [class.active]="flat()[activeIndex()] === item"
-                        [attr.aria-selected]="flat()[activeIndex()] === item"
-                        (mouseenter)="activeIndex.set(flat().indexOf(item))"
-                        (click)="openResult(item)"
+                      type="button"
+                      role="option"
+                      class="result"
+                      [class.active]="flat()[activeIndex()] === item"
+                      [attr.aria-selected]="flat()[activeIndex()] === item"
+                      (mouseenter)="activeIndex.set(flat().indexOf(item))"
+                      (click)="openResult(item)"
                     >
                       <span class="result-title">{{ item.title }}</span>
                       @if (item.subtitle) {
@@ -120,11 +120,13 @@ export interface Breadcrumb {
         </div>
 
         <button
-            type="button"
-            class="icon-btn hide-mobile"
-            (click)="theme.toggleTheme()"
-            [attr.aria-label]="
-            theme.currentTheme() === 'light' ? t('HEADER.THEME_TO_DARK') : t('HEADER.THEME_TO_LIGHT')
+          type="button"
+          class="icon-btn hide-mobile"
+          (click)="theme.toggleTheme()"
+          [attr.aria-label]="
+            theme.currentTheme() === 'light'
+              ? t('HEADER.THEME_TO_DARK')
+              : t('HEADER.THEME_TO_LIGHT')
           "
         >
           @if (theme.currentTheme() === 'light') {
@@ -135,10 +137,10 @@ export interface Breadcrumb {
         </button>
 
         <button
-            type="button"
-            class="icon-btn hide-mobile"
-            (click)="notificationsClicked.emit()"
-            [attr.aria-label]="t('HEADER.NOTIFICATIONS')"
+          type="button"
+          class="icon-btn hide-mobile"
+          (click)="notificationsClicked.emit()"
+          [attr.aria-label]="t('HEADER.NOTIFICATIONS')"
         >
           <svg lucideBell [size]="20" aria-hidden="true"></svg>
           @if (unreadCount() > 0) {
@@ -148,12 +150,12 @@ export interface Breadcrumb {
 
         <div class="lang">
           <button
-              type="button"
-              class="lang-btn"
-              aria-haspopup="listbox"
-              [attr.aria-expanded]="langMenuOpen()"
-              [attr.aria-label]="t('HEADER.LANGUAGE')"
-              (click)="langMenuOpen.set(!langMenuOpen())"
+            type="button"
+            class="lang-btn"
+            aria-haspopup="listbox"
+            [attr.aria-expanded]="langMenuOpen()"
+            [attr.aria-label]="t('HEADER.LANGUAGE')"
+            (click)="langMenuOpen.set(!langMenuOpen())"
           >
             {{ activeLang().toUpperCase() }}
           </button>
@@ -169,11 +171,11 @@ export interface Breadcrumb {
         </div>
 
         <button
-            type="button"
-            class="menu-btn"
-            (click)="menu.toggle()"
-            aria-haspopup="dialog"
-            [attr.aria-expanded]="menu.open()"
+          type="button"
+          class="menu-btn"
+          (click)="menu.toggle()"
+          aria-haspopup="dialog"
+          [attr.aria-expanded]="menu.open()"
         >
           {{ t('MENU.TITLE') }}
         </button>
@@ -197,21 +199,18 @@ export class TopbarComponent {
 
   // paginile din rutele active, recalculate la fiecare navigare
   private readonly routeCrumbs = toSignal(
-      this.router.events.pipe(
-          filter((e) => e instanceof NavigationEnd),
-          startWith(null),
-          map(() => this.buildCrumbs()),
-      ),
-      { initialValue: [] as Breadcrumb[] },
+    this.router.events.pipe(
+      filter((e) => e instanceof NavigationEnd),
+      startWith(null),
+      map(() => this.buildCrumbs()),
+    ),
+    { initialValue: [] as Breadcrumb[] },
   );
 
   // numele business-ului + paginile curente
   protected readonly items = computed<Breadcrumb[]>(() => {
     const business = this.businessService.current();
-    return [
-      ...(business ? [{ label: business.name, url: '/' }] : []),
-      ...this.routeCrumbs(),
-    ];
+    return [...(business ? [{ label: business.name, url: '/' }] : []), ...this.routeCrumbs()];
   });
 
   readonly languages = ['ro', 'en'];

@@ -1,7 +1,7 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { ServicesComponent } from "./services.component";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ServicesComponent } from './services.component';
 
-describe("ServicesComponent", () => {
+describe('ServicesComponent', () => {
   let component: ServicesComponent;
   let fixture: ComponentFixture<ServicesComponent>;
 
@@ -15,7 +15,7 @@ describe("ServicesComponent", () => {
     await fixture.whenStable();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

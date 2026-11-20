@@ -19,14 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class BusinessService {
-    final private BusinessRepository businessRepository;
+    private final BusinessRepository businessRepository;
 
     private final BusinessMapper businessMapper;
 
     public Business findById(int businessId) {
-        return businessRepository.findById(businessId)
+        return businessRepository
+                .findById(businessId)
                 .orElseThrow(() -> new EntityNotFoundException("Business not found"));
-
     }
 
     @Transactional(readOnly = true)

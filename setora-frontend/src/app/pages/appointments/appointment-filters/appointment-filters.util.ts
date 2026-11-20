@@ -1,5 +1,8 @@
 import { AppointmentStatus } from '../../../core/models/enums/appointment-status.model';
-import { AppointmentFilters, FilterEmployee } from '../../../core/ui-models/appointment-filters.model';
+import {
+  AppointmentFilters,
+  FilterEmployee,
+} from '../../../core/ui-models/appointment-filters.model';
 import { BUSINESS_TIMEZONE, businessMinutesOfDay } from '../../../core/utils/date.util';
 
 /** Campurile pe care se filtreaza. Appointment (si CalendarAppointment) le are pe toate. */

@@ -1,95 +1,95 @@
 :host {
-    /* Culorile vin din styles.css (--appt-*) și se schimbă cu tema. */
-    --tone-bg: var(--appt-confirmed-bg);
-    --tone-border: var(--appt-confirmed-border);
-    --tone-text: var(--appt-confirmed-text);
+  /* Culorile vin din styles.css (--appt-*) și se schimbă cu tema. */
+  --tone-bg: var(--appt-confirmed-bg);
+  --tone-border: var(--appt-confirmed-border);
+  --tone-text: var(--appt-confirmed-text);
 
-    position: absolute;
-    box-sizing: border-box;
-    min-width: 0;
-    padding: 4px 8px;
-    border: 1px solid var(--tone-border);
-    border-radius: 6px;
-    background: var(--tone-bg);
-    color: var(--ink);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    cursor: pointer;
-    transition: box-shadow 0.15s ease;
+  position: absolute;
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 4px 8px;
+  border: 1px solid var(--tone-border);
+  border-radius: 6px;
+  background: var(--tone-bg);
+  color: var(--ink);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
 }
 
 :host(:hover) {
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 :host(.confirmed) {
-    --tone-bg: var(--appt-confirmed-bg);
-    --tone-border: var(--appt-confirmed-border);
-    --tone-text: var(--appt-confirmed-text);
+  --tone-bg: var(--appt-confirmed-bg);
+  --tone-border: var(--appt-confirmed-border);
+  --tone-text: var(--appt-confirmed-text);
 }
 
 :host(.cancelled) {
-    --tone-bg: var(--appt-cancelled-bg);
-    --tone-border: var(--appt-cancelled-border);
-    --tone-text: var(--appt-cancelled-text);
+  --tone-bg: var(--appt-cancelled-bg);
+  --tone-border: var(--appt-cancelled-border);
+  --tone-text: var(--appt-cancelled-text);
 }
 
 /* Clasa vine din status ('blocked' sau 'unavailable'). */
 :host(.blocked),
 :host(.unavailable) {
-    --tone-bg: var(--appt-blocked-bg);
-    --tone-border: var(--appt-blocked-border);
-    --tone-text: var(--appt-blocked-text);
+  --tone-bg: var(--appt-blocked-bg);
+  --tone-border: var(--appt-blocked-border);
+  --tone-text: var(--appt-blocked-text);
 }
 
 /* Programarea deschisă în panoul de detalii (se activează cu [class.selected]). */
 :host(.selected) {
-    outline: 2px solid var(--ink);
-    outline-offset: 1px;
+  outline: 2px solid var(--ink);
+  outline-offset: 1px;
 }
 
 p {
-    margin: 0;
-    font-size: 11px;
-    line-height: 1.25;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .block__time {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--tone-text);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--tone-text);
 }
 
 .block__client {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
 }
 
 .block__meta {
-    font-size: 11px;
-    color: var(--tone-text);
+  font-size: 11px;
+  color: var(--tone-text);
 }
 
 :host(.compact) {
-    padding: 2px 6px;
-    border-radius: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 
 :host(.compact.selected) {
-    padding: 2px 5px;
+  padding: 2px 5px;
 }
 
 :host(.compact) p {
-    font-size: 10px;
-    line-height: 1.15;
+  font-size: 10px;
+  line-height: 1.15;
 }
 
 :host(.compact) .block__client {
-    font-size: 11px;
+  font-size: 11px;
 }

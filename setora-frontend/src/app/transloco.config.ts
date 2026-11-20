@@ -18,5 +18,5 @@ export const translocoConfig = provideTransloco({
     reRenderOnLangChange: true,
     prodMode: !isDevMode(),
   },
-  loader: TranslocoHttpLoader
+  loader: TranslocoHttpLoader,
 });

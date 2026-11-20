@@ -10,5 +10,4 @@ public record EmployeeScheduleDto(
         String location,
         List<WorkingHoursDto> workingHours,
         List<ScheduledAppointmentDto> appointments,
-        List<UnavailableSlotDto> unavailableSlots
-) {}
+        List<UnavailableSlotDto> unavailableSlots) {}

@@ -5,27 +5,21 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public record CreateAppointmentGhostClientRequestDto (
-    @NotNull int businessId,//TODO remove later on when we have sessions
-    @NotNull int serviceId,
-    int employeeId,
+public record CreateAppointmentGhostClientRequestDto(
+        @NotNull int businessId, // TODO remove later on when we have sessions
+        @NotNull int serviceId,
+        int employeeId,
 
-    @NotBlank String clientName,
-    @NotBlank String clientPhone,
-    @Email
-    @NotBlank String clientEmail,
+        @NotBlank String clientName,
+        @NotBlank String clientPhone,
+        @Email @NotBlank String clientEmail,
 
-    @NotNull
-    LocalDate date,
-    @NotNull
-    LocalTime startTime,
+        @NotNull LocalDate date,
+        @NotNull LocalTime startTime,
 
-    @NotNull
-    PaymentMethod paymentMethod,
+        @NotNull PaymentMethod paymentMethod,
 
-    @Size(max = 1000) String clientNote
-){}
+        @Size(max = 1000) String clientNote) {}
