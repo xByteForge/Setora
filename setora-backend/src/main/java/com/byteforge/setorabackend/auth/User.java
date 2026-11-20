@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Locale;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -14,7 +16,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class User {
     @Id
-    @GeneratedValue(strategy= GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
     @Column(nullable = false)
@@ -24,7 +26,7 @@ public class User {
     private String lastName;
 
     @Column(nullable = false)
-    private String username = firstName;
+    private String username;
 
     //always saved in lower case, used for login
     @Column(nullable = false, unique = true)
@@ -37,8 +39,17 @@ public class User {
     private String passwordHash;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserRole role = UserRole.CLIENT;
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
+
+    @Column(name = "token_version", nullable = false)
+    private int tokenVersion = 0;
+
     @Column
-    private UserRole role=UserRole.CLIENT;
+    private String avatarPath;
 
     //add the rest later on
 
@@ -46,7 +57,7 @@ public class User {
         this.email = email == null ? null : email.trim().toLowerCase();
     }
 
-    public String getName(){
+    public String getName() {
         return this.firstName + " " + this.lastName;
     }
 
@@ -54,9 +65,22 @@ public class User {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = firstName;
-        this.email = email;
+        setEmail(email);
         this.phoneNumber = phoneNumber;
         this.passwordHash = passwordHash;
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void prepareForSave() {                 // just to be safe
+        if (username == null || username.isBlank())
+            username = this.firstName;
+
+        if (email != null)
+            setEmail(this.email);       // in case a constructor or generated setters bypass email normalization in the explicit constructor
+
+        if (role == null)
+            role = UserRole.CLIENT;
     }
 
     public String getNameInitials() {
