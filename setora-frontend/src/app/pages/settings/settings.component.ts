@@ -1,8 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, computed } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UserService } from '../../core/services/user.service';
 import { ProfileDetailsComponent } from './profile-details/profile-details.component';
 import { AccountSettingsComponent } from './account-settings/account-settings.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 
 
 export type SettingsTab = 'profile' | 'settings';
@@ -18,11 +21,25 @@ export class SettingsComponent {
   private readonly userService = inject(UserService);
 
   readonly user = this.userService.currentUser;
-  readonly activeTab = signal<SettingsTab>('profile');
 
-  
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+
+  private readonly tabParam = toSignal(
+    this.route.queryParamMap.pipe(map((params) => params.get('tab'))),
+    { initialValue: null },
+  );
+
+  readonly activeTab = computed<SettingsTab>(() =>
+    this.tabParam() === 'settings' ? 'settings' : 'profile',
+  );
 
   selectTab(tab: SettingsTab): void {
-    this.activeTab.set(tab);
-  }
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab },
+      replaceUrl: true,
+    });
+}
+
 }

@@ -8,7 +8,7 @@
 .notif-table { display: flex; flex-direction: column; }
 .notif-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 64px 64px 64px;
+  grid-template-columns: minmax(0, 1fr) 64px 64px;
   align-items: center;
   gap: 8px;
   padding: 16px 0;
@@ -103,7 +103,12 @@
 
 @media (max-width: 900px) {
   .theme-options { grid-template-columns: 1fr; }
-  .notif-row { grid-template-columns: minmax(0, 1fr) 48px 48px 48px; }
+  .notif-row { grid-template-columns: minmax(0, 1fr) 48px 48px; }
+}
+
+@media (min-width: 900px) {
+  .field--new-password { grid-column: 1; grid-row: 2; }
+  .field--confirm-password { grid-column: 2; grid-row: 2; }
 }
 
 .password-message {
