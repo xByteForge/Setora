@@ -19,9 +19,9 @@ export interface PasswordChange {
 }
 
 const DEFAULT_NOTIFICATION_PREFERENCES: UserNotificationPreference[] = [
-  { event: 'BOOKING_CONFIRMED', channel: 'EMAIL' },
-  { event: 'BOOKING_CONFIRMED', channel: 'SMS' },
-  { event: 'BOOKING_CHANGED', channel: 'EMAIL' },
+  { event: 'APPOINTMENT_CONFIRMED', channel: 'EMAIL' },
+  { event: 'APPOINTMENT_CONFIRMED', channel: 'SMS' },
+  { event: 'APPOINTMENT_CHANGED', channel: 'EMAIL' },
   { event: 'REMINDER', channel: 'SMS' },
 ];
 

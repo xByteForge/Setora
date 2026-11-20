@@ -24,7 +24,7 @@
           class="avatar__image"
           [src]="src"
           alt=""
-          (error)="brokenSrc.set(src)"
+          (error)="imageFailed.set(true)"
         />
       } @else {
         <span aria-hidden="true">{{ initials() }}</span>
@@ -46,7 +46,7 @@
         <input
           #photoInput
           type="file"
-          accept="image/jpeg,image/png"
+          accept="image/jpeg,image/png,image/webp"
           hidden
           (change)="onPhotoSelected($event)"
         />
@@ -127,8 +127,8 @@
 
       <hr class="divider" />
 
-      @if (saveFailed()) {
-        <p class="form-error" role="alert">{{ 'ERRORS.GENERIC' | transloco }}</p>
+      @if (saveError(); as err) {
+        <p class="form-error" role="alert">{{ err | transloco }}</p>
       }
 
       <div class="form-actions">

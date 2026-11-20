@@ -218,7 +218,7 @@ public class UserService {
         return oldPath;
     }
     public String getAvatarPathByUser(int userId){
-        User user = userRepository.findUserById(userId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow();
         return user.getAvatarPath();
     }
 }

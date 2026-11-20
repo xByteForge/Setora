@@ -4,15 +4,19 @@ import com.byteforge.setorabackend.error.exceptions.InvalidStateException;
 import com.byteforge.setorabackend.error.exceptions.PriceChangedException;
 import com.byteforge.setorabackend.error.exceptions.SlotTakenException;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.NonNull;
+import org.springframework.http.HttpStatus;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.nio.file.AccessDeniedException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -20,14 +24,14 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     // Helper method to avoid repeating response construction
-    private ResponseEntity<@NonNull ApiErrorResponse> error(
+    private ResponseEntity<ApiErrorResponse> error(
             HttpStatus status,
             String code,
             String message,
             String fieldErrors
     ) {
         return ResponseEntity.status(status).body(
-                new @NonNull ApiErrorResponse(code, message, fieldErrors)
+                new ApiErrorResponse(code, message, fieldErrors)
         );
     }
 
@@ -36,7 +40,7 @@ public class GlobalExceptionHandler {
     // ==========================================
 
     @ExceptionHandler(SlotTakenException.class)
-    public ResponseEntity<@NonNull ApiErrorResponse> handleSlotTaken(
+    public ResponseEntity<ApiErrorResponse> handleSlotTaken(
             SlotTakenException ex) {
         return error(
                 HttpStatus.CONFLICT,
@@ -47,7 +51,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(PriceChangedException.class)
-    public ResponseEntity<@NonNull ApiErrorResponse> handlePriceChanged(
+    public ResponseEntity<ApiErrorResponse> handlePriceChanged(
             PriceChangedException ex) {
         return error(
                 HttpStatus.CONFLICT,
@@ -58,7 +62,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidStateException.class)
-    public ResponseEntity<@NonNull ApiErrorResponse> handleInvalidState(
+    public ResponseEntity<ApiErrorResponse> handleInvalidState(
             InvalidStateException ex) {
         return error(
                 HttpStatus.CONFLICT,
@@ -73,12 +77,45 @@ public class GlobalExceptionHandler {
     // ==========================================
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleInvalidParameter(
-            EntityNotFoundException ex
-    ) {
-        return ResponseEntity
-                .badRequest()
-                .body(Map.of("message", "Entity not found:  " + ex.getMessage()));
+    public ResponseEntity<ApiErrorResponse> handleNotFound(
+            EntityNotFoundException ex) {
+        return error(
+                HttpStatus.NOT_FOUND,
+                "NOT_FOUND",
+                ex.getMessage(),
+                ""
+        );
+    }
+
+
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiErrorResponse> handleForbidden(
+            AccessDeniedException ex) {
+        return error(
+                HttpStatus.FORBIDDEN,
+                "FORBIDDEN",
+                "You are not allowed to perform this action.",
+                ""
+        );
+    }
+
+    // ==========================================
+    // FALLBACK
+    // ==========================================
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiErrorResponse> handleUnexpected(
+            Exception ex) {
+
+        //log.error("Unexpected server error", ex);
+
+        return error(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "UNKNOWN",
+                "An unexpected error occurred.",
+                ""
+        );
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -100,30 +137,5 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("error", message));
-    }
-
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<@NonNull ApiErrorResponse> handleRuntimeException(
-            RuntimeException ex
-    ){
-        return error(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                "UNKNOWN runtime",
-                ex.getMessage(),
-                ""
-        );
-    }
-
-
-
-    @ExceptionHandler(UnknownError.class)
-    public ResponseEntity<@NonNull ApiErrorResponse> handleUnknownError(
-            UnknownError ex
-    ){
-        return error(HttpStatus.INTERNAL_SERVER_ERROR,
-                "UNKNOWN",
-                ex.getMessage(),
-                ex.fillInStackTrace().toString()
-                );
     }
 }

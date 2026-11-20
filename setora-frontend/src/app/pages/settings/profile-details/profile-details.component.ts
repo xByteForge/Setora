@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslocoModule } from '@ngneat/transloco';
-import { of, switchMap } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { User } from '../../../core/models/user.model';
 import { ProfileUpdate, UserService } from '../../../core/services/user.service';
 
@@ -31,7 +31,8 @@ const COUNTRY_OPTIONS: CountryOption[] = [
   { code: '+34', flag: '🇪🇸', name: 'Spain' },
 ];
 
-const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/png'];
+// Aceleași formate ca în backend
+const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 
 @Component({
@@ -51,20 +52,19 @@ export class ProfileDetailsComponent {
 
   readonly editing = signal(false);
   readonly saving = signal(false);
-  readonly saveFailed = signal(false);
+  readonly saveError = signal<string | null>(null);
 
   readonly selectedPhoto = signal<File | null>(null);
   readonly photoPreviewUrl = signal<string | null>(null);
-  readonly photoError = signal<string | null>(null); // cheie de traducere
+  readonly photoError = signal<string | null>(null);
 
-  
-  readonly brokenSrc = signal<string | null>(null);
+  private readonly avatarSource = computed(
+    () => this.photoPreviewUrl() ?? this.userService.avatarUrl(),
+  );
 
-  
-  readonly avatarSrc = computed(() => {
-    const src = this.photoPreviewUrl() ?? this.userService.avatarUrl();
-    return src && src !== this.brokenSrc() ? src : null;
-  });
+  readonly imageFailed = signal(false);
+
+  readonly avatarSrc = computed(() => (this.imageFailed() ? null : this.avatarSource()));
 
   readonly initials = computed(() => {
     const u = this.user();
@@ -82,17 +82,22 @@ export class ProfileDetailsComponent {
   constructor() {
     effect(() => this.patchForm(this.user()));
 
+    effect(() => {
+      this.avatarSource();
+      this.imageFailed.set(false);
+    });
+
     this.destroyRef.onDestroy(() => this.revokePreview());
   }
 
   startEditing(): void {
-    this.saveFailed.set(false);
+    this.saveError.set(null);
     this.editing.set(true);
   }
 
   cancel(): void {
     this.clearSelectedPhoto();
-    this.saveFailed.set(false);
+    this.saveError.set(null);
     this.patchForm(this.user());
     this.editing.set(false);
   }
@@ -100,35 +105,17 @@ export class ProfileDetailsComponent {
   save(): void {
     if (this.saving()) return;
 
-    const raw = this.form.getRawValue();
-    const phone = raw.phoneNumber.trim();
-
-    const payload: ProfileUpdate = {
-      firstName: raw.firstName.trim(),
-      lastName: raw.lastName.trim(),
-      username: raw.username.trim(),
-      phoneNumber: phone ? `${raw.countryCode} ${phone}` : '',
-    };
-
-    const photo = this.selectedPhoto();
-
     this.saving.set(true);
-    this.saveFailed.set(false);
+    this.saveError.set(null);
 
-    this.userService
-      .updateProfile(payload)
-      .pipe(switchMap(() => (photo ? this.userService.updateProfilePicture(photo) : of(null))))
-      .subscribe({
-        next: () => {
-          this.saving.set(false);
-          this.clearSelectedPhoto();
-          this.editing.set(false);
-        },
-        error: () => {
-          this.saving.set(false);
-          this.saveFailed.set(true);
-        },
-      });
+    const profile$: Observable<unknown> = this.form.dirty
+      ? this.userService.updateProfile(this.buildPayload())
+      : of(null);
+
+    profile$.subscribe({
+      next: () => this.uploadPhotoIfSelected(),
+      error: () => this.finishWithError('ERRORS.GENERIC'),
+    });
   }
 
   onPhotoSelected(event: Event): void {
@@ -152,6 +139,43 @@ export class ProfileDetailsComponent {
     this.revokePreview();
     this.selectedPhoto.set(file);
     this.photoPreviewUrl.set(URL.createObjectURL(file));
+  }
+
+  private uploadPhotoIfSelected(): void {
+    const photo = this.selectedPhoto();
+
+    if (!photo) {
+      this.finishSave();
+      return;
+    }
+
+    this.userService.updateProfilePicture(photo).subscribe({
+      next: () => this.finishSave(),
+      error: () => this.finishWithError('SETTINGS.PROFILE.PHOTO_UPLOAD_ERROR'),
+    });
+  }
+
+  private finishSave(): void {
+    this.saving.set(false);
+    this.clearSelectedPhoto();
+    this.editing.set(false);
+  }
+
+  private finishWithError(key: string): void {
+    this.saving.set(false);
+    this.saveError.set(key);
+  }
+
+  private buildPayload(): ProfileUpdate {
+    const raw = this.form.getRawValue();
+    const phone = raw.phoneNumber.trim();
+
+    return {
+      firstName: raw.firstName.trim(),
+      lastName: raw.lastName.trim(),
+      username: raw.username.trim(),
+      phoneNumber: phone ? `${raw.countryCode} ${phone}` : '',
+    };
   }
 
   private patchForm(u: User): void {

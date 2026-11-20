@@ -15,8 +15,8 @@ export type ThemeMode = 'light' | 'dark';
 type PasswordField = 'current' | 'new' | 'confirm';
 
 const NOTIFICATION_ROWS: { event: NotificationEvent; titleKey: string; hintKey: string }[] = [
-  { event: 'BOOKING_CONFIRMED', titleKey: 'SETTINGS.NOTIFICATIONS.CONFIRMED', hintKey: 'SETTINGS.NOTIFICATIONS.CONFIRMED_HINT' },
-  { event: 'BOOKING_CHANGED', titleKey: 'SETTINGS.NOTIFICATIONS.CHANGED', hintKey: 'SETTINGS.NOTIFICATIONS.CHANGED_HINT' },
+  { event: 'APPOINTMENT_CONFIRMED', titleKey: 'SETTINGS.NOTIFICATIONS.CONFIRMED', hintKey: 'SETTINGS.NOTIFICATIONS.CONFIRMED_HINT' },
+  { event: 'APPOINTMENT_CHANGED', titleKey: 'SETTINGS.NOTIFICATIONS.CHANGED', hintKey: 'SETTINGS.NOTIFICATIONS.CHANGED_HINT' },
   { event: 'REMINDER', titleKey: 'SETTINGS.NOTIFICATIONS.REMINDER', hintKey: 'SETTINGS.NOTIFICATIONS.REMINDER_HINT' },
 ];
 
@@ -40,6 +40,7 @@ const THEME_OPTIONS: { value: ThemeMode; labelKey: string }[] = [
 export class AccountSettingsComponent {
   private readonly fb = inject(FormBuilder);
   private readonly userService = inject(UserService);
+  private readonly themeService = inject(ThemeService);
 
   readonly user = input.required<User>();
   readonly openProfile = output<void>();
@@ -47,8 +48,6 @@ export class AccountSettingsComponent {
   readonly channels = CHANNELS;
   readonly notificationRows = NOTIFICATION_ROWS;
   readonly themeOptions = THEME_OPTIONS;
-
-  private readonly themeService = inject(ThemeService);
   readonly theme = this.themeService.currentTheme;
 
   readonly showEmailForm = signal(false);
@@ -56,33 +55,52 @@ export class AccountSettingsComponent {
   readonly emailSuccess = signal(false);
   readonly emailError = signal('');
 
-  readonly deleteForm = this.fb.nonNullable.group({
-    currentPassword: ['', Validators.required],
-  });
+  readonly passwordLoading = signal(false);
+  readonly passwordSuccess = signal(false);
+  readonly passwordError = signal('');
 
+  readonly notifications = signal<UserNotificationPreference[]>([]);
+  readonly notificationError = signal('');
+
+  readonly confirmingDelete = signal(false);
   readonly deleteLoading = signal(false);
   readonly deleteError = signal('');
 
-  setTheme(mode: Theme): void {
-    this.themeService.currentTheme.set(mode);
-  }
-
-  readonly notifications = signal<UserNotificationPreference[]>([]);
-
-  
   readonly visible = signal<Record<PasswordField, boolean>>({
     current: false,
     new: false,
     confirm: false,
   });
 
-  readonly confirmingDelete = signal(false);
+  readonly emailForm = this.fb.nonNullable.group({
+    newEmail: ['', [Validators.required, Validators.email]],
+    confirmEmail: ['', [Validators.required, Validators.email]],
+    currentPassword: ['', Validators.required],
+  });
+
+  readonly passwordForm = this.fb.nonNullable.group({
+    currentPassword: ['', Validators.required],
+    newPassword: ['', [Validators.required, Validators.minLength(8)]],
+    confirmPassword: ['', Validators.required],
+  });
+
+  readonly deleteForm = this.fb.nonNullable.group({
+    currentPassword: ['', Validators.required],
+  });
 
   constructor() {
     effect(() => {
       const u = this.user();
       this.notifications.set(u.notificationPreferences ?? []);
     });
+  }
+
+  setTheme(mode: Theme): void {
+    this.themeService.currentTheme.set(mode);
+  }
+
+  toggleVisible(field: PasswordField): void {
+    this.visible.update((v) => ({ ...v, [field]: !v[field] }));
   }
 
   changeLoginEmail(): void {
@@ -94,8 +112,7 @@ export class AccountSettingsComponent {
       return;
     }
 
-    const { newEmail, confirmEmail, currentPassword } =
-      this.emailForm.getRawValue();
+    const { newEmail, confirmEmail, currentPassword } = this.emailForm.getRawValue();
 
     if (newEmail.trim().toLowerCase() !== confirmEmail.trim().toLowerCase()) {
       this.emailError.set('Email addresses do not match.');
@@ -109,21 +126,22 @@ export class AccountSettingsComponent {
 
     this.emailLoading.set(true);
 
-    this.userService.changeEmail({
-      newEmail: newEmail.trim(),
-      currentPassword,
-    }).subscribe({
-      next: () => {
-        this.emailLoading.set(false);
-        this.emailSuccess.set(true);
-        this.showEmailForm.set(false);
-        this.emailForm.reset();
-      },
-      error: () => {
-        this.emailLoading.set(false);
-        this.emailError.set('Unable to update your email. Please check your password and try again.');
-      },
-    });
+    this.userService
+      .changeEmail({
+        newEmail: newEmail.trim(),
+        currentPassword,
+      })
+      .pipe(finalize(() => this.emailLoading.set(false)))
+      .subscribe({
+        next: () => {
+          this.emailSuccess.set(true);
+          this.showEmailForm.set(false);
+          this.emailForm.reset();
+        },
+        error: () => {
+          this.emailError.set('Unable to update your email. Please check your password and try again.');
+        },
+      });
   }
 
   cancelEmailChange(): void {
@@ -133,24 +151,7 @@ export class AccountSettingsComponent {
     this.emailSuccess.set(false);
   }
 
-  toggleVisible(field: PasswordField): void {
-    this.visible.update((v) => ({ ...v, [field]: !v[field] }));
-  }
-
-  readonly passwordForm = this.fb.nonNullable.group({
-    currentPassword: ['', Validators.required],
-    newPassword: ['', [
-      Validators.required,
-      Validators.minLength(8),
-    ]],
-    confirmPassword: ['', Validators.required],
-  });
-
-  readonly passwordLoading = signal(false);
-  readonly passwordSuccess = signal(false);
-  readonly passwordError = signal('');
-
-changePassword(): void {
+  changePassword(): void {
     this.passwordForm.markAllAsTouched();
     this.passwordSuccess.set(false);
     this.passwordError.set('');
@@ -159,8 +160,7 @@ changePassword(): void {
       return;
     }
 
-    const { currentPassword, newPassword, confirmPassword } =
-      this.passwordForm.getRawValue();
+    const { currentPassword, newPassword, confirmPassword } = this.passwordForm.getRawValue();
 
     if (newPassword !== confirmPassword) {
       this.passwordError.set('Passwords do not match.');
@@ -174,7 +174,8 @@ changePassword(): void {
 
     this.passwordLoading.set(true);
 
-    this.userService.changePassword({ currentPassword, newPassword })
+    this.userService
+      .changePassword({ currentPassword, newPassword })
       .pipe(finalize(() => this.passwordLoading.set(false)))
       .subscribe({
         next: () => {
@@ -197,14 +198,20 @@ changePassword(): void {
   }
 
   toggleNotification(event: NotificationEvent, channel: NotificationChannel): void {
-    this.notifications.update((prefs) => {
-      const exists = prefs.some((p) => p.event === event && p.channel === channel);
-      const updated = exists
-        ? prefs.filter((p) => !(p.event === event && p.channel === channel))
-        : [...prefs, { event, channel }];
+    this.notificationError.set('');
+    const previous = this.notifications();
+    const exists = previous.some((p) => p.event === event && p.channel === channel);
+    const updated = exists
+      ? previous.filter((p) => !(p.event === event && p.channel === channel))
+      : [...previous, { event, channel }];
 
-      this.userService.updateNotificationPreferences(updated).subscribe();
-      return updated;
+    this.notifications.set(updated);
+
+    this.userService.updateNotificationPreferences(updated).subscribe({
+      error: () => {
+        this.notifications.set(previous);
+        this.notificationError.set('Unable to update notification preferences. Please try again.');
+      },
     });
   }
 
@@ -216,36 +223,23 @@ changePassword(): void {
       return;
     }
 
-    const { currentPassword } = this.deleteForm.getRawValue();
-
     this.deleteLoading.set(true);
 
-    this.userService.deleteAccount().subscribe({
-      next: () => {
-        this.deleteLoading.set(false);
-
-      },
-      error: () => {
-        this.deleteLoading.set(false);
-        this.deleteError.set(
-          'Unable to delete your account. Please check your password and try again.'
-        );
-      },
-    });
+    this.userService
+      .deleteAccount()
+      .pipe(finalize(() => this.deleteLoading.set(false)))
+      .subscribe({
+        next: () => {},
+        error: () => {
+          this.deleteError.set('Unable to delete your account. Please check your password and try again.');
+        },
+      });
   }
 
   cancelDelete(): void {
     this.confirmingDelete.set(false);
     this.deleteForm.reset();
     this.deleteError.set('');
-    this.visible.update(v => ({ ...v, current: false }));
+    this.visible.update((v) => ({ ...v, current: false }));
   }
-
-  
-
-  readonly emailForm = this.fb.nonNullable.group({
-    newEmail: ['', [Validators.required, Validators.email]],
-    confirmEmail: ['', [Validators.required, Validators.email]],
-    currentPassword: ['', Validators.required],
-  });
 }

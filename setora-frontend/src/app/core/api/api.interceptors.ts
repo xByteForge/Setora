@@ -2,18 +2,43 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { API_BASE_URL } from './api.config';
-import { toApiError } from './api-error.interceptor';
+
 import { AuthService } from '../services/auth.service';
+import { toApiError } from './api-error.interceptor';
 
 
-const PUBLIC_PATHS = ['/auth/login', '/auth/register', '/auth/refresh'];
+const PUBLIC_PATHS = new Set(['/auth/login', '/auth/register', '/auth/refresh']);
+
+
+/** Returnează calea relativă la API-ul de bază, sau null dacă URL-ul nu aparține API-ului. */
+function relativeApiPath(requestUrl: string, apiBaseUrl: string): string | null {
+  let api: URL;
+  let target: URL;
+
+  try {
+    // Ambele URL-uri trebuie să fie absolute. Cele relative (fără schemă) nu sunt apeluri API.
+    api = new URL(apiBaseUrl);
+    target = new URL(requestUrl);
+  } catch {
+    return null;
+  }
+
+  if (target.origin !== api.origin) return null;
+
+  const basePath = api.pathname.replace(/\/$/, '');
+  const pathname = target.pathname.replace(/\/$/, '');
+
+  if (pathname !== basePath && !pathname.startsWith(`${basePath}/`)) return null;
+
+  return pathname.slice(basePath.length) || '/';
+}
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const apiBase = inject(API_BASE_URL);
+  const relativePath = relativeApiPath(req.url, inject(API_BASE_URL));
 
+  if (relativePath === null) return next(req);
   
-  if (!req.url.startsWith(apiBase)) return next(req);
-  if (PUBLIC_PATHS.some((path) => req.url.startsWith(apiBase + path))) return next(req);
+  if (PUBLIC_PATHS.has(relativePath)) return next(req);
 
   const token = inject(AuthService).accessToken();
   if (!token) return next(req);
