@@ -15,7 +15,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Service
 @RequiredArgsConstructor
 public class BusinessService {
@@ -36,13 +35,9 @@ public class BusinessService {
 
     @Transactional(readOnly = true)
     public Page<BusinessResponseDto> getBusinesses(
-            BusinessFilterCriteria criteria,
-            BusinessSortBy sortBy,
-            PaginationParams pageParams
-    ) {
+            BusinessFilterCriteria criteria, BusinessSortBy sortBy, PaginationParams pageParams) {
         BusinessSortBy effectiveSort = (sortBy != null) ? sortBy : BusinessSortBy.NEWEST;
-        boolean isPriceSort = effectiveSort == BusinessSortBy.PRICE_ASC
-                || effectiveSort == BusinessSortBy.PRICE_DESC;
+        boolean isPriceSort = effectiveSort == BusinessSortBy.PRICE_ASC || effectiveSort == BusinessSortBy.PRICE_DESC;
 
         Pageable pageable = isPriceSort
                 ? PageRequest.of(pageParams.page(), pageParams.size())
@@ -51,8 +46,7 @@ public class BusinessService {
         Specification<Business> spec = BusinessSpecification.withCriteria(criteria)
                 .and(BusinessSpecification.withPriceSort(criteria, effectiveSort));
 
-        return businessRepository.findAll(spec, pageable)
-                .map(businessMapper::toResponseDto);
+        return businessRepository.findAll(spec, pageable).map(businessMapper::toResponseDto);
     }
 
     @Transactional(readOnly = true)
@@ -62,14 +56,11 @@ public class BusinessService {
 
     private Sort buildStandardSort(BusinessSortBy sortBy) {
         return switch (sortBy) {
-            case NAME_ASC -> Sort.by(Sort.Direction.ASC, "name")
-                    .and(Sort.by(Sort.Direction.ASC, "id"));
-            case NAME_DESC -> Sort.by(Sort.Direction.DESC, "name")
-                    .and(Sort.by(Sort.Direction.DESC, "id"));
-            case OLDEST -> Sort.by(Sort.Direction.ASC, "createdAt")
-                    .and(Sort.by(Sort.Direction.ASC, "id"));
-            case NEWEST, PRICE_ASC, PRICE_DESC -> Sort.by(Sort.Direction.DESC, "createdAt")
-                    .and(Sort.by(Sort.Direction.DESC, "id"));
+            case NAME_ASC -> Sort.by(Sort.Direction.ASC, "name").and(Sort.by(Sort.Direction.ASC, "id"));
+            case NAME_DESC -> Sort.by(Sort.Direction.DESC, "name").and(Sort.by(Sort.Direction.DESC, "id"));
+            case OLDEST -> Sort.by(Sort.Direction.ASC, "createdAt").and(Sort.by(Sort.Direction.ASC, "id"));
+            case NEWEST, PRICE_ASC, PRICE_DESC ->
+                Sort.by(Sort.Direction.DESC, "createdAt").and(Sort.by(Sort.Direction.DESC, "id"));
         };
     }
 }

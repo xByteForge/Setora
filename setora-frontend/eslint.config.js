@@ -33,11 +33,9 @@ module.exports = defineConfig([
       ],
     },
   },
-    {
-        files: ['**/*.html'],
-        extends: [
-            angular.configs.templateRecommended,
-        ],
-        rules: {},
-    },
+  {
+    files: ['**/*.html'],
+    extends: [angular.configs.templateRecommended],
+    rules: {},
+  },
 ]);

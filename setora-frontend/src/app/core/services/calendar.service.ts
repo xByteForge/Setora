@@ -7,8 +7,8 @@ import { CreateAppointmentPayload } from '../ui-models/create-appointment-payloa
 import { AppointmentSummary } from '../ui-models/appointment-summary.model';
 import { addMinutes, businessLocalToInstant } from '../utils/date.util';
 import { CatalogService } from './catalog.service';
-import {PaymentMethod} from "../models/enums/payment-method.model";
-import {AppointmentStatus} from "../models/enums/appointment-status.model";
+import { PaymentMethod } from '../models/enums/payment-method.model';
+import { AppointmentStatus } from '../models/enums/appointment-status.model';
 
 const WORK_START = 9 * 60; // 09:00
 const WORK_END = 18 * 60; // 18:00
