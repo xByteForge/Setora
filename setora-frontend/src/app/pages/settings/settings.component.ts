@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UserService } from '../../core/services/user.service';
 import { ProfileDetailsComponent } from './profile-details/profile-details.component';

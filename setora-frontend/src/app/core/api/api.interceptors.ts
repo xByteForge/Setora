@@ -2,18 +2,41 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { API_BASE_URL } from './api.config';
-import { toApiError } from './api-error.interceptor';
+
 import { AuthService } from '../services/auth.service';
+import { toApiError } from './api-error.interceptor';
 
 
-const PUBLIC_PATHS = ['/auth/login', '/auth/register', '/auth/refresh'];
+const PUBLIC_PATHS = new Set(['/auth/login', '/auth/register', '/auth/refresh']);
 
-export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const apiBase = inject(API_BASE_URL);
+
+function relativeApiPath(requestUrl: string, apiBaseUrl: string): string | null {
+  const api = new URL(apiBaseUrl, window.location.origin);
+
+  let target: URL;
+  try {
+    target = new URL(requestUrl, window.location.origin);
+  } catch {
+    return null;
+  }
+  
+  if (target.origin !== api.origin) return null;
+
+  const basePath = api.pathname.replace(/\/$/, '');
+  const pathname = target.pathname.replace(/\/$/, '');
 
   
-  if (!req.url.startsWith(apiBase)) return next(req);
-  if (PUBLIC_PATHS.some((path) => req.url.startsWith(apiBase + path))) return next(req);
+  if (pathname !== basePath && !pathname.startsWith(`${basePath}/`)) return null;
+
+  return pathname.slice(basePath.length) || '/';
+}
+
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const relativePath = relativeApiPath(req.url, inject(API_BASE_URL));
+
+  if (relativePath === null) return next(req);
+  
+  if (PUBLIC_PATHS.has(relativePath)) return next(req);
 
   const token = inject(AuthService).accessToken();
   if (!token) return next(req);
