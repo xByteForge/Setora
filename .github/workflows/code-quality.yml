@@ -25,7 +25,7 @@ jobs:
           cache: gradle
 
       - name: Run Spotless Check
-        run: ./setora-backend/gradlew -p ./backend/ spotlessCheck
+        run: ./setora-backend/gradlew -p ./setora-backend/ spotlessCheck
 
   frontend:
     name: Frontend - Prettier and ESLint
@@ -33,7 +33,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: frontend
+        working-directory: setora-frontend
 
     steps:
       - name: Checkout repository
