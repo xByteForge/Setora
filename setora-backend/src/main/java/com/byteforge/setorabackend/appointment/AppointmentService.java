@@ -6,13 +6,14 @@ import com.byteforge.setorabackend.auth.User;
 import com.byteforge.setorabackend.auth.UserService;
 import com.byteforge.setorabackend.business.Business;
 import com.byteforge.setorabackend.business.BusinessService;
+import com.byteforge.setorabackend.common.DateTimeInterval;
 import com.byteforge.setorabackend.employees.model.Employee;
 import com.byteforge.setorabackend.employees.service.EmployeeService;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
 import com.byteforge.setorabackend.serviceItem.ServiceItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Locale;
 
@@ -153,6 +155,131 @@ public class AppointmentService {
         Appointment savedAppointment = appointmentRepository.save(appointment);
 
         return AppointmentMapper.toResponseDto(savedAppointment);
+    }
+
+    @Transactional
+    public AppointmentResponseDto createAppointment(@Valid CreateAppointmentRequestDto request) {
+        if (request == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request body is required");
+        }
+
+        if (request.serviceId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "serviceId is required");
+        }
+
+        if (request.employeeId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "employeeId is required");
+        }
+
+        if (request.date() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "date is required");
+        }
+
+        if (request.startTime() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "startTime is required");
+        }
+
+        ServiceItem service = serviceItemService.findById(request.serviceId());
+        Employee employee = employeeService.findById(request.employeeId());
+
+        Business business = service.getBusiness();
+
+        if (employee.getBusiness().getId() != business.getId()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Employee does not belong to the business offering this service"
+            );
+        }
+
+        if (request.businessId() != null && request.businessId() != business.getId()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Service does not belong to the specified business"
+            );
+        }
+
+        User client = null;
+        String clientName = null;
+        String clientEmail = null;
+        String clientPhone = null;
+
+        if (request.clientId() != null) {
+            client = userService.findById(request.clientId());
+        } else {
+            if (request.clientName() == null || request.clientName().isBlank()) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "clientName is required when clientId is not provided"
+                );
+            }
+            if ((request.clientEmail() == null || request.clientEmail().isBlank()) &&
+                    (request.clientPhone() == null || request.clientPhone().isBlank())) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "At least one of clientEmail or clientPhone must be provided when clientId is not provided"
+                );
+            }
+            clientName = request.clientName().trim();
+            clientEmail = request.clientEmail() != null && !request.clientEmail().isBlank()
+                    ? request.clientEmail().trim().toLowerCase(Locale.ROOT)
+                    : null;
+            clientPhone = request.clientPhone() != null && !request.clientPhone().isBlank()
+                    ? request.clientPhone().trim()
+                    : null;
+        }
+
+        ZoneId timezone = business.getTimezone() != null ? business.getTimezone() : ZoneId.of("Europe/Bucharest");
+
+        ZonedDateTime start = request.date()
+                .atTime(request.startTime())
+                .atZone(timezone);
+
+        ZonedDateTime end = start.plusMinutes(service.getDurationMinutes());
+
+        Appointment appointment = new Appointment();
+        appointment.setClient(client);
+        appointment.setClientName(clientName);
+        appointment.setClientEmail(clientEmail);
+        appointment.setClientPhone(clientPhone);
+
+        appointment.setEmployee(employee);
+        appointment.setServiceItem(service);
+
+        appointment.setInterval(new DateTimeInterval(
+                start.toInstant(),
+                end.toInstant()
+        ));
+
+        PaymentMethod paymentMethod = request.paymentMethod() != null
+                ? request.paymentMethod()
+                : (service.getPaymentMethod() != null ? service.getPaymentMethod() : PaymentMethod.PHYSICAL);
+        appointment.setPaymentMethod(paymentMethod);
+
+        appointment.setPriceAtAppointment(service.getPrice());
+
+        AppointmentStatus status = request.status() != null
+                ? request.status()
+                : AppointmentStatus.CONFIRMED;
+        appointment.setStatus(status);
+
+        appointment.setClientNote(request.clientNote());
+
+        try {
+            Appointment saved = appointmentRepository.save(appointment);
+            return AppointmentMapper.toResponseDto(saved);
+        } catch (DataIntegrityViolationException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Appointment data violates database constraints: " + e.getMessage(),
+                    e
+            );
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Failed to persist appointment: " + e.getMessage(),
+                    e
+            );
+        }
     }
 
     @Transactional

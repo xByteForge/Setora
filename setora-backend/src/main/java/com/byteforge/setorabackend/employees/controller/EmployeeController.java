@@ -1,10 +1,12 @@
 package com.byteforge.setorabackend.employees.controller;
 
+import com.byteforge.setorabackend.employees.model.EmployeeResponseDto;
 import com.byteforge.setorabackend.employees.service.EmployeeService;
 import com.byteforge.setorabackend.employees.model.AvailabilityDtos.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,13 +18,20 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
-
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/employees")
 @RequiredArgsConstructor
 public class EmployeeController {
     private final EmployeeService availabilityService;
+
+    @GetMapping
+    public ResponseEntity<List<EmployeeResponseDto>> getEmployeesByBusinessId(
+            @RequestParam int businessId
+    ) {
+        return ResponseEntity.ok(availabilityService.getEmployeesByBusinessId(businessId));
+    }
 
     @GetMapping("/{employeeId}/working-hours")
     public WorkingHours getWorkingHours(@PathVariable("employeeId") int employeeId) {

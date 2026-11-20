@@ -20,6 +20,14 @@ public class UserService {
                 ));
     }
 
+    public User findById(int id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "User not found"
+                ));
+    }
+
     public void updateClientDetails(
             User client,
             String lastName,
