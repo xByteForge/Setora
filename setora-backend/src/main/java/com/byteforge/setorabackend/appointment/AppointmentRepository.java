@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
 import java.util.List;
 import java.time.Instant;
 
@@ -48,5 +47,20 @@ public interface AppointmentRepository
             @Param("businessId") Integer businessId,
             @Param("startDate") Instant startDate,
             @Param("endDate") Instant endDate
+    );
+
+
+
+    @Query("""
+    SELECT a
+    FROM Appointment a
+    WHERE a.employee.id = :employeeId
+      AND a.interval.start >= :start
+      AND a.interval.end < :end
+""")
+    List<Appointment> findByEmployee_IdOnDate(
+            @Param("employeeId") int employeeId,
+            @Param("start") Instant start,
+            @Param("end") Instant end
     );
 }

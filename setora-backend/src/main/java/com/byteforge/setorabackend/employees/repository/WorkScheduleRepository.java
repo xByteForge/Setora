@@ -5,7 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.DayOfWeek;
 import java.util.List;
+import java.util.Optional;
 
 
 public interface WorkScheduleRepository extends JpaRepository<WorkSchedule, Integer> {
@@ -20,4 +22,6 @@ public interface WorkScheduleRepository extends JpaRepository<WorkSchedule, Inte
         AND e.active = true
     """)
     List<WorkSchedule> findByBusinessId(@Param("businessId") Integer businessId);
+
+    Optional<WorkSchedule> findByEmployee_IdAndDayOfWeek(int employeeId, DayOfWeek dayOfWeek);
 }

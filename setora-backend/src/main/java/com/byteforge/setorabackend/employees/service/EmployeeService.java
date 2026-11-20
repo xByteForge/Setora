@@ -13,15 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -237,4 +234,17 @@ public class EmployeeService {
         return employeeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
     }
+
+    public List<Employee> findAllEmployeesByServiceId(int serviceId){
+        return employeeRepository.findAllByActiveTrueAndServiceItems_Id(serviceId);
+    }
+    public Optional<WorkSchedule> findWorkScheduleByEmployeeId(int employeeId, DayOfWeek dayOfWeek) {
+        return workScheduleRepository.findByEmployee_IdAndDayOfWeek(
+                employeeId, dayOfWeek
+        );
+    }
+    public Optional<WorkSchedule> findWorkScheduleByEmployeeId(int employeeId) {
+        return workScheduleRepository.findById(employeeId);
+    }
+
 }
