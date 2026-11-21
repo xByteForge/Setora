@@ -130,7 +130,7 @@ public class UserService {
 
         refreshTokenRepository.revokeAllActiveByUserId(user.getId(), Instant.now());
     }
-  
+
     public User findById(int id) {
         return userRepository
                 .findById(id)
