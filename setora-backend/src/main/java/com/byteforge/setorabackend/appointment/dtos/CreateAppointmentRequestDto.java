@@ -3,7 +3,6 @@ package com.byteforge.setorabackend.appointment.dtos;
 import com.byteforge.setorabackend.appointment.AppointmentStatus;
 import com.byteforge.setorabackend.appointment.PaymentMethod;
 import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -19,5 +18,4 @@ public record CreateAppointmentRequestDto(
         @NotNull(message = "startTime is required") LocalTime startTime,
         PaymentMethod paymentMethod,
         AppointmentStatus status,
-        String clientNote
-) {}
+        String clientNote) {}

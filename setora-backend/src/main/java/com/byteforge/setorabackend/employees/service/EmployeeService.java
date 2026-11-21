@@ -232,7 +232,8 @@ public class EmployeeService {
     }
 
     public Employee findById(int id) {
-        return employeeRepository.findById(id)
+        return employeeRepository
+                .findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found"));
     }
 
@@ -241,6 +242,5 @@ public class EmployeeService {
         return employeeRepository.findByBusinessId(businessId).stream()
                 .map(EmployeeResponseDto::from)
                 .toList();
-        return employeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found"));
     }
 }

@@ -2,7 +2,6 @@ package com.byteforge.setorabackend.employees.model;
 
 import com.byteforge.setorabackend.auth.User;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
-
 import java.util.List;
 
 public record EmployeeResponseDto(
@@ -14,8 +13,7 @@ public record EmployeeResponseDto(
         String phoneNumber,
         String employmentRole,
         boolean active,
-        List<Integer> serviceIds
-) {
+        List<Integer> serviceIds) {
     public static EmployeeResponseDto from(Employee employee) {
         User user = employee.getUser();
         List<Integer> serviceIds = employee.getServiceItems() != null
@@ -31,7 +29,6 @@ public record EmployeeResponseDto(
                 user != null ? user.getPhoneNumber() : null,
                 employee.getEmploymentRole(),
                 employee.isActive(),
-                serviceIds
-        );
+                serviceIds);
     }
 }

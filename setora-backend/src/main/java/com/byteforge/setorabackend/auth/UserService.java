@@ -19,42 +19,39 @@ public class UserService {
     }
 
     public User findById(int id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "User not found"
-                ));
+        return userRepository
+                .findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 
-    public void updateClientDetails(
-            User client,
-            String lastName,
-            String firstName,
-            String email,
-            String phoneNumber
-    ) {
     public void updateClientDetails(User client, String lastName, String firstName, String email, String phoneNumber) {
         if (lastName != null) {
-            if (lastName.isBlank())
+            if (lastName.isBlank()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "lastName cannot be blank");
+            }
 
             client.setLastName(lastName.trim());
         }
 
         if (firstName != null) {
-            if (firstName.isBlank())
+            if (firstName.isBlank()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "firstName cannot be blank");
+            }
 
             client.setFirstName(firstName.trim());
         }
 
         if (email != null) {
-            if (email.isBlank()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email cannot be blank");
+            if (email.isBlank()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email cannot be blank");
+            }
 
-            client.setEmail(email);
+            client.setEmail(email.trim());
         }
 
-        if (phoneNumber != null) client.setPhoneNumber(phoneNumber.trim());
+        if (phoneNumber != null) {
+            client.setPhoneNumber(phoneNumber.trim());
+        }
 
         try {
             userRepository.saveAndFlush(client);

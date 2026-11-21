@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Locale;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +25,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -160,16 +154,12 @@ public class AppointmentService {
 
         if (employee.getBusiness().getId() != business.getId()) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Employee does not belong to the business offering this service"
-            );
+                    HttpStatus.BAD_REQUEST, "Employee does not belong to the business offering this service");
         }
 
         if (request.businessId() != null && request.businessId() != business.getId()) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Service does not belong to the specified business"
-            );
+                    HttpStatus.BAD_REQUEST, "Service does not belong to the specified business");
         }
 
         User client = null;
@@ -182,31 +172,32 @@ public class AppointmentService {
         } else {
             if (request.clientName() == null || request.clientName().isBlank()) {
                 throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "clientName is required when clientId is not provided"
-                );
+                        HttpStatus.BAD_REQUEST, "clientName is required when clientId is not provided");
             }
-            if ((request.clientEmail() == null || request.clientEmail().isBlank()) &&
-                    (request.clientPhone() == null || request.clientPhone().isBlank())) {
+
+            if ((request.clientEmail() == null || request.clientEmail().isBlank())
+                    && (request.clientPhone() == null || request.clientPhone().isBlank())) {
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
-                        "At least one of clientEmail or clientPhone must be provided when clientId is not provided"
-                );
+                        "At least one of clientEmail or clientPhone must be provided when clientId is not provided");
             }
+
             clientName = request.clientName().trim();
-            clientEmail = request.clientEmail() != null && !request.clientEmail().isBlank()
-                    ? request.clientEmail().trim().toLowerCase(Locale.ROOT)
-                    : null;
-            clientPhone = request.clientPhone() != null && !request.clientPhone().isBlank()
-                    ? request.clientPhone().trim()
-                    : null;
+
+            clientEmail =
+                    request.clientEmail() != null && !request.clientEmail().isBlank()
+                            ? request.clientEmail().trim().toLowerCase(Locale.ROOT)
+                            : null;
+
+            clientPhone =
+                    request.clientPhone() != null && !request.clientPhone().isBlank()
+                            ? request.clientPhone().trim()
+                            : null;
         }
 
         ZoneId timezone = business.getTimezone() != null ? business.getTimezone() : ZoneId.of("Europe/Bucharest");
 
-        ZonedDateTime start = request.date()
-                .atTime(request.startTime())
-                .atZone(timezone);
+        ZonedDateTime start = request.date().atTime(request.startTime()).atZone(timezone);
 
         ZonedDateTime end = start.plusMinutes(service.getDurationMinutes());
 
@@ -219,23 +210,18 @@ public class AppointmentService {
         appointment.setEmployee(employee);
         appointment.setServiceItem(service);
 
-        appointment.setInterval(new DateTimeInterval(
-                start.toInstant(),
-                end.toInstant()
-        ));
+        appointment.setInterval(new DateTimeInterval(start.toInstant(), end.toInstant()));
 
         PaymentMethod paymentMethod = request.paymentMethod() != null
                 ? request.paymentMethod()
                 : (service.getPaymentMethod() != null ? service.getPaymentMethod() : PaymentMethod.PHYSICAL);
-        appointment.setPaymentMethod(paymentMethod);
 
+        appointment.setPaymentMethod(paymentMethod);
         appointment.setPriceAtAppointment(service.getPrice());
 
-        AppointmentStatus status = request.status() != null
-                ? request.status()
-                : AppointmentStatus.CONFIRMED;
-        appointment.setStatus(status);
+        AppointmentStatus status = request.status() != null ? request.status() : AppointmentStatus.CONFIRMED;
 
+        appointment.setStatus(status);
         appointment.setClientNote(request.clientNote());
 
         try {
@@ -243,23 +229,11 @@ public class AppointmentService {
             return AppointmentMapper.toResponseDto(saved);
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Appointment data violates database constraints: " + e.getMessage(),
-                    e
-            );
-        } catch (Exception e) {
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Failed to persist appointment: " + e.getMessage(),
-                    e
-            );
+                    HttpStatus.CONFLICT, "Appointment data violates database constraints: " + e.getMessage(), e);
         }
     }
 
     @Transactional
-    public AppointmentResponseDto createGuestAppointment(
-            @Valid CreateAppointmentGhostClientRequestDto request
-    ) {
     public AppointmentResponseDto createGuestAppointment(@Valid CreateAppointmentGhostClientRequestDto request) {
         ServiceItem service = serviceItemService.findById(request.serviceId());
         Employee employee = employeeService.findById(request.employeeId());

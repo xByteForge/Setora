@@ -25,13 +25,10 @@ public class AppointmentController {
 
     @PostMapping
     public ResponseEntity<AppointmentResponseDto> createAppointment(
-            @Valid @RequestBody CreateAppointmentRequestDto request
-    ) {
+            @Valid @RequestBody CreateAppointmentRequestDto request) {
         var response = appointmentService.createAppointment(request);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/ghost")

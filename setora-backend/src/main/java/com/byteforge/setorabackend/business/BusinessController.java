@@ -9,12 +9,11 @@ import com.byteforge.setorabackend.employees.service.EmployeeService;
 import com.byteforge.setorabackend.serviceItem.ServiceItemService;
 import com.byteforge.setorabackend.serviceItem.dtos.ServiceResponseDto;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/businesses")
@@ -54,4 +53,3 @@ public class BusinessController {
         return ResponseEntity.ok(businessService.getAllBusinesses(pageParams));
     }
 }
-
