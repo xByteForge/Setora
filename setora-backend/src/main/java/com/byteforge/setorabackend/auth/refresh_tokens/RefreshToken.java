@@ -2,12 +2,11 @@ package com.byteforge.setorabackend.auth.refresh_tokens;
 
 import com.byteforge.setorabackend.auth.User;
 import jakarta.persistence.*;
+import java.time.Instant;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.Instant;
 
 @Entity
 @Table(name = "refresh_tokens")

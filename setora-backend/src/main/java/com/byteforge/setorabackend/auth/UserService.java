@@ -4,6 +4,8 @@ import com.byteforge.setorabackend.auth.dtos.CreateUserRequestDto;
 import com.byteforge.setorabackend.auth.dtos.UpdateUserRequestDto;
 import com.byteforge.setorabackend.auth.dtos.UserResponseDto;
 import com.byteforge.setorabackend.auth.refresh_tokens.RefreshTokenRepository;
+import java.time.Instant;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -11,10 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -38,18 +36,13 @@ public class UserService {
                 user.getEmail(),
                 user.getPhoneNumber(),
                 user.getRole(),
-                user.isDeleted()
-        );
+                user.isDeleted());
     }
-
 
     @Transactional
     public UserResponseDto createUser(CreateUserRequestDto request) {
         if (request.password().length() > 72) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Password too long"
-            );
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password too long");
         }
 
         User user = new User();
@@ -58,7 +51,8 @@ public class UserService {
         user.setLastName(request.lastName().trim());
         user.setUsername(request.firstName().trim());
         user.setEmail(request.email());
-        user.setPhoneNumber(request.phoneNumber() == null ? null : request.phoneNumber().trim());
+        user.setPhoneNumber(
+                request.phoneNumber() == null ? null : request.phoneNumber().trim());
 
         user.setPasswordHash(passwordEncoder.encode(request.password()));
 
@@ -71,10 +65,7 @@ public class UserService {
 
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "User information conflicts with database constraints",
-                    e
-            );
+                    HttpStatus.CONFLICT, "User information conflicts with database constraints", e);
         }
     }
 
@@ -83,45 +74,36 @@ public class UserService {
         User user = findActiveUserById(id);
 
         if ("ghost@gmail.com".equalsIgnoreCase(user.getEmail())) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "The guest account cannot be modified"
-            );
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "The guest account cannot be modified");
         }
 
         user.setFirstName(request.firstName().trim());
         user.setLastName(request.lastName().trim());
         user.setUsername(request.username().trim());
         user.setEmail(request.email());
-        user.setPhoneNumber(request.phoneNumber() == null ? null : request.phoneNumber().trim());
+        user.setPhoneNumber(
+                request.phoneNumber() == null ? null : request.phoneNumber().trim());
 
         try {
             User savedUser = userRepository.saveAndFlush(user);
             return toResponseDto(savedUser);
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "User information conflicts with database constraints",
-                    e
-            );
+                    HttpStatus.CONFLICT, "User information conflicts with database constraints", e);
         }
     }
 
     @Transactional(readOnly = true)
     public List<UserResponseDto> getUsers() {
-        return userRepository.findAllActive()
-                .stream()
-                .map(this::toResponseDto)
-                .toList();
+        return userRepository.findAllActive().stream().map(this::toResponseDto).toList();
     }
 
     // finds all non-deleted users
     private User findActiveUserById(int id) {
-        return userRepository.findById(id).filter(user -> !user.isDeleted())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "User not found"
-                ));
+        return userRepository
+                .findById(id)
+                .filter(user -> !user.isDeleted())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 
     @Transactional(readOnly = true)
@@ -130,23 +112,16 @@ public class UserService {
         return toResponseDto(user);
     }
 
-
     @Transactional
     public void deleteUser(int id) {
         User user = findActiveUserById(id);
 
         if ("ghost@gmail.com".equalsIgnoreCase(user.getEmail())) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "The guest account cannot be deleted"
-            );
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "The guest account cannot be deleted");
         }
 
         if (user.getRole() == UserRole.ADMIN && userRepository.countActiveByRole(UserRole.ADMIN) <= 1) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Cannot delete the last existing administrator"
-            );
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot delete the last existing administrator");
         }
 
         user.setDeleted(true);
@@ -155,7 +130,6 @@ public class UserService {
 
         refreshTokenRepository.revokeAllActiveByUserId(user.getId(), Instant.now());
     }
-
 
     public void updateClientDetails(User client, String lastName, String firstName, String email, String phoneNumber) {
         if (lastName != null) {

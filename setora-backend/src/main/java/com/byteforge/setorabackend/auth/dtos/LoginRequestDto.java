@@ -4,11 +4,4 @@ import jakarta.validation.constraints.*;
 
 // for POST /api/auth/login
 public record LoginRequestDto(
-        @NotBlank
-        @Email
-        String email,
-
-        @NotBlank
-        String password
-) {
-}
+        @NotBlank @Email String email, @NotBlank String password) {}
