@@ -1,21 +1,7 @@
 <div class="pagination">
-  <div class="pagination__top">
-    <span class="pagination__range">
-      {{ 'DISCOVER.RANGE' | transloco: { start: rangeStart(), end: rangeEnd(), total: total() } }}
-    </span>
-    <select
-      class="pagination__size"
-      [value]="pageSize()"
-      (change)="onSizeChange($event)"
-      [attr.aria-label]="'DISCOVER.PAGE_SIZE_LABEL' | transloco"
-    >
-      @for (s of pageSizes(); track s) {
-        <option [value]="s" [selected]="s === pageSize()">
-          {{ 'DISCOVER.PER_PAGE' | transloco: { count: s } }}
-        </option>
-      }
-    </select>
-  </div>
+  <span class="pagination__range">
+    {{ 'DISCOVER.RANGE' | transloco: { start: rangeStart(), end: rangeEnd(), total: total() } }}
+  </span>
 
   <nav class="pagination__nav" [attr.aria-label]="'DISCOVER.PAGINATION' | transloco">
     <button
@@ -54,6 +40,19 @@
       ›
     </button>
   </nav>
+
+  <select
+    class="pagination__size"
+    [value]="pageSize()"
+    (change)="onSizeChange($event)"
+    [attr.aria-label]="'DISCOVER.PAGE_SIZE_LABEL' | transloco"
+  >
+    @for (s of pageSizes(); track s) {
+      <option [value]="s" [selected]="s === pageSize()">
+        {{ 'DISCOVER.PER_PAGE' | transloco: { count: s } }}
+      </option>
+    }
+  </select>
 
   <p class="pagination__info">
     {{ 'DISCOVER.PAGE_OF' | transloco: { page: page(), pages: totalPages() } }}

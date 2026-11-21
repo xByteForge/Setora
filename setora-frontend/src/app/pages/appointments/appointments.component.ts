@@ -29,6 +29,7 @@ import {
   filterAppointments,
   filterEmployees,
 } from './appointment-filters/appointment-filters.util';
+import { UniversalSearchComponent } from '../../core/layout/universal-search/universal-search.component';
 
 @Component({
   imports: [
@@ -40,6 +41,7 @@ import {
     AppointmentAgendaComponent,
     AppointmentFormDialogComponent,
     CancelAppointmentDialogComponent,
+    UniversalSearchComponent,
   ],
   selector: 'app-appointments',
   templateUrl: './appointments.component.html',
