@@ -8,3 +8,4 @@ public interface ServiceItemRepository extends JpaRepository<ServiceItem, Intege
     List<ServiceItem> findByBusinessId(int businessId);
 }
 
+public interface ServiceItemRepository extends JpaRepository<ServiceItem, Integer> {}

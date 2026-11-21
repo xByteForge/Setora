@@ -44,17 +44,13 @@ public class BusinessController {
     public ResponseEntity<Page<BusinessResponseDto>> getBusinesses(
             @Valid @ModelAttribute BusinessFilterCriteria criteria,
             @RequestParam(required = false, defaultValue = "NEWEST") BusinessSortBy sortBy,
-            @Valid @ModelAttribute PaginationParams pageParams
-    ) {
-        return ResponseEntity.ok(
-                businessService.getBusinesses(criteria, sortBy, pageParams)
-        );
+            @Valid @ModelAttribute PaginationParams pageParams) {
+        return ResponseEntity.ok(businessService.getBusinesses(criteria, sortBy, pageParams));
     }
 
     @GetMapping("/all")
     public ResponseEntity<Page<BusinessResponseDto>> getAllBusinesses(
-            @Valid @ModelAttribute PaginationParams pageParams
-    ) {
+            @Valid @ModelAttribute PaginationParams pageParams) {
         return ResponseEntity.ok(businessService.getAllBusinesses(pageParams));
     }
 }

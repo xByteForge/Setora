@@ -1,4 +1,3 @@
-
 package com.byteforge.setorabackend.appointment;
 
 import com.byteforge.setorabackend.appointment.dtos.*;
@@ -12,6 +11,11 @@ import com.byteforge.setorabackend.employees.service.EmployeeService;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
 import com.byteforge.setorabackend.serviceItem.ServiceItemService;
 import jakarta.validation.Valid;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.List;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
@@ -38,10 +42,7 @@ public class AppointmentService {
     private final EmployeeService employeeService;
     private final UserService userService;
 
-    public AppointmentsTodaySummaryDto getDailySummary(
-            int businessId,
-            LocalDate date
-    ) {
+    public AppointmentsTodaySummaryDto getDailySummary(int businessId, LocalDate date) {
         Business business = businessService.findById(businessId);
 
         ZoneId zone = business.getTimezone();
@@ -49,48 +50,38 @@ public class AppointmentService {
         Instant start = date.atStartOfDay(zone).toInstant();
         Instant end = date.plusDays(1).atStartOfDay(zone).toInstant();
 
-        AppointmentsTodaySummaryProjection summary =
-                appointmentRepository.getDailySummary(
-                        businessId,
-                        start,
-                        end,
-                        AppointmentStatus.CONFIRMED,
-                        AppointmentStatus.UNAVAILABLE,
-                        AppointmentStatus.CANCELLED
-                );
+        AppointmentsTodaySummaryProjection summary = appointmentRepository.getDailySummary(
+                businessId,
+                start,
+                end,
+                AppointmentStatus.CONFIRMED,
+                AppointmentStatus.UNAVAILABLE,
+                AppointmentStatus.CANCELLED);
 
         return new AppointmentsTodaySummaryDto(
                 Math.toIntExact(summary.getTotal()),
                 Math.toIntExact(summary.getConfirmed()),
                 Math.toIntExact(summary.getPending()),
-                Math.toIntExact(summary.getCancelled())
-        );
+                Math.toIntExact(summary.getCancelled()));
     }
 
     @Transactional(readOnly = true)
     public AppointmentResponseDto getAppointmentById(int id) {
-        Appointment appointment = appointmentRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Appointment not found"
-                ));
+        Appointment appointment = appointmentRepository
+                .findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Appointment not found"));
 
         return AppointmentMapper.toResponseDto(appointment);
     }
 
     @Transactional
     public AppointmentResponseDto cancelAppointment(int id) {
-        Appointment appointment = appointmentRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Appointment not found"
-                ));
+        Appointment appointment = appointmentRepository
+                .findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Appointment not found"));
 
         if (appointment.getStatus() == AppointmentStatus.CANCELLED) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Appointment is already cancelled"
-            );
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Appointment is already cancelled");
         }
 
         appointment.setStatus(AppointmentStatus.CANCELLED);
@@ -100,52 +91,35 @@ public class AppointmentService {
     }
 
     @Transactional
-    public AppointmentResponseDto updateAppointment(
-            int id,
-            UpdateAppointmentRequestDto request
-    ) {
-        Appointment appointment = appointmentRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Appointment not found"
-                ));
+    public AppointmentResponseDto updateAppointment(int id, UpdateAppointmentRequestDto request) {
+        Appointment appointment = appointmentRepository
+                .findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Appointment not found"));
 
-        if (appointment.getStatus() == AppointmentStatus.CANCELLED ||
-                appointment.getStatus() == AppointmentStatus.UNAVAILABLE) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "This appointment cannot be modified"
-            );
+        if (appointment.getStatus() == AppointmentStatus.CANCELLED
+                || appointment.getStatus() == AppointmentStatus.UNAVAILABLE) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "This appointment cannot be modified");
         }
 
-        if (request == null ||
-                (request.surname() == null &&
-                        request.firstname() == null &&
-                        request.email() == null &&
-                        request.phoneNumber() == null &&
-                        request.clientNote() == null)) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "At least one field must be provided"
-            );
+        if (request == null
+                || (request.surname() == null
+                        && request.firstname() == null
+                        && request.email() == null
+                        && request.phoneNumber() == null
+                        && request.clientNote() == null)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "At least one field must be provided");
         }
 
         User client = appointment.getClient();
 
-        boolean updatingClient =
-                request.surname() != null ||
-                        request.firstname() != null ||
-                        request.email() != null ||
-                        request.phoneNumber() != null;
+        boolean updatingClient = request.surname() != null
+                || request.firstname() != null
+                || request.email() != null
+                || request.phoneNumber() != null;
 
         if (updatingClient) {
             userService.updateClientDetails(
-                    client,
-                    request.surname(),
-                    request.firstname(),
-                    request.email(),
-                    request.phoneNumber()
-            );
+                    client, request.surname(), request.firstname(), request.email(), request.phoneNumber());
         }
 
         if (request.clientNote() != null) {
@@ -286,6 +260,7 @@ public class AppointmentService {
     public AppointmentResponseDto createGuestAppointment(
             @Valid CreateAppointmentGhostClientRequestDto request
     ) {
+    public AppointmentResponseDto createGuestAppointment(@Valid CreateAppointmentGhostClientRequestDto request) {
         ServiceItem service = serviceItemService.findById(request.serviceId());
         Employee employee = employeeService.findById(request.employeeId());
 
@@ -295,13 +270,8 @@ public class AppointmentService {
 
         // Validate business, employee and service compatibility.
         // TODO: Check time slots to prevent double bookings.
-        Appointment appointment = AppointmentMapper.toEntity(
-                request,
-                employee,
-                service,
-                client,
-                business.getTimezone()
-        );
+        Appointment appointment =
+                AppointmentMapper.toEntity(request, employee, service, client, business.getTimezone());
 
         String note = "";
         note += "Appointment for: " + request.clientName() + "\n";
@@ -312,9 +282,7 @@ public class AppointmentService {
 
         appointment.setClientNote(note);
 
-        return AppointmentMapper.toResponseDto(
-                appointmentRepository.save(appointment)
-        );
+        return AppointmentMapper.toResponseDto(appointmentRepository.save(appointment));
     }
 
     @Transactional(readOnly = true)
@@ -324,34 +292,22 @@ public class AppointmentService {
             Integer serviceId,
             String statusValue,
             LocalDate startDate,
-            LocalDate endDate
-    ) {
+            LocalDate endDate) {
         if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Invalid date range"
-            );
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid date range");
         }
 
         if ((startDate == null) != (endDate == null)) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Both startDate and endDate must be provided"
-            );
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Both startDate and endDate must be provided");
         }
 
         AppointmentStatus status = null;
 
         if (statusValue != null) {
             try {
-                status = AppointmentStatus.valueOf(
-                        statusValue.trim().toUpperCase(Locale.ROOT)
-                );
+                status = AppointmentStatus.valueOf(statusValue.trim().toUpperCase(Locale.ROOT));
             } catch (IllegalArgumentException e) {
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Invalid appointment status"
-                );
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid appointment status");
             }
         }
 
@@ -371,21 +327,10 @@ public class AppointmentService {
             rangeEnd = endDate.plusDays(1).atStartOfDay(zone).toInstant();
         }
 
-        Specification<Appointment> specification =
-                AppointmentSpecifications.filterAppointments(
-                        businessId,
-                        clientId,
-                        serviceId,
-                        status,
-                        rangeStart,
-                        rangeEnd
-                );
+        Specification<Appointment> specification = AppointmentSpecifications.filterAppointments(
+                businessId, clientId, serviceId, status, rangeStart, rangeEnd);
 
-        return appointmentRepository.findAll(
-                        specification,
-                        Sort.by(Sort.Direction.ASC, "interval.start")
-                )
-                .stream()
+        return appointmentRepository.findAll(specification, Sort.by(Sort.Direction.ASC, "interval.start")).stream()
                 .map(AppointmentMapper::toResponseDto)
                 .toList();
     }

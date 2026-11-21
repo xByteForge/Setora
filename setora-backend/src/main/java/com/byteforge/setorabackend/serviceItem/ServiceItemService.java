@@ -13,8 +13,9 @@ import java.util.List;
 public class ServiceItemService {
     private final ServiceItemRepository serviceItemRepository;
 
-    public ServiceItem findById (int serviceId){
-        return serviceItemRepository.findById(serviceId)
+    public ServiceItem findById(int serviceId) {
+        return serviceItemRepository
+                .findById(serviceId)
                 .orElseThrow(() -> new EntityNotFoundException("Service not found"));
     }
 

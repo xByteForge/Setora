@@ -16,5 +16,4 @@ public record BusinessResponseDto(
         Instant createdAt,
         List<String> photoUrls,
         String thumbnailUrl,
-        List<String> tags
-) {}
+        List<String> tags) {}

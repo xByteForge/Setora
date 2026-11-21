@@ -1,5 +1,4 @@
-import { PaymentMethod } from "./enums/payment-method.model";
-
+import { PaymentMethod } from './enums/payment-method.model';
 
 export interface Service {
   id: number;

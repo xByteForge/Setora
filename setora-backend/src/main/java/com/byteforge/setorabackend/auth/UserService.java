@@ -13,11 +13,9 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "User not found"
-                ));
+        return userRepository
+                .findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 
     public User findById(int id) {
@@ -35,47 +33,33 @@ public class UserService {
             String email,
             String phoneNumber
     ) {
+    public void updateClientDetails(User client, String lastName, String firstName, String email, String phoneNumber) {
         if (lastName != null) {
             if (lastName.isBlank())
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "lastName cannot be blank"
-                );
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "lastName cannot be blank");
 
             client.setLastName(lastName.trim());
         }
 
         if (firstName != null) {
             if (firstName.isBlank())
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "firstName cannot be blank"
-                );
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "firstName cannot be blank");
 
             client.setFirstName(firstName.trim());
         }
 
         if (email != null) {
-            if (email.isBlank())
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Email cannot be blank"
-                );
+            if (email.isBlank()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email cannot be blank");
 
             client.setEmail(email);
         }
 
-        if (phoneNumber != null)
-            client.setPhoneNumber(phoneNumber.trim());
+        if (phoneNumber != null) client.setPhoneNumber(phoneNumber.trim());
 
         try {
             userRepository.saveAndFlush(client);
         } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Client details violate a database constraint",
-                    e
-            );
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Client details violate a database constraint", e);
         }
     }
 }

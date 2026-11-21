@@ -1,5 +1,4 @@
-import { CancellationRequestStatus } from "./enums/cancellation-request-status.model";
-
+import { CancellationRequestStatus } from './enums/cancellation-request-status.model';
 
 export interface AppointmentCancellationRequest {
   id: number;

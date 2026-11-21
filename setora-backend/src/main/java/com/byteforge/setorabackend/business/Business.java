@@ -2,6 +2,8 @@ package com.byteforge.setorabackend.business;
 
 import com.byteforge.setorabackend.auth.User;
 import jakarta.persistence.*;
+import java.time.Instant;
+import java.time.ZoneId;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -9,18 +11,13 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
-import java.time.Instant;
-import java.time.ZoneId;
-
-
 @Entity
 @Table(
         name = "businesses",
-        check = @CheckConstraint(
-                name = "chk_business_coordinates",
-                constraint = "latitude BETWEEN -90 AND 90 AND longitude BETWEEN -180 AND 180"
-        )
-)
+        check =
+                @CheckConstraint(
+                        name = "chk_business_coordinates",
+                        constraint = "latitude BETWEEN -90 AND 90 AND longitude BETWEEN -180 AND 180"))
 @Getter
 @Setter
 public class Business {
@@ -35,7 +32,7 @@ public class Business {
     @Column(nullable = false, columnDefinition = "text")
     private String name;
 
-    //used for the public page
+    // used for the public page
     @Column(nullable = false, unique = true, columnDefinition = "text")
     private String slug;
 
@@ -69,5 +66,4 @@ public class Business {
     @JdbcTypeCode(SqlTypes.ARRAY)
     @Column(name = "tags", columnDefinition = "text[]")
     private String[] tags;
-
 }

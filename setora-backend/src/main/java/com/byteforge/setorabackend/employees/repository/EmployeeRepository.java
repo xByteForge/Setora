@@ -8,3 +8,4 @@ import java.util.List;
 public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     List<Employee> findByBusinessId(int businessId);
 }
+public interface EmployeeRepository extends JpaRepository<Employee, Integer> {}

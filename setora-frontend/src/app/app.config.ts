@@ -6,7 +6,6 @@ import { provideHttpClient, withFetch } from '@angular/common/http';
 import { TranslocoHttpLoader } from './transloco-loader';
 import { provideTransloco } from '@ngneat/transloco';
 
-
 function getInitialLang(): string {
   if (typeof window === 'undefined') return 'ro';
   const saved = localStorage.getItem('setora_lang');
