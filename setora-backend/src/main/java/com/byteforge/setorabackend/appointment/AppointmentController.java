@@ -23,6 +23,14 @@ public class AppointmentController {
         return ResponseEntity.ok(appointmentService.getDailySummary(businessId, date));
     }
 
+    @PostMapping
+    public ResponseEntity<AppointmentResponseDto> createAppointment(
+            @Valid @RequestBody CreateAppointmentRequestDto request) {
+        var response = appointmentService.createAppointment(request);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
     @PostMapping("/ghost")
     public ResponseEntity<AppointmentResponseDto> createGuestAppointment(
             @Valid @RequestBody CreateAppointmentGhostClientRequestDto request) {
