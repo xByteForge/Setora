@@ -27,16 +27,21 @@ public class AppointmentMapper {
         ZonedDateTime start = startsAt.atZone(timezone);
         ZonedDateTime end = endsAt.atZone(timezone);
 
+        int clientId = client != null ? client.getId() : 0;
+        String clientName = client != null ? client.getName() : appointment.getClientName();
+        String clientPhone = client != null ? client.getPhoneNumber() : appointment.getClientPhone();
+        String clientEmail = client != null ? client.getEmail() : appointment.getClientEmail();
+
         return new AppointmentResponseDto(
                 appointment.getId(),
                 business.getId(),
                 service.getId(),
                 service.getName(),
                 Math.toIntExact(Duration.between(startsAt, endsAt).toMinutes()),
-                client.getId(),
-                client.getName(),
-                client.getPhoneNumber(),
-                client.getEmail(),
+                clientId,
+                clientName,
+                clientPhone,
+                clientEmail,
                 employee.getId(),
                 employee.getUser().getName(),
                 start.toLocalDate(),

@@ -232,6 +232,15 @@ public class EmployeeService {
     }
 
     public Employee findById(int id) {
-        return employeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found"));
+        return employeeRepository
+                .findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found"));
+    }
+
+    @Transactional(readOnly = true)
+    public List<EmployeeResponseDto> getEmployeesByBusinessId(int businessId) {
+        return employeeRepository.findByBusinessId(businessId).stream()
+                .map(EmployeeResponseDto::from)
+                .toList();
     }
 }
