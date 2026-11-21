@@ -1,49 +1,49 @@
 <div class="search" *transloco="let t">
-    <svg lucideSearch [size]="16" aria-hidden="true"></svg>
-    <input
-        #q
-        type="search"
-        role="combobox"
-        aria-autocomplete="list"
-        [attr.aria-controls]="panelId"
-        [attr.aria-expanded]="searchOpen()"
-        [value]="query()"
-        (input)="onQueryInput(q.value)"
-        (keydown)="onSearchKeydown($event)"
-        (focus)="searchOpen.set(query().trim().length > 0)"
-        [placeholder]="t('HEADER.SEARCH')"
-        [attr.aria-label]="t('HEADER.SEARCH')"
-    />
-    <kbd class="shortcut" aria-hidden="true">/</kbd>
+  <svg lucideSearch [size]="16" aria-hidden="true"></svg>
+  <input
+    #q
+    type="search"
+    role="combobox"
+    aria-autocomplete="list"
+    [attr.aria-controls]="panelId"
+    [attr.aria-expanded]="searchOpen()"
+    [value]="query()"
+    (input)="onQueryInput(q.value)"
+    (keydown)="onSearchKeydown($event)"
+    (focus)="searchOpen.set(query().trim().length > 0)"
+    [placeholder]="t('HEADER.SEARCH')"
+    [attr.aria-label]="t('HEADER.SEARCH')"
+  />
+  <kbd class="shortcut" aria-hidden="true">/</kbd>
 
-    @if (searchOpen()) {
-        <div class="search-panel" [id]="panelId" role="listbox">
-            @for (g of groups(); track g.category) {
-                <div class="search-group">
-                    <p class="group-title">{{ t(g.labelKey) }}</p>
-                    @for (item of g.items; track item.id) {
-                        <button
-                                type="button"
-                                role="option"
-                                class="result"
-                                [class.active]="flat()[activeIndex()] === item"
-                                [attr.aria-selected]="flat()[activeIndex()] === item"
-                                (mouseenter)="activeIndex.set(flat().indexOf(item))"
-                                (click)="openResult(item)"
-                        >
-                            <span class="result-title">{{ item.title }}</span>
-                            @if (item.subtitle) {
-                                <span class="result-sub">{{ item.subtitle }}</span>
-                            }
-                        </button>
-                    }
-                </div>
-            } @empty {
-                <p class="no-results">{{ t('SEARCH.NO_RESULTS') }}</p>
-            }
-            <button type="button" class="see-all" (click)="seeAll()">
-                {{ t('SEARCH.SEE_ALL') }} „{{ query().trim() }}"
+  @if (searchOpen()) {
+    <div class="search-panel" [id]="panelId" role="listbox">
+      @for (g of groups(); track g.category) {
+        <div class="search-group">
+          <p class="group-title">{{ t(g.labelKey) }}</p>
+          @for (item of g.items; track item.id) {
+            <button
+              type="button"
+              role="option"
+              class="result"
+              [class.active]="flat()[activeIndex()] === item"
+              [attr.aria-selected]="flat()[activeIndex()] === item"
+              (mouseenter)="activeIndex.set(flat().indexOf(item))"
+              (click)="openResult(item)"
+            >
+              <span class="result-title">{{ item.title }}</span>
+              @if (item.subtitle) {
+                <span class="result-sub">{{ item.subtitle }}</span>
+              }
             </button>
+          }
         </div>
-    }
+      } @empty {
+        <p class="no-results">{{ t('SEARCH.NO_RESULTS') }}</p>
+      }
+      <button type="button" class="see-all" (click)="seeAll()">
+        {{ t('SEARCH.SEE_ALL') }} „{{ query().trim() }}"
+      </button>
+    </div>
+  }
 </div>

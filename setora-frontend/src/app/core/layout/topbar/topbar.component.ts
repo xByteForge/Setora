@@ -14,16 +14,11 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 import { TranslocoDirective, TranslocoService } from '@ngneat/transloco';
-import {
-  LucideSun,
-  LucideMoon,
-  LucideBell,
-  LucideChevronRight,
-} from '@lucide/angular';
+import { LucideSun, LucideMoon, LucideBell, LucideChevronRight } from '@lucide/angular';
 import { ThemeService } from '../../services/theme.service';
 import { BusinessService } from '../../services/business.service';
 import { MobileMenuService } from '../../services/mobile-menu.service';
-import { UniversalSearchComponent} from "../universal-search/universal-search.component";
+import { UniversalSearchComponent } from '../universal-search/universal-search.component';
 
 export interface Breadcrumb {
   label?: string; // text brut (ex: numele business-ului)
@@ -199,5 +194,4 @@ export class TopbarComponent {
   onEsc(): void {
     this.langMenuOpen.set(false);
   }
-
 }

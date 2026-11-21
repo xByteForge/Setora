@@ -14,25 +14,17 @@
 }
 
 .pagination__range {
-    align-self: flex-start;
-}
-
-.pagination__controls {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
+  align-self: flex-start;
 }
 
 .pagination__size {
-    height: 40px;
-    background: var(--paper);
-    color: var(--ink);
-    border: 1px solid var(--control-border);
-    border-radius: 8px;
-    padding: 0 12px;
-    font-family: inherit;
+  height: 40px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--control-border);
+  border-radius: 8px;
+  padding: 0 12px;
+  font-family: inherit;
 }
 
 .pagination__nav {
@@ -65,11 +57,10 @@
 }
 
 .pagination__btn.is-active {
-    background: var(--brand-mint);
-    color:
-            #064E43;
-    border-color: transparent;
-    font-weight: 700;
+  background: var(--brand-mint);
+  color: #064e43;
+  border-color: transparent;
+  font-weight: 700;
 }
 
 .pagination__btn:focus-visible,
@@ -84,13 +75,13 @@
 }
 
 @media (max-width: 640px) {
-    .pagination__btn {
-        min-width: 36px;
-        height: 36px;
-        padding: 0 8px;
-    }
+  .pagination__btn {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 8px;
+  }
 
-    .pagination__size {
-        height: 36px;
-    }
+  .pagination__size {
+    height: 36px;
+  }
 }

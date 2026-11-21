@@ -31,12 +31,16 @@ app-appointment-details {
   z-index: 200;
 }
 
-.page-search { display: none; }
+.page-search {
+  display: none;
+}
 
 @media (max-width: 900px) {
   .calendar-layout--with-details {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .page-search { display: block; }
+  .page-search {
+    display: block;
+  }
 }

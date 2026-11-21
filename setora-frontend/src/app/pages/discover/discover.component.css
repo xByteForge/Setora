@@ -138,12 +138,18 @@
   cursor: pointer;
 }
 
-.page-search { display: none; }
+.page-search {
+  display: none;
+}
 
 /* sub 900px panoul devine bottom sheet, deci lista ramane pe toata latimea */
 @media (max-width: 900px) {
-    .results--panel { grid-template-columns: minmax(0, 1fr); }
-    .page-search { display: block; }
+  .results--panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .page-search {
+    display: block;
+  }
 }
 
 @media (max-width: 640px) {

@@ -25,8 +25,11 @@ import { AppointmentFormDialogComponent } from './appointment-form-dialog/appoin
 import { CancelAppointmentDialogComponent } from './cancel-appointment-dialog/cancel-appointment-dialog.component';
 import { Appointment } from '../../core/models/appointment.model';
 import { businessDate, todayIn } from '../../core/utils/date.util';
-import { filterAppointments, filterEmployees } from './appointment-filters/appointment-filters.util';
-import { UniversalSearchComponent } from "../../core/layout/universal-search/universal-search.component";
+import {
+  filterAppointments,
+  filterEmployees,
+} from './appointment-filters/appointment-filters.util';
+import { UniversalSearchComponent } from '../../core/layout/universal-search/universal-search.component';
 
 @Component({
   imports: [

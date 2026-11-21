@@ -1,7 +1,7 @@
 <app-appointments-header [summary]="summary()" (addClicked)="openAddAppointment()" />
 
 @if (isMobile()) {
-    <app-universal-search class="page-search" />
+  <app-universal-search class="page-search" />
 }
 
 <app-appointment-filters [employees]="employees()" [(filters)]="filters" />
