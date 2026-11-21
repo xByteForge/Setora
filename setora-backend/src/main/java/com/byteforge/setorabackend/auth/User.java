@@ -14,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class User {
     @Id
-    @GeneratedValue(strategy= GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
     @Column(nullable = false)
@@ -26,7 +26,7 @@ public class User {
     @Column(nullable = false)
     private String username = firstName;
 
-    //always saved in lower case, used for login
+    // always saved in lower case, used for login
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -38,15 +38,15 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column
-    private UserRole role=UserRole.CLIENT;
+    private UserRole role = UserRole.CLIENT;
 
-    //add the rest later on
+    // add the rest later on
 
     public void setEmail(String email) {
         this.email = email == null ? null : email.trim().toLowerCase();
     }
 
-    public String getName(){
+    public String getName() {
         return this.firstName + " " + this.lastName;
     }
 
@@ -75,5 +75,4 @@ public class User {
 
         return (parts[0].substring(0, 1) + parts[parts.length - 1].charAt(0)).toUpperCase();
     }
-
 }

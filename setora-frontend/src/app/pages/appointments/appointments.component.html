@@ -1,16 +1,10 @@
-<app-appointments-header
-  [summary]="summary()"
-  (addClicked)="openAddAppointment()"
-/>
+<app-appointments-header [summary]="summary()" (addClicked)="openAddAppointment()" />
 
 @if (isMobile()) {
     <app-universal-search class="page-search" />
 }
 
-<app-appointment-filters
-  [employees]="employees()"
-  [(filters)]="filters"
-/>
+<app-appointment-filters [employees]="employees()" [(filters)]="filters" />
 
 <div class="calendar-layout" [class.calendar-layout--with-details]="selectedAppointment()">
   @if (isMobile()) {
@@ -20,7 +14,8 @@
       [timezone]="business().timezone"
       [selectedId]="selectedId()"
       (appointmentSelected)="selectedId.set($event)"
-      [(selectedDate)]="selectedDate" />
+      [(selectedDate)]="selectedDate"
+    />
   } @else {
     <app-appointment-calendar
       [employees]="visibleEmployees()"
@@ -30,16 +25,18 @@
       [selectedId]="selectedId()"
       (appointmentSelected)="selectedId.set($event)"
       [(selectedDate)]="selectedDate"
-      [(view)]="view" />
+      [(view)]="view"
+    />
   }
 
-  @if (selectedAppointment(); as appt) {   
+  @if (selectedAppointment(); as appt) {
     <app-appointment-details
       [appointment]="appt"
       [locationName]="locationLabel()"
       [timezone]="business().timezone"
       (closed)="closeDetails()"
-      (cancelRequested)="cancelAppointment($event)" />
+      (cancelRequested)="cancelAppointment($event)"
+    />
   }
 </div>
 
@@ -48,7 +45,8 @@
   <app-appointment-form-dialog
     [selectedDate]="selectedDate()"
     (closed)="closeAddAppointment()"
-    (created)="onAppointmentCreated($event)" />
+    (created)="onAppointmentCreated($event)"
+  />
 }
 
 <!-- Confirmare anulare -->
@@ -60,7 +58,8 @@
     [busy]="cancelBusy()"
     [failed]="cancelFailed()"
     (closed)="closeCancel()"
-    (confirmed)="confirmCancel()" />
+    (confirmed)="confirmCancel()"
+  />
 }
 
 @if (toast(); as key) {

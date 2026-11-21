@@ -26,8 +26,8 @@ import { MobileMenuService } from '../../services/mobile-menu.service';
 import { UniversalSearchComponent} from "../universal-search/universal-search.component";
 
 export interface Breadcrumb {
-  label?: string;     // text brut (ex: numele business-ului)
-  labelKey?: string;  // cheie Transloco (ex: 'NAV.APPOINTMENTS')
+  label?: string; // text brut (ex: numele business-ului)
+  labelKey?: string; // cheie Transloco (ex: 'NAV.APPOINTMENTS')
   url?: string;
 }
 
@@ -70,11 +70,13 @@ export interface Breadcrumb {
         <app-universal-search class="hide-mobile" />
 
         <button
-            type="button"
-            class="icon-btn hide-mobile"
-            (click)="theme.toggleTheme()"
-            [attr.aria-label]="
-            theme.currentTheme() === 'light' ? t('HEADER.THEME_TO_DARK') : t('HEADER.THEME_TO_LIGHT')
+          type="button"
+          class="icon-btn hide-mobile"
+          (click)="theme.toggleTheme()"
+          [attr.aria-label]="
+            theme.currentTheme() === 'light'
+              ? t('HEADER.THEME_TO_DARK')
+              : t('HEADER.THEME_TO_LIGHT')
           "
         >
           @if (theme.currentTheme() === 'light') {
@@ -85,10 +87,10 @@ export interface Breadcrumb {
         </button>
 
         <button
-            type="button"
-            class="icon-btn hide-mobile"
-            (click)="notificationsClicked.emit()"
-            [attr.aria-label]="t('HEADER.NOTIFICATIONS')"
+          type="button"
+          class="icon-btn hide-mobile"
+          (click)="notificationsClicked.emit()"
+          [attr.aria-label]="t('HEADER.NOTIFICATIONS')"
         >
           <svg lucideBell [size]="20" aria-hidden="true"></svg>
           @if (unreadCount() > 0) {
@@ -98,12 +100,12 @@ export interface Breadcrumb {
 
         <div class="lang">
           <button
-              type="button"
-              class="lang-btn"
-              aria-haspopup="listbox"
-              [attr.aria-expanded]="langMenuOpen()"
-              [attr.aria-label]="t('HEADER.LANGUAGE')"
-              (click)="langMenuOpen.set(!langMenuOpen())"
+            type="button"
+            class="lang-btn"
+            aria-haspopup="listbox"
+            [attr.aria-expanded]="langMenuOpen()"
+            [attr.aria-label]="t('HEADER.LANGUAGE')"
+            (click)="langMenuOpen.set(!langMenuOpen())"
           >
             {{ activeLang().toUpperCase() }}
           </button>
@@ -119,11 +121,11 @@ export interface Breadcrumb {
         </div>
 
         <button
-            type="button"
-            class="menu-btn"
-            (click)="menu.toggle()"
-            aria-haspopup="dialog"
-            [attr.aria-expanded]="menu.open()"
+          type="button"
+          class="menu-btn"
+          (click)="menu.toggle()"
+          aria-haspopup="dialog"
+          [attr.aria-expanded]="menu.open()"
         >
           {{ t('MENU.TITLE') }}
         </button>
@@ -146,21 +148,18 @@ export class TopbarComponent {
 
   // paginile din rutele active, recalculate la fiecare navigare
   private readonly routeCrumbs = toSignal(
-      this.router.events.pipe(
-          filter((e) => e instanceof NavigationEnd),
-          startWith(null),
-          map(() => this.buildCrumbs()),
-      ),
-      { initialValue: [] as Breadcrumb[] },
+    this.router.events.pipe(
+      filter((e) => e instanceof NavigationEnd),
+      startWith(null),
+      map(() => this.buildCrumbs()),
+    ),
+    { initialValue: [] as Breadcrumb[] },
   );
 
   // numele business-ului + paginile curente
   protected readonly items = computed<Breadcrumb[]>(() => {
     const business = this.businessService.current();
-    return [
-      ...(business ? [{ label: business.name, url: '/' }] : []),
-      ...this.routeCrumbs(),
-    ];
+    return [...(business ? [{ label: business.name, url: '/' }] : []), ...this.routeCrumbs()];
   });
 
   readonly languages = ['ro', 'en'];

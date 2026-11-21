@@ -52,3 +52,35 @@ GET http://localhost:8080/api/appointments?serviceId=1&status=CONFIRMED
 
 ### Get appointments with all filters
 GET http://localhost:8080/api/appointments?businessId=1&clientId=1&serviceId=1&status=CONFIRMED&startDate=2026-11-16&endDate=2026-11-16
+
+### Create appointment (registered client)
+POST http://localhost:8080/api/appointments
+Content-Type: application/json
+
+{
+  "businessId": 1,
+  "serviceId": 1,
+  "employeeId": 1,
+  "clientId": 1,
+  "date": "2026-11-23",
+  "startTime": "10:00:00",
+  "paymentMethod": "PHYSICAL",
+  "clientNote": "Created via API"
+}
+
+### Create appointment (guest client)
+POST http://localhost:8080/api/appointments
+Content-Type: application/json
+
+{
+  "businessId": 1,
+  "serviceId": 1,
+  "employeeId": 1,
+  "clientName": "George Vasile",
+  "clientEmail": "george.vasile@example.com",
+  "clientPhone": "0744112233",
+  "date": "2026-11-23",
+  "startTime": "14:00:00",
+  "paymentMethod": "PHYSICAL",
+  "clientNote": "Guest booking"
+}

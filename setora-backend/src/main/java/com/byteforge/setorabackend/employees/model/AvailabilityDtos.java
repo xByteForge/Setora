@@ -6,32 +6,20 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
 
-
-
-//request and response bodies of the availability endpoints
-//all times are local times in the timezone of the business, the end is exclusive
+// request and response bodies of the availability endpoints
+// all times are local times in the timezone of the business, the end is exclusive
 public final class AvailabilityDtos {
-    private AvailabilityDtos() {
-    }
+    private AvailabilityDtos() {}
 
-    public record WorkingDay(DayOfWeek dayOfWeek, LocalTime start, LocalTime end) {
-    }
+    public record WorkingDay(DayOfWeek dayOfWeek, LocalTime start, LocalTime end) {}
 
-    public record WorkingHours(int employeeId, ZoneId timezone, List<WorkingDay> days) {
-    }
+    public record WorkingHours(int employeeId, ZoneId timezone, List<WorkingDay> days) {}
 
-    //send either date (one-off slot) or dayOfWeek (recurring weekly slot)
+    // send either date (one-off slot) or dayOfWeek (recurring weekly slot)
     public record UnavailableSlotRequest(
-            UnavailableType type,
-            String reason,
-            LocalDate date,
-            DayOfWeek dayOfWeek,
-            LocalTime start,
-            LocalTime end
-    ) {
-    }
+            UnavailableType type, String reason, LocalDate date, DayOfWeek dayOfWeek, LocalTime start, LocalTime end) {}
 
-    //the slot as it is stored
+    // the slot as it is stored
     public record UnavailableSlotResponse(
             int id,
             int employeeId,
@@ -41,11 +29,9 @@ public final class AvailabilityDtos {
             LocalDate date,
             DayOfWeek dayOfWeek,
             LocalTime start,
-            LocalTime end
-    ) {
-    }
+            LocalTime end) {}
 
-    //the slot on one concrete date, recurring slots are expanded for every date in the range
+    // the slot on one concrete date, recurring slots are expanded for every date in the range
     public record UnavailableOccurrence(
             int slotId,
             UnavailableType type,
@@ -53,23 +39,10 @@ public final class AvailabilityDtos {
             boolean recurring,
             LocalDate date,
             LocalTime start,
-            LocalTime end
-    ) {
-    }
+            LocalTime end) {}
 
     public record UnavailableSlots(
-            int employeeId,
-            ZoneId timezone,
-            LocalDate from,
-            LocalDate to,
-            List<UnavailableOccurrence> slots
-    ) {
-    }
+            int employeeId, ZoneId timezone, LocalDate from, LocalDate to, List<UnavailableOccurrence> slots) {}
 
-    public record CreateSlotResponse(
-            UnavailableSlotResponse slot,
-            List<Integer> cancelledAppointmentIds
-    ) {
-
-    }
+    public record CreateSlotResponse(UnavailableSlotResponse slot, List<Integer> cancelledAppointmentIds) {}
 }

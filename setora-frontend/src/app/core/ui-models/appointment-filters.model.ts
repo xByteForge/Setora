@@ -12,7 +12,7 @@ export interface TimeRange {
 }
 
 export interface AppointmentFilters {
-  employeeId: number | null;        // null = toti angajatii
+  employeeId: number | null; // null = toti angajatii
   status: AppointmentStatus | null; // null = toate starile
   timeRange: TimeRange;
 }

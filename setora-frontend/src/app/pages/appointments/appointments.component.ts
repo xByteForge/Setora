@@ -1,10 +1,21 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AppointmentsHeaderComponent } from './appointment-header/appointment-header.component';
 import { AppointmentFiltersComponent } from './appointment-filters/appointment-filters.component';
 import { AppointmentCalendarComponent } from './appointment-calendar/appointment-calendar.component';
 import { AppointmentSummary } from '../../core/ui-models/appointment-summary.model';
-import { AppointmentFilters, DEFAULT_FILTERS } from '../../core/ui-models/appointment-filters.model';
+import {
+  AppointmentFilters,
+  DEFAULT_FILTERS,
+} from '../../core/ui-models/appointment-filters.model';
 import { CalendarView } from '../../core/ui-models/calendar-view.type';
 import { CalendarService } from '../../core/services/calendar.service';
 import { CatalogService } from '../../core/services/catalog.service';
