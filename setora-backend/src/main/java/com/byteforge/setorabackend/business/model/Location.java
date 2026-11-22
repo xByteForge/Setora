@@ -1,4 +1,4 @@
-package com.byteforge.setorabackend.business;
+package com.byteforge.setorabackend.business.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

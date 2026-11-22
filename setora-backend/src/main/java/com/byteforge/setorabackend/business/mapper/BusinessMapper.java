@@ -1,11 +1,14 @@
 package com.byteforge.setorabackend.business.mapper;
 
-import com.byteforge.setorabackend.business.Business;
-import com.byteforge.setorabackend.business.Location;
+import com.byteforge.setorabackend.business.model.Business;
+import com.byteforge.setorabackend.business.model.Category;
+import com.byteforge.setorabackend.business.model.Location;
 import com.byteforge.setorabackend.business.dtos.BusinessLocationDto;
 import com.byteforge.setorabackend.business.dtos.BusinessResponseDto;
 import java.util.Arrays;
 import java.util.List;
+
+import com.byteforge.setorabackend.business.dtos.CategoryDto;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,6 +18,7 @@ public class BusinessMapper {
         return new BusinessResponseDto(
                 business.getId(),
                 business.getOwner().getId(),
+                toCategoryDto(business.getCategory()),
                 business.getName(),
                 business.getSlug(),
                 business.getDescription(),
@@ -34,6 +38,13 @@ public class BusinessMapper {
         }
         return new BusinessLocationDto(
                 location.getLocationName(), location.getAddress(), location.getLatitude(), location.getLongitude());
+    }
+
+    private CategoryDto toCategoryDto(Category category) {
+        if (category == null) {
+            return null;
+        }
+        return new CategoryDto(category.getId(), category.getName());
     }
 
     private List<String> toList(String[] array) {

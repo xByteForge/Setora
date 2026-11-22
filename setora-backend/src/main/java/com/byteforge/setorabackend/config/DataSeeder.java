@@ -4,7 +4,9 @@
  * Generates a sample dataset for testing the Setora application.
  *
  * Dataset:
- * - 10 businesses, each with a unique owner and location.
+ * - 5 categories.
+ * - 20 service types (4 per category).
+ * - 10 businesses, each with a unique owner, location, and category.
  * - 40 services (4 per business).
  * - 40 employees (4 per business).
  * - 60 users (10 clients, 10 business owners, 40 employees).
@@ -25,9 +27,11 @@ package com.byteforge.setorabackend.config;
 import com.byteforge.setorabackend.appointment.*;
 import com.byteforge.setorabackend.auth.User;
 import com.byteforge.setorabackend.auth.UserRepository;
-import com.byteforge.setorabackend.business.Business;
-import com.byteforge.setorabackend.business.BusinessRepository;
-import com.byteforge.setorabackend.business.Location;
+import com.byteforge.setorabackend.business.model.Business;
+import com.byteforge.setorabackend.business.model.Category;
+import com.byteforge.setorabackend.business.model.Location;
+import com.byteforge.setorabackend.business.repository.BusinessRepository;
+import com.byteforge.setorabackend.business.repository.CategoryRepository;
 import com.byteforge.setorabackend.common.DateTimeInterval;
 import com.byteforge.setorabackend.common.TimeInterval;
 import com.byteforge.setorabackend.employees.model.Employee;
@@ -39,6 +43,8 @@ import com.byteforge.setorabackend.employees.repository.UnavailableSlotRepositor
 import com.byteforge.setorabackend.employees.repository.WorkScheduleRepository;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
 import com.byteforge.setorabackend.serviceItem.ServiceItemRepository;
+import com.byteforge.setorabackend.serviceItem.ServiceType;
+import com.byteforge.setorabackend.serviceItem.ServiceTypeRepository;
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -48,7 +54,9 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,6 +74,13 @@ public class DataSeeder implements CommandLineRunner {
     private static final List<DayOfWeek> WORK_DAYS =
             List.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY);
 
+    private static final Map<String, List<String>> CATEGORY_SERVICE_TYPES = Map.of(
+            "Barbershop", List.of("Men's Haircut", "Beard Trim", "Hot Towel Shave", "Fade & Styling"),
+            "Hair Salon", List.of("Women's Haircut", "Hair Coloring", "Balayage", "Blowout & Styling"),
+            "Nail Salon", List.of("Gel Manicure", "Classic Pedicure", "Nail Extensions", "Nail Art"),
+            "Beauty Salon", List.of("Facial Treatment", "Eyebrow Shaping", "Eyelash Extensions", "Makeup"),
+            "Spa & Wellness", List.of("Swedish Massage", "Deep Tissue Massage", "Aromatherapy", "Body Scrub"));
+
     private static final List<String> BUSINESS_NAMES = List.of(
             "Studio Armonia",
             "Beauty House",
@@ -77,6 +92,18 @@ public class DataSeeder implements CommandLineRunner {
             "Aura Wellness",
             "Elite Studio",
             "Bloom Beauty");
+
+    private static final List<String> BUSINESS_CATEGORIES = List.of(
+            "Hair Salon",
+            "Beauty Salon",
+            "Barbershop",
+            "Nail Salon",
+            "Beauty Salon",
+            "Nail Salon",
+            "Barbershop",
+            "Spa & Wellness",
+            "Hair Salon",
+            "Spa & Wellness");
 
     private static final List<String> FIRST_NAMES = List.of(
             "Maria",
@@ -123,7 +150,9 @@ public class DataSeeder implements CommandLineRunner {
             "Lazar");
 
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
     private final BusinessRepository businessRepository;
+    private final ServiceTypeRepository serviceTypeRepository;
     private final ServiceItemRepository serviceItemRepository;
     private final EmployeeRepository employeeRepository;
     private final WorkScheduleRepository workScheduleRepository;
@@ -144,6 +173,8 @@ public class DataSeeder implements CommandLineRunner {
 
         log.info("Starting development data seeding...");
 
+        Map<String, Category> categoriesByName = seedCategories();
+        Map<String, List<ServiceType>> serviceTypesByCategory = seedServiceTypes();
         List<User> clients = seedClients(10);
 
         List<Employee> allEmployees = new ArrayList<>();
@@ -158,10 +189,11 @@ public class DataSeeder implements CommandLineRunner {
             User owner = seedUser("Owner", "Business" + (i + 1), "owner" + (i + 1) + "@setora.test");
 
             // Create business.
-            Business business = seedBusiness(owner, i);
+            String categoryName = BUSINESS_CATEGORIES.get(i);
+            Business business = seedBusiness(owner, categoriesByName.get(categoryName), i);
 
             // Create four services.
-            List<ServiceItem> services = seedServices(business);
+            List<ServiceItem> services = seedServices(business, serviceTypesByCategory.get(categoryName), i);
 
             // Create four employees with different service assignments.
             List<Employee> employees = List.of(
@@ -293,6 +325,8 @@ public class DataSeeder implements CommandLineRunner {
         seedUnavailableSlots(allEmployees);
 
         log.info("Development data seeding completed.");
+        log.info("Categories: {}", categoryRepository.count());
+        log.info("Service types: {}", serviceTypeRepository.count());
         log.info("Businesses: {}", businessRepository.count());
         log.info("Services: {}", serviceItemRepository.count());
         log.info("Employees: {}", employeeRepository.count());
@@ -300,6 +334,38 @@ public class DataSeeder implements CommandLineRunner {
         log.info("Work schedules: {}", workScheduleRepository.count());
         log.info("Unavailable slots: {}", unavailableSlotRepository.count());
         log.info("Users: {}", userRepository.count());
+    }
+
+    private Map<String, Category> seedCategories() {
+
+        Map<String, Category> categories = new LinkedHashMap<>();
+
+        for (String name : CATEGORY_SERVICE_TYPES.keySet()) {
+            Category category = new Category();
+            category.setName(name);
+            categories.put(name, categoryRepository.save(category));
+        }
+
+        return categories;
+    }
+
+    private Map<String, List<ServiceType>> seedServiceTypes() {
+
+        Map<String, List<ServiceType>> serviceTypesByCategory = new LinkedHashMap<>();
+
+        for (Map.Entry<String, List<String>> entry : CATEGORY_SERVICE_TYPES.entrySet()) {
+            List<ServiceType> types = new ArrayList<>();
+
+            for (String typeName : entry.getValue()) {
+                ServiceType serviceType = new ServiceType();
+                serviceType.setName(typeName);
+                types.add(serviceTypeRepository.save(serviceType));
+            }
+
+            serviceTypesByCategory.put(entry.getKey(), types);
+        }
+
+        return serviceTypesByCategory;
     }
 
     private User seedUser(String surname, String firstname, String email) {
@@ -334,7 +400,7 @@ public class DataSeeder implements CommandLineRunner {
         return clients;
     }
 
-    private Business seedBusiness(User owner, int index) {
+    private Business seedBusiness(User owner, Category category, int index) {
 
         Business business = new Business();
 
@@ -342,6 +408,7 @@ public class DataSeeder implements CommandLineRunner {
         String slug = name.toLowerCase().replace(" ", "-");
 
         business.setOwner(owner);
+        business.setCategory(category);
         business.setName(name);
         business.setEmail("contact" + (index + 1) + "@setora.test");
         business.setSlug(slug);
@@ -354,32 +421,62 @@ public class DataSeeder implements CommandLineRunner {
         return businessRepository.save(business);
     }
 
-    private List<ServiceItem> seedServices(Business business) {
+    private List<ServiceItem> seedServices(Business business, List<ServiceType> serviceTypes, int businessIndex) {
+
+        BigDecimal priceOffset = BigDecimal.valueOf((businessIndex % 3) * 15L);
 
         List<ServiceItem> services = new ArrayList<>();
 
-        services.add(seedService(business, "Standard Service", "A standard appointment service.", "80.00", 45));
+        services.add(seedService(
+                business,
+                serviceTypes.get(0),
+                serviceTypes.get(0).getName(),
+                "Standard " + serviceTypes.get(0).getName().toLowerCase() + " appointment.",
+                new BigDecimal("80.00").add(priceOffset),
+                45));
 
-        services.add(seedService(business, "Premium Service", "A premium appointment service.", "150.00", 60));
+        services.add(seedService(
+                business,
+                serviceTypes.get(1),
+                serviceTypes.get(1).getName(),
+                "Premium " + serviceTypes.get(1).getName().toLowerCase() + " appointment.",
+                new BigDecimal("150.00").add(priceOffset),
+                60));
 
-        services.add(
-                seedService(business, "Deluxe Service", "An extended premium appointment service.", "250.00", 120));
+        services.add(seedService(
+                business,
+                serviceTypes.get(2),
+                serviceTypes.get(2).getName(),
+                "Deluxe " + serviceTypes.get(2).getName().toLowerCase() + " appointment.",
+                new BigDecimal("250.00").add(priceOffset),
+                120));
 
-        services.add(
-                seedService(business, "Express Service", "A shorter appointment for quick treatments.", "50.00", 30));
+        services.add(seedService(
+                business,
+                serviceTypes.get(3),
+                serviceTypes.get(3).getName(),
+                "Express " + serviceTypes.get(3).getName().toLowerCase() + " appointment.",
+                new BigDecimal("50.00").add(priceOffset),
+                30));
 
         return services;
     }
 
     private ServiceItem seedService(
-            Business business, String name, String description, String price, int durationMinutes) {
+            Business business,
+            ServiceType serviceType,
+            String name,
+            String description,
+            BigDecimal price,
+            int durationMinutes) {
 
         ServiceItem service = new ServiceItem();
 
         service.setBusiness(business);
+        service.setServiceType(serviceType);
         service.setName(name);
         service.setDescription(description);
-        service.setPrice(new BigDecimal(price));
+        service.setPrice(price);
         service.setDurationMinutes(durationMinutes);
 
         return serviceItemRepository.save(service);

@@ -6,6 +6,7 @@ import java.util.List;
 public record BusinessResponseDto(
         int id,
         int ownerId,
+        CategoryDto category,
         String name,
         String slug,
         String description,
@@ -16,4 +17,5 @@ public record BusinessResponseDto(
         Instant createdAt,
         List<String> photoUrls,
         String thumbnailUrl,
-        List<String> tags) {}
+        List<String> tags
+) {}

@@ -1,5 +1,6 @@
-package com.byteforge.setorabackend.business;
+package com.byteforge.setorabackend.business.controller;
 
+import com.byteforge.setorabackend.business.service.BusinessService;
 import com.byteforge.setorabackend.business.dtos.BusinessFilterCriteria;
 import com.byteforge.setorabackend.business.dtos.BusinessResponseDto;
 import com.byteforge.setorabackend.business.dtos.BusinessSortBy;

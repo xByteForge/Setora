@@ -1,4 +1,4 @@
-package com.byteforge.setorabackend.business;
+package com.byteforge.setorabackend.business.model;
 
 import com.byteforge.setorabackend.auth.User;
 import jakarta.persistence.*;
@@ -66,4 +66,8 @@ public class Business {
     @JdbcTypeCode(SqlTypes.ARRAY)
     @Column(name = "tags", columnDefinition = "text[]")
     private String[] tags;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 }

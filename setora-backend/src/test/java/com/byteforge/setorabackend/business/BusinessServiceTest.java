@@ -5,11 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-import com.byteforge.setorabackend.business.dtos.BusinessFilterCriteria;
-import com.byteforge.setorabackend.business.dtos.BusinessLocationDto;
-import com.byteforge.setorabackend.business.dtos.BusinessResponseDto;
-import com.byteforge.setorabackend.business.dtos.BusinessSortBy;
+import com.byteforge.setorabackend.business.dtos.*;
 import com.byteforge.setorabackend.business.mapper.BusinessMapper;
+import com.byteforge.setorabackend.business.model.Business;
+import com.byteforge.setorabackend.business.repository.BusinessRepository;
+import com.byteforge.setorabackend.business.service.BusinessService;
 import com.byteforge.setorabackend.common.PaginationParams;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.Instant;
@@ -93,148 +93,6 @@ class BusinessServiceTest {
         verifyNoInteractions(businessMapper);
     }
 
-    // getBusinesses - sorting
-    @Test
-    void getBusinesses_whenSortByIsNull_defaultsToNewestWithIdTieBreaker() {
-        PaginationParams pageParams = new PaginationParams(0, 20);
-        when(businessRepository.findAll(ArgumentMatchers.<Specification<Business>>any(), any(Pageable.class)))
-                .thenReturn(Page.empty());
-
-        businessService.getBusinesses(emptyCriteria(), null, pageParams);
-
-        Pageable captured = capturePageable();
-        assertThat(captured.getSort()).containsExactly(Sort.Order.desc("createdAt"), Sort.Order.desc("id"));
-    }
-
-    @ParameterizedTest
-    @MethodSource("standardSortCases")
-    void getBusinesses_standardSort_appliesExpectedOrderAndTieBreaker(
-            BusinessSortBy sortBy, Sort.Order primaryOrder, Sort.Order tieBreakerOrder) {
-        PaginationParams pageParams = new PaginationParams(1, 10);
-        when(businessRepository.findAll(ArgumentMatchers.<Specification<Business>>any(), any(Pageable.class)))
-                .thenReturn(Page.empty());
-
-        businessService.getBusinesses(emptyCriteria(), sortBy, pageParams);
-
-        Pageable captured = capturePageable();
-        assertThat(captured.getPageNumber()).isEqualTo(1);
-        assertThat(captured.getPageSize()).isEqualTo(10);
-        assertThat(captured.getSort()).containsExactly(primaryOrder, tieBreakerOrder);
-    }
-
-    static Stream<Arguments> standardSortCases() {
-        return Stream.of(
-                Arguments.of(BusinessSortBy.NAME_ASC, Sort.Order.asc("name"), Sort.Order.asc("id")),
-                Arguments.of(BusinessSortBy.NAME_DESC, Sort.Order.desc("name"), Sort.Order.desc("id")),
-                Arguments.of(BusinessSortBy.OLDEST, Sort.Order.asc("createdAt"), Sort.Order.asc("id")),
-                Arguments.of(BusinessSortBy.NEWEST, Sort.Order.desc("createdAt"), Sort.Order.desc("id")));
-    }
-
-    @ParameterizedTest
-    @EnumSource(
-            value = BusinessSortBy.class,
-            names = {"PRICE_ASC", "PRICE_DESC"})
-    void getBusinesses_priceSort_passesUnsortedPageableSoSpecificationOrderIsNotOverridden(BusinessSortBy priceSort) {
-        PaginationParams pageParams = new PaginationParams(2, 15);
-        when(businessRepository.findAll(ArgumentMatchers.<Specification<Business>>any(), any(Pageable.class)))
-                .thenReturn(Page.empty());
-
-        businessService.getBusinesses(emptyCriteria(), priceSort, pageParams);
-
-        Pageable captured = capturePageable();
-        assertThat(captured.getPageNumber()).isEqualTo(2);
-        assertThat(captured.getPageSize()).isEqualTo(15);
-        assertThat(captured.getSort().isUnsorted()).isTrue();
-    }
-
-    // getBusinesses - mapping, pagination, edge cases
-    @Test
-    void getBusinesses_whenResultsFound_mapsAllEntitiesAndPreservesPageMetadata() {
-        Business b1 = createBusiness(1, "Alpha Cuts");
-        Business b2 = createBusiness(2, "Beta Spa");
-        BusinessResponseDto dto1 = createDto(1, "Alpha Cuts");
-        BusinessResponseDto dto2 = createDto(2, "Beta Spa");
-
-        PaginationParams pageParams = new PaginationParams(0, 2);
-        Page<Business> repoPage = new PageImpl<>(List.of(b1, b2), Pageable.ofSize(2), 5);
-
-        when(businessRepository.findAll(ArgumentMatchers.<Specification<Business>>any(), any(Pageable.class)))
-                .thenReturn(repoPage);
-        when(businessMapper.toResponseDto(b1)).thenReturn(dto1);
-        when(businessMapper.toResponseDto(b2)).thenReturn(dto2);
-
-        Page<BusinessResponseDto> result =
-                businessService.getBusinesses(emptyCriteria(), BusinessSortBy.NAME_ASC, pageParams);
-
-        assertThat(result.getContent()).containsExactly(dto1, dto2);
-        assertThat(result.getTotalElements()).isEqualTo(5);
-        assertThat(result.getTotalPages()).isEqualTo(3);
-        assertThat(result.getNumber()).isEqualTo(0);
-        verify(businessMapper).toResponseDto(b1);
-        verify(businessMapper).toResponseDto(b2);
-    }
-
-    @Test
-    void getBusinesses_whenNoMatches_returnsEmptyPageAndSkipsMapper() {
-        when(businessRepository.findAll(ArgumentMatchers.<Specification<Business>>any(), any(Pageable.class)))
-                .thenReturn(Page.empty());
-
-        Page<BusinessResponseDto> result =
-                businessService.getBusinesses(emptyCriteria(), BusinessSortBy.NEWEST, new PaginationParams(0, 20));
-
-        assertThat(result).isEmpty();
-        verifyNoInteractions(businessMapper);
-    }
-
-    @Test
-    void getBusinesses_whenCriteriaIsNull_doesNotThrowAndDelegatesToRepository() {
-        when(businessRepository.findAll(ArgumentMatchers.<Specification<Business>>any(), any(Pageable.class)))
-                .thenReturn(Page.empty());
-
-        Page<BusinessResponseDto> result =
-                businessService.getBusinesses(null, BusinessSortBy.NEWEST, new PaginationParams(null, null));
-
-        assertThat(result).isEmpty();
-        Pageable captured = capturePageable();
-        assertThat(captured.getPageNumber()).isEqualTo(0);
-        assertThat(captured.getPageSize()).isEqualTo(20);
-    }
-
-    // helpers
-    private Pageable capturePageable() {
-        ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
-        verify(businessRepository).findAll(ArgumentMatchers.<Specification<Business>>any(), captor.capture());
-        return captor.getValue();
-    }
-
-    private BusinessFilterCriteria emptyCriteria() {
-        return new BusinessFilterCriteria(null, null, null, null, null, null, null, null);
-    }
-
-    private Business createBusiness(int id, String name) {
-        Business business = new Business();
-        business.setId(id);
-        business.setName(name);
-        return business;
-    }
-
-    private BusinessResponseDto createDto(int id, String name) {
-        return new BusinessResponseDto(
-                id,
-                10,
-                name,
-                name.toLowerCase().replace(" ", "-"),
-                null,
-                new BusinessLocationDto("Piezisa", "Piezisa nr. 4", 46.77, 23.59),
-                null,
-                "contact@example.com",
-                "Europe/Bucharest",
-                Instant.parse("2026-11-01T10:00:00Z"),
-                List.of(),
-                null,
-                List.of());
-    }
-
     // getAllBusinesses
     @Test
     void getAllBusinesses_delegatesWithNullCriteriaAndDefaultNewestSort() {
@@ -253,7 +111,10 @@ class BusinessServiceTest {
         Pageable captured = capturePageable();
         assertThat(captured.getPageNumber()).isEqualTo(0);
         assertThat(captured.getPageSize()).isEqualTo(10);
-        assertThat(captured.getSort()).containsExactly(Sort.Order.desc("createdAt"), Sort.Order.desc("id"));
+        assertThat(captured.getSort()).containsExactly(
+                Sort.Order.desc("createdAt"),
+                Sort.Order.desc("id")
+        );
     }
 
     @Test
@@ -265,5 +126,157 @@ class BusinessServiceTest {
 
         assertThat(result).isEmpty();
         verifyNoInteractions(businessMapper);
+    }
+
+    @Test
+    void getBusinesses_whenSortByIsNull_defaultsToNewestWithIdTieBreaker() {
+        PaginationParams pageParams = new PaginationParams(0, 20);
+        when(businessRepository.findAll(ArgumentMatchers.<Specification<Business>>any(), any(Pageable.class)))
+                .thenReturn(Page.empty());
+
+        businessService.getBusinesses(emptyCriteria(), null, pageParams);
+
+        Pageable captured = capturePageable();
+        assertThat(captured.getSort()).containsExactly(
+                Sort.Order.desc("createdAt"),
+                Sort.Order.desc("id")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("standardSortCases")
+    void getBusinesses_standardSort_appliesExpectedOrderAndTieBreaker(
+            BusinessSortBy sortBy,
+            Sort.Order primaryOrder,
+            Sort.Order tieBreakerOrder
+    ) {
+        PaginationParams pageParams = new PaginationParams(1, 10);
+        when(businessRepository.findAll(ArgumentMatchers.<Specification<Business>>any(), any(Pageable.class)))
+                .thenReturn(Page.empty());
+
+        businessService.getBusinesses(emptyCriteria(), sortBy, pageParams);
+
+        Pageable captured = capturePageable();
+        assertThat(captured.getPageNumber()).isEqualTo(1);
+        assertThat(captured.getPageSize()).isEqualTo(10);
+        assertThat(captured.getSort()).containsExactly(primaryOrder, tieBreakerOrder);
+    }
+
+    static Stream<Arguments> standardSortCases() {
+        return Stream.of(
+                Arguments.of(BusinessSortBy.NAME_ASC, Sort.Order.asc("name"), Sort.Order.asc("id")),
+                Arguments.of(BusinessSortBy.NAME_DESC, Sort.Order.desc("name"), Sort.Order.desc("id")),
+                Arguments.of(BusinessSortBy.OLDEST, Sort.Order.asc("createdAt"), Sort.Order.asc("id")),
+                Arguments.of(BusinessSortBy.NEWEST, Sort.Order.desc("createdAt"), Sort.Order.desc("id"))
+        );
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = BusinessSortBy.class, names = {"PRICE_ASC", "PRICE_DESC"})
+    void getBusinesses_priceSort_passesUnsortedPageableSoSpecificationOrderIsNotOverridden(
+            BusinessSortBy priceSort
+    ) {
+        PaginationParams pageParams = new PaginationParams(2, 15);
+        when(businessRepository.findAll(ArgumentMatchers.<Specification<Business>>any(), any(Pageable.class)))
+                .thenReturn(Page.empty());
+
+        businessService.getBusinesses(emptyCriteria(), priceSort, pageParams);
+
+        Pageable captured = capturePageable();
+        assertThat(captured.getPageNumber()).isEqualTo(2);
+        assertThat(captured.getPageSize()).isEqualTo(15);
+        assertThat(captured.getSort().isUnsorted()).isTrue();
+    }
+
+    @Test
+    void getBusinesses_whenResultsFound_mapsAllEntitiesAndPreservesPageMetadata() {
+        Business b1 = createBusiness(1, "Alpha Cuts");
+        Business b2 = createBusiness(2, "Beta Spa");
+        BusinessResponseDto dto1 = createDto(1, "Alpha Cuts");
+        BusinessResponseDto dto2 = createDto(2, "Beta Spa");
+
+        PaginationParams pageParams = new PaginationParams(0, 2);
+        Page<Business> repoPage = new PageImpl<>(List.of(b1, b2), Pageable.ofSize(2), 5);
+
+        when(businessRepository.findAll(ArgumentMatchers.<Specification<Business>>any(), any(Pageable.class)))
+                .thenReturn(repoPage);
+        when(businessMapper.toResponseDto(b1)).thenReturn(dto1);
+        when(businessMapper.toResponseDto(b2)).thenReturn(dto2);
+
+        Page<BusinessResponseDto> result = businessService.getBusinesses(
+                emptyCriteria(), BusinessSortBy.NAME_ASC, pageParams
+        );
+
+        assertThat(result.getContent()).containsExactly(dto1, dto2);
+        assertThat(result.getTotalElements()).isEqualTo(5);
+        assertThat(result.getTotalPages()).isEqualTo(3);
+        assertThat(result.getNumber()).isEqualTo(0);
+        verify(businessMapper).toResponseDto(b1);
+        verify(businessMapper).toResponseDto(b2);
+    }
+
+    @Test
+    void getBusinesses_whenNoMatches_returnsEmptyPageAndSkipsMapper() {
+        when(businessRepository.findAll(ArgumentMatchers.<Specification<Business>>any(), any(Pageable.class)))
+                .thenReturn(Page.empty());
+
+        Page<BusinessResponseDto> result = businessService.getBusinesses(
+                emptyCriteria(), BusinessSortBy.NEWEST, new PaginationParams(0, 20)
+        );
+
+        assertThat(result).isEmpty();
+        verifyNoInteractions(businessMapper);
+    }
+
+    @Test
+    void getBusinesses_whenCriteriaIsNull_doesNotThrowAndDelegatesToRepository() {
+        when(businessRepository.findAll(ArgumentMatchers.<Specification<Business>>any(), any(Pageable.class)))
+                .thenReturn(Page.empty());
+
+        Page<BusinessResponseDto> result = businessService.getBusinesses(
+                null, BusinessSortBy.NEWEST, new PaginationParams(null, null)
+        );
+
+        assertThat(result).isEmpty();
+        Pageable captured = capturePageable();
+        assertThat(captured.getPageNumber()).isEqualTo(0);
+        assertThat(captured.getPageSize()).isEqualTo(20);
+    }
+
+    // helpers
+    private Pageable capturePageable() {
+        ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
+        verify(businessRepository).findAll(ArgumentMatchers.<Specification<Business>>any(), captor.capture());
+        return captor.getValue();
+    }
+
+    private BusinessFilterCriteria emptyCriteria() {
+        return new BusinessFilterCriteria(null, null, null, null, null, null, null, null, null);
+    }
+
+    private Business createBusiness(int id, String name) {
+        Business business = new Business();
+        business.setId(id);
+        business.setName(name);
+        return business;
+    }
+
+    private BusinessResponseDto createDto(int id, String name) {
+        return new BusinessResponseDto(
+                id,
+                10,
+                new CategoryDto(1, "Barbershop"),
+                name,
+                name.toLowerCase().replace(" ", "-"),
+                null,
+                new BusinessLocationDto("Piezisa", "Piezisa nr. 4", 46.77, 23.59),
+                null,
+                "contact@example.com",
+                "Europe/Bucharest",
+                Instant.parse("2026-11-01T10:00:00Z"),
+                List.of(),
+                null,
+                List.of()
+        );
     }
 }

@@ -1,7 +1,9 @@
-package com.byteforge.setorabackend.business;
+package com.byteforge.setorabackend.business.repository;
 
 import com.byteforge.setorabackend.business.dtos.BusinessFilterCriteria;
 import com.byteforge.setorabackend.business.dtos.BusinessSortBy;
+import com.byteforge.setorabackend.business.model.Business;
+import com.byteforge.setorabackend.business.model.Location;
 import com.byteforge.setorabackend.employees.model.UnavailableSlot;
 import com.byteforge.setorabackend.employees.model.WorkSchedule;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
@@ -26,6 +28,13 @@ public final class BusinessSpecification {
 
             if (criteria.ownerId() != null) {
                 predicates.add(cb.equal(root.get("owner").get("id"), criteria.ownerId()));
+            }
+
+            if (criteria.category() != null && !criteria.category().isBlank()) {
+                predicates.add(cb.like(
+                        cb.lower(root.get("category").get("name")),
+                        containsPattern(criteria.category())
+                ));
             }
 
             if (criteria.location() != null && !criteria.location().isBlank()) {
@@ -85,17 +94,26 @@ public final class BusinessSpecification {
     }
 
     private static Predicate hasMatchingService(
-            Root<Business> root, CriteriaQuery<?> query, CriteriaBuilder cb, BusinessFilterCriteria criteria) {
+            Root<Business> root,
+            CriteriaQuery<?> query,
+            CriteriaBuilder cb,
+            BusinessFilterCriteria criteria
+    ) {
         Subquery<Integer> subquery = query.subquery(Integer.class);
         Root<ServiceItem> serviceRoot = subquery.from(ServiceItem.class);
 
-        subquery.select(cb.literal(1)).where(buildServicePredicates(root, serviceRoot, cb, criteria));
+        subquery.select(cb.literal(1))
+                .where(buildServicePredicates(root, serviceRoot, cb, criteria));
 
         return cb.exists(subquery);
     }
 
     private static Predicate hasAvailableSchedule(
-            Root<Business> root, CriteriaQuery<?> query, CriteriaBuilder cb, BusinessFilterCriteria criteria) {
+            Root<Business> root,
+            CriteriaQuery<?> query,
+            CriteriaBuilder cb,
+            BusinessFilterCriteria criteria
+    ) {
         Subquery<Integer> scheduleSubquery = query.subquery(Integer.class);
         Root<WorkSchedule> wsRoot = scheduleSubquery.from(WorkSchedule.class);
 
@@ -117,7 +135,8 @@ public final class BusinessSpecification {
             Predicate sameEmployee = cb.equal(slotRoot.get("employee"), wsRoot.get("employee"));
             Predicate matchesDateOrDay = cb.or(
                     cb.equal(slotRoot.get("specificDate"), criteria.date()),
-                    cb.equal(slotRoot.get("dayOfWeek"), criteria.date().getDayOfWeek()));
+                    cb.equal(slotRoot.get("dayOfWeek"), criteria.date().getDayOfWeek())
+            );
             Predicate timeBlocked = coversTime(slotRoot.get("interval"), criteria.time(), cb);
 
             unavailableSubquery.select(cb.literal(1)).where(sameEmployee, matchesDateOrDay, timeBlocked);
@@ -138,7 +157,10 @@ public final class BusinessSpecification {
         predicates.add(cb.isTrue(serviceRoot.get("active")));
 
         if (criteria != null && criteria.hasService()) {
-            predicates.add(cb.like(cb.lower(serviceRoot.get("name")), containsPattern(criteria.service())));
+            predicates.add(cb.like(
+                    cb.lower(serviceRoot.get("serviceType").get("name")),
+                    containsPattern(criteria.service())
+            ));
 
             if (criteria.minPrice() != null) {
                 predicates.add(cb.greaterThanOrEqualTo(serviceRoot.get("price"), criteria.minPrice()));
