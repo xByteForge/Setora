@@ -181,8 +181,8 @@ export class BusinessDiscoveryService {
 
   private loadFilterMetadata() {
     this.http
-      .get<string[]>(`${this.apiBase}/businesses/locations`)
-      .subscribe((data) => this.cities.set(data));
+        .get<string[]>(`${this.apiBase}/businesses/locations`)
+        .subscribe((data) => this.cities.set(data));
 
     this.http
       .get<BusinessCategory[]>(`${this.apiBase}/businesses/categories`)
