@@ -1,6 +1,6 @@
 @if (items().length) {
   <div class="list" [class.list--single]="single()">
-    @for (b of items(); track b.id) {
+    @for (b of items(); track b.id + '-' + animationRun()) {
       <app-business-card [business]="b" (view)="view.emit($event)" />
     }
   </div>
