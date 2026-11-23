@@ -10,13 +10,11 @@ import { toApiError } from './api-error.interceptor';
 const PUBLIC_PATHS = new Set(['/auth/login', '/auth/register', '/auth/refresh']);
 
 
-/** Returnează calea relativă la API-ul de bază, sau null dacă URL-ul nu aparține API-ului. */
 function relativeApiPath(requestUrl: string, apiBaseUrl: string): string | null {
   let api: URL;
   let target: URL;
 
-  try {
-    // Ambele URL-uri trebuie să fie absolute. Cele relative (fără schemă) nu sunt apeluri API.
+  try {    
     api = new URL(apiBaseUrl);
     target = new URL(requestUrl);
   } catch {
