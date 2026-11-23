@@ -17,16 +17,19 @@
   <div class="card__body">
     <span class="card__category">{{ business().category }}</span>
     <h3 class="card__title">{{ business().name }}</h3>
+
     <p class="card__location">
       <svg lucideMapPin [size]="16" aria-hidden="true"></svg>
       <span>{{ business().location.locationName }} · {{ business().city }}</span>
     </p>
+
     <p class="card__description">{{ business().description }}</p>
 
     <div class="card__footer">
-      <strong class="card__price">{{
-        'DISCOVER.FROM_PRICE' | transloco: { price: business().minPrice }
-      }}</strong>
+      <strong class="card__price">
+        {{ 'DISCOVER.FROM_PRICE' | transloco: { price: business().minPrice } }}
+      </strong>
+
       <button type="button" class="card__cta" (click)="view.emit(business().id)">
         {{ 'DISCOVER.VIEW_BUSINESS' | transloco }}
       </button>

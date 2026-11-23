@@ -3,10 +3,20 @@
   grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
   grid-auto-rows: 1fr;
   gap: 16px;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 400ms ease,
+    transform 400ms ease;
 }
 
 .list--single {
   grid-template-columns: 1fr;
+}
+
+.list.is-transitioning {
+  opacity: 0.45;
+  transform: translateY(8px);
 }
 
 .empty {
@@ -18,5 +28,11 @@
 @media (max-width: 640px) {
   .list {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .list {
+    transition: none;
   }
 }

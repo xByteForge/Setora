@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
 import { BusinessListItem } from '../../../core/ui-models/business-list-item.model';
 import { BusinessCardComponent } from '../business-card/business-card.component';
@@ -16,4 +16,15 @@ export class BusinessListComponent {
   /** O singură coloană (când panoul de filtre e deschis). */
   readonly single = input(false);
   readonly view = output<number>();
+
+  readonly animationRun = signal(0);
+
+  private animationCounter = 0;
+
+  constructor() {
+    effect(() => {
+      this.items();
+      this.animationRun.set(++this.animationCounter);
+    });
+  }
 }

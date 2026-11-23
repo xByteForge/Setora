@@ -105,10 +105,22 @@
   font-family: inherit;
   white-space: nowrap;
   cursor: pointer;
+
+  transition:
+    transform 200ms ease,
+    background-color 200ms ease,
+    box-shadow 200ms ease;
 }
 
 .card__cta:hover {
   background: var(--brand-mint-hover);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card__cta:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: none;
 }
 
 .card__cta:focus-visible {
@@ -135,5 +147,11 @@
   .card__cta {
     width: 100%;
     padding: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card__cta {
+    transition: none;
   }
 }

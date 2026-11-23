@@ -24,39 +24,29 @@
   --appt-confirmed-bg: #ecfdf5;
   --appt-confirmed-border: #10b981;
   --appt-confirmed-text: #064e43;
+
   /* În așteptare */
   --appt-pending-bg: #fef3c7;
   --appt-pending-border: #f59e0b;
   --appt-pending-text: #8a5a00;
+
   /* Anulată */
   --appt-cancelled-bg: #fee2e2;
   --appt-cancelled-border: #ef4444;
   --appt-cancelled-text: #b42318;
+
   /* Interval blocat (pauză) */
   --appt-blocked-bg: #e5e7eb;
   --appt-blocked-border: #6b7280;
   --appt-blocked-text: #4b5563;
+
   /* Selectată */
   --appt-selected-bg: #d1fae5;
   --appt-selected-border: #43cdb6;
   --appt-selected-text: #064e43;
-}
 
-body.dark-theme {
-  --paper: #1d2d44;
-  --canvas: #0d1321;
-  --ink: #f0ebd8;
-  --text-secondary: #b6c6d8;
-
-  --border-color: #3e5c76;
-  --control-border: #748cab;
-
-  --mint-wash: #163e3b;
-  --accent-text: #93e3cb;
-  --focus: #43cdb6;
-
-  --status-pending: #f2c265;
-  --status-cancelled: #ff8a80;
+  --accessible-green: #064e43;
+  --focus-ring: #087f6d;
 }
 
 body {
@@ -100,6 +90,7 @@ body.light-theme {
 body.dark-theme {
   color-scheme: dark;
   background-color: var(--canvas);
+
   --paper: #1d2d44; /* Deep blue: sidebar and card surfaces */
   --canvas: #0d1321; /* Midnight: page background and hint card */
   --border-color: #3e5c76; /* Slate: dividers and structure */
@@ -129,4 +120,37 @@ body.dark-theme {
   --appt-selected-bg: #123e3c;
   --appt-selected-border: #43cdb6;
   --appt-selected-text: #93e3cb;
+}
+
+/* Business card entrance animation */
+.list app-business-card {
+  animation: card-fade-in 350ms ease both;
+}
+
+.list app-business-card:nth-child(2) {
+  animation-delay: 50ms;
+}
+
+.list app-business-card:nth-child(3) {
+  animation-delay: 100ms;
+}
+
+.list app-business-card:nth-child(4) {
+  animation-delay: 150ms;
+}
+
+@keyframes card-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .list app-business-card {
+    animation: none;
+  }
 }
