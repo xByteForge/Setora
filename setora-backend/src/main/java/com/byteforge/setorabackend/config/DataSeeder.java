@@ -174,7 +174,7 @@ public class DataSeeder implements CommandLineRunner {
         log.info("Starting development data seeding...");
 
         Map<String, Category> categoriesByName = seedCategories();
-        Map<String, List<ServiceType>> serviceTypesByCategory = seedServiceTypes();
+        Map<String, List<ServiceType>> serviceTypesByCategory = seedServiceTypes(categoriesByName);
         List<User> clients = seedClients(10);
 
         List<Employee> allEmployees = new ArrayList<>();
@@ -349,15 +349,17 @@ public class DataSeeder implements CommandLineRunner {
         return categories;
     }
 
-    private Map<String, List<ServiceType>> seedServiceTypes() {
+    private Map<String, List<ServiceType>> seedServiceTypes(Map<String, Category> categoriesByName) {
 
         Map<String, List<ServiceType>> serviceTypesByCategory = new LinkedHashMap<>();
 
         for (Map.Entry<String, List<String>> entry : CATEGORY_SERVICE_TYPES.entrySet()) {
+            Category category = categoriesByName.get(entry.getKey());
             List<ServiceType> types = new ArrayList<>();
 
             for (String typeName : entry.getValue()) {
                 ServiceType serviceType = new ServiceType();
+                serviceType.setCategory(category);
                 serviceType.setName(typeName);
                 types.add(serviceTypeRepository.save(serviceType));
             }
@@ -406,6 +408,7 @@ public class DataSeeder implements CommandLineRunner {
 
         String name = BUSINESS_NAMES.get(index);
         String slug = name.toLowerCase().replace(" ", "-");
+        String locationName = index % 4 == 0 ? "Cluj-Napoca" : "Bucuresti";
 
         business.setOwner(owner);
         business.setCategory(category);
@@ -414,7 +417,7 @@ public class DataSeeder implements CommandLineRunner {
         business.setSlug(slug);
         business.setDescription("Professional beauty and wellness services.");
         business.setLocation(
-                new Location("Cluj-Napoca", "Str. Memorandumului " + (10 + index) + ", Cluj-Napoca", 46.7694, 23.5899));
+                new Location(locationName, "Str. Memorandumului " + (10 + index) + ", " + locationName, 46.7694, 23.5899));
         business.setPhone("0264000000");
         business.setTimezone(ZONE);
 

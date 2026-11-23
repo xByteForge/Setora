@@ -42,7 +42,7 @@ export class ActiveFiltersChipsComponent {
     }
 
     if (q.serviceId != null) {
-      const s = this.service.serviceOptions.find((o) => o.id === q.serviceId);
+      const s = this.service.serviceOptions().find((o) => o.id === q.serviceId);
       if (s) chips.push({ id: 'service', label: s.name, clear: { serviceId: null } });
     }
 

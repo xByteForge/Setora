@@ -1,4 +1,10 @@
-export type BusinessSort = 'relevance' | 'priceAsc' | 'priceDesc' | 'nameAsc';
+export type BusinessSort =
+    | 'newest'
+    | 'oldest'
+    | 'nameAsc'
+    | 'nameDesc'
+    | 'priceAsc'
+    | 'priceDesc';
 
 export interface BusinessQuery {
   text: string;
@@ -25,7 +31,7 @@ export const DEFAULT_BUSINESS_QUERY: BusinessQuery = {
   date: null,
   timeFrom: null,
   timeTo: null,
-  sort: 'relevance',
+  sort: 'newest',
   page: 1,
   pageSize: 6,
 };

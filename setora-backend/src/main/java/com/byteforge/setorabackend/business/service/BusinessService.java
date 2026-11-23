@@ -1,5 +1,6 @@
 package com.byteforge.setorabackend.business.service;
 
+import com.byteforge.setorabackend.business.dtos.BusinessDetailedResponseDto;
 import com.byteforge.setorabackend.business.model.Business;
 import com.byteforge.setorabackend.business.repository.BusinessRepository;
 import com.byteforge.setorabackend.business.repository.BusinessSpecification;
@@ -32,8 +33,8 @@ public class BusinessService {
     }
 
     @Transactional(readOnly = true)
-    public BusinessResponseDto getBusinessById(int businessId) {
-        return businessMapper.toResponseDto(findById(businessId));
+    public BusinessDetailedResponseDto getBusinessById(int businessId) {
+        return businessMapper.toDetailedResponseDto(findById(businessId));
     }
 
     @Transactional(readOnly = true)

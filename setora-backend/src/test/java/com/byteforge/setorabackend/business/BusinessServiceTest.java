@@ -12,7 +12,10 @@ import com.byteforge.setorabackend.business.repository.BusinessRepository;
 import com.byteforge.setorabackend.business.service.BusinessService;
 import com.byteforge.setorabackend.common.PaginationParams;
 import jakarta.persistence.EntityNotFoundException;
+import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -70,16 +73,16 @@ class BusinessServiceTest {
     @Test
     void getBusinessById_whenExists_returnsMappedDto() {
         Business business = createBusiness(1, "Studio Armonia");
-        BusinessResponseDto expectedDto = createDto(1, "Studio Armonia");
+        BusinessDetailedResponseDto expectedDto = createDetailedDto(1, "Studio Armonia");
 
         when(businessRepository.findById(1)).thenReturn(Optional.of(business));
-        when(businessMapper.toResponseDto(business)).thenReturn(expectedDto);
+        when(businessMapper.toDetailedResponseDto(business)).thenReturn(expectedDto);
 
-        BusinessResponseDto result = businessService.getBusinessById(1);
+        BusinessDetailedResponseDto result = businessService.getBusinessById(1);
 
         assertThat(result).isEqualTo(expectedDto);
         verify(businessRepository).findById(1);
-        verify(businessMapper).toResponseDto(business);
+        verify(businessMapper).toDetailedResponseDto(business);
     }
 
     @Test
@@ -128,6 +131,7 @@ class BusinessServiceTest {
         verifyNoInteractions(businessMapper);
     }
 
+    // getBusinesses
     @Test
     void getBusinesses_whenSortByIsNull_defaultsToNewestWithIdTieBreaker() {
         PaginationParams pageParams = new PaginationParams(0, 20);
@@ -189,11 +193,25 @@ class BusinessServiceTest {
     }
 
     @Test
-    void getBusinesses_whenResultsFound_mapsAllEntitiesAndPreservesPageMetadata() {
+    void getBusinesses_withFullDiscoveryCriteria_mapsResultsAndPreservesMetadata() {
         Business b1 = createBusiness(1, "Alpha Cuts");
         Business b2 = createBusiness(2, "Beta Spa");
         BusinessResponseDto dto1 = createDto(1, "Alpha Cuts");
         BusinessResponseDto dto2 = createDto(2, "Beta Spa");
+
+        BusinessFilterCriteria criteria = new BusinessFilterCriteria(
+                null,
+                "cuts",
+                "Cluj-Napoca",
+                List.of("barbershop"),
+                1,
+                2,
+                new BigDecimal("50.00"),
+                new BigDecimal("150.00"),
+                LocalDate.of(2026, 11, 25),
+                LocalTime.of(6, 0),
+                LocalTime.of(12, 0)
+        );
 
         PaginationParams pageParams = new PaginationParams(0, 2);
         Page<Business> repoPage = new PageImpl<>(List.of(b1, b2), Pageable.ofSize(2), 5);
@@ -204,7 +222,7 @@ class BusinessServiceTest {
         when(businessMapper.toResponseDto(b2)).thenReturn(dto2);
 
         Page<BusinessResponseDto> result = businessService.getBusinesses(
-                emptyCriteria(), BusinessSortBy.NAME_ASC, pageParams
+                criteria, BusinessSortBy.NAME_ASC, pageParams
         );
 
         assertThat(result.getContent()).containsExactly(dto1, dto2);
@@ -243,6 +261,49 @@ class BusinessServiceTest {
         assertThat(captured.getPageSize()).isEqualTo(20);
     }
 
+    // BusinessFilterCriteria validation & helper methods
+    @Test
+    void filterCriteria_validatesPriceAndTimeRanges() {
+        BusinessFilterCriteria valid = new BusinessFilterCriteria(
+                null, null, null, null, null, null,
+                new BigDecimal("60"), new BigDecimal("120"),
+                null, LocalTime.of(12, 0), LocalTime.of(18, 0)
+        );
+        assertThat(valid.isPriceRangeValid()).isTrue();
+        assertThat(valid.isTimeRangeValid()).isTrue();
+
+        BusinessFilterCriteria equalBounds = new BusinessFilterCriteria(
+                null, null, null, null, null, null,
+                new BigDecimal("100"), new BigDecimal("100"),
+                null, LocalTime.of(12, 0), LocalTime.of(12, 0)
+        );
+        assertThat(equalBounds.isPriceRangeValid()).isTrue();
+        assertThat(equalBounds.isTimeRangeValid()).isTrue();
+
+        BusinessFilterCriteria invalid = new BusinessFilterCriteria(
+                null, null, null, null, null, null,
+                new BigDecimal("200"), new BigDecimal("50"),
+                null, LocalTime.of(18, 0), LocalTime.of(6, 0)
+        );
+        assertThat(invalid.isPriceRangeValid()).isFalse();
+        assertThat(invalid.isTimeRangeValid()).isFalse();
+    }
+
+    @Test
+    void filterCriteria_helperFlagsDetectActiveFilters() {
+        assertThat(emptyCriteria().hasText()).isFalse();
+        assertThat(emptyCriteria().hasService()).isFalse();
+        assertThat(emptyCriteria().hasScheduleFilter()).isFalse();
+
+        BusinessFilterCriteria active = new BusinessFilterCriteria(
+                null, "  barber ", null, null, null, 3,
+                null, null, null, LocalTime.of(18, 0), null
+        );
+        assertThat(active.hasText()).isTrue();
+        assertThat(active.hasService()).isTrue();
+        assertThat(active.hasScheduleFilter()).isTrue();
+    }
+
     // helpers
     private Pageable capturePageable() {
         ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
@@ -251,7 +312,9 @@ class BusinessServiceTest {
     }
 
     private BusinessFilterCriteria emptyCriteria() {
-        return new BusinessFilterCriteria(null, null, null, null, null, null, null, null, null);
+        return new BusinessFilterCriteria(
+                null, null, null, null, null, null, null, null, null, null, null
+        );
     }
 
     private Business createBusiness(int id, String name) {
@@ -265,6 +328,27 @@ class BusinessServiceTest {
         return new BusinessResponseDto(
                 id,
                 10,
+                "Barbershop",
+                name,
+                name.toLowerCase().replace(" ", "-"),
+                null,
+                new BusinessLocationDto("Piezisa", "Piezisa nr. 4", 46.77, 23.59),
+                "Cluj-Napoca",
+                null,
+                "contact@example.com",
+                "Europe/Bucharest",
+                Instant.parse("2026-11-01T10:00:00Z"),
+                List.of(),
+                null,
+                List.of(),
+                BigDecimal.ZERO
+        );
+    }
+
+    private BusinessDetailedResponseDto createDetailedDto(int id, String name) {
+        return new BusinessDetailedResponseDto(
+                id,
+                10,
                 new CategoryDto(1, "Barbershop"),
                 name,
                 name.toLowerCase().replace(" ", "-"),
@@ -276,6 +360,7 @@ class BusinessServiceTest {
                 Instant.parse("2026-11-01T10:00:00Z"),
                 List.of(),
                 null,
+                List.of(),
                 List.of()
         );
     }

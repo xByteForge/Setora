@@ -3,13 +3,12 @@ package com.byteforge.setorabackend.business.repository;
 import com.byteforge.setorabackend.business.dtos.BusinessFilterCriteria;
 import com.byteforge.setorabackend.business.dtos.BusinessSortBy;
 import com.byteforge.setorabackend.business.model.Business;
-import com.byteforge.setorabackend.business.model.Location;
-import com.byteforge.setorabackend.employees.model.UnavailableSlot;
+import com.byteforge.setorabackend.employees.model.Employee;
 import com.byteforge.setorabackend.employees.model.WorkSchedule;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
 import jakarta.persistence.criteria.*;
+
 import java.math.BigDecimal;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
@@ -30,37 +29,38 @@ public final class BusinessSpecification {
                 predicates.add(cb.equal(root.get("owner").get("id"), criteria.ownerId()));
             }
 
-            if (criteria.category() != null && !criteria.category().isBlank()) {
-                predicates.add(cb.like(
-                        cb.lower(root.get("category").get("name")),
-                        containsPattern(criteria.category())
-                ));
+            if (criteria.categoryId() != null) {
+                predicates.add(cb.equal(root.get("category").get("id"), criteria.categoryId()));
+            }
+
+            if (criteria.hasText()) {
+                predicates.add(hasMatchingText(root, query, cb, criteria.text()));
             }
 
             if (criteria.location() != null && !criteria.location().isBlank()) {
-                String pattern = containsPattern(criteria.location());
-                Path<Location> loc = root.get("location");
+                Expression<String> pattern = toSearchPattern(cb, criteria.location());
                 predicates.add(cb.or(
-                        cb.like(cb.lower(loc.get("locationName")), pattern),
-                        cb.like(cb.lower(loc.get("address")), pattern)));
+                        cb.like(unaccentLower(cb, cb.coalesce(root.get("location").get("locationName"), "")), pattern),
+                        cb.like(unaccentLower(cb, cb.coalesce(root.get("location").get("address"), "")), pattern)
+                ));
             }
 
             if (criteria.tags() != null && !criteria.tags().isEmpty()) {
                 for (String tag : criteria.tags()) {
                     if (tag != null && !tag.isBlank()) {
-                        Expression<Integer> pos =
-                                cb.function("array_position", Integer.class, root.get("tags"), cb.literal(tag.trim()));
-                        predicates.add(cb.isNotNull(pos));
+                        predicates.add(cb.isNotNull(
+                                cb.function("array_position", Integer.class, root.get("tags"), cb.literal(tag.trim()))
+                        ));
                     }
                 }
             }
 
-            if (criteria.hasService()) {
+            if (criteria.hasService() || criteria.minPrice() != null || criteria.maxPrice() != null) {
                 predicates.add(hasMatchingService(root, query, cb, criteria));
+            }
 
-                if (criteria.date() != null || criteria.time() != null) {
-                    predicates.add(hasAvailableSchedule(root, query, cb, criteria));
-                }
+            if (criteria.hasScheduleFilter()) {
+                predicates.add(hasAvailableSchedule(root, query, cb, criteria));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
@@ -69,28 +69,67 @@ public final class BusinessSpecification {
 
     public static Specification<Business> withPriceSort(BusinessFilterCriteria criteria, BusinessSortBy sortBy) {
         return (root, query, cb) -> {
-            boolean isPriceSort = sortBy == BusinessSortBy.PRICE_ASC || sortBy == BusinessSortBy.PRICE_DESC;
-            boolean isCountQuery = query.getResultType() == Long.class || query.getResultType() == long.class;
-
-            if (!isPriceSort || isCountQuery) {
+            if (sortBy != BusinessSortBy.PRICE_ASC && sortBy != BusinessSortBy.PRICE_DESC) {
                 return cb.conjunction();
             }
+
+            if (Long.class.equals(query.getResultType()) || long.class.equals(query.getResultType())) {
+                return cb.conjunction();
+            }
+
+            boolean ascending = sortBy == BusinessSortBy.PRICE_ASC;
 
             Subquery<BigDecimal> priceSubquery = query.subquery(BigDecimal.class);
             Root<ServiceItem> serviceRoot = priceSubquery.from(ServiceItem.class);
 
-            Predicate[] subPredicates = buildServicePredicates(root, serviceRoot, cb, criteria);
-            Expression<BigDecimal> aggPrice = (sortBy == BusinessSortBy.PRICE_ASC)
-                    ? cb.min(serviceRoot.get("price"))
-                    : cb.max(serviceRoot.get("price"));
+            List<Predicate> servicePredicates = buildServicePredicates(root, serviceRoot, cb, criteria);
+            priceSubquery.select(cb.min(serviceRoot.get("price")))
+                    .where(servicePredicates.toArray(new Predicate[0]));
 
-            priceSubquery.select(aggPrice).where(subPredicates);
+            query.orderBy(
+                    ascending ? cb.asc(priceSubquery) : cb.desc(priceSubquery),
+                    cb.asc(root.get("id"))
+            );
 
-            Order priceOrder = (sortBy == BusinessSortBy.PRICE_ASC) ? cb.asc(priceSubquery) : cb.desc(priceSubquery);
-
-            query.orderBy(priceOrder, cb.asc(root.get("id")));
             return cb.conjunction();
         };
+    }
+
+    private static Predicate hasMatchingText(
+            Root<Business> root,
+            CriteriaQuery<?> query,
+            CriteriaBuilder cb,
+            String rawText
+    ) {
+        Expression<String> pattern = toSearchPattern(cb, rawText);
+
+        Subquery<Integer> serviceSubquery = query.subquery(Integer.class);
+        Root<ServiceItem> serviceRoot = serviceSubquery.from(ServiceItem.class);
+        serviceSubquery.select(cb.literal(1)).where(
+                cb.equal(serviceRoot.get("business"), root),
+                cb.isTrue(serviceRoot.get("active")),
+                cb.or(
+                        cb.like(unaccentLower(cb, serviceRoot.get("name")), pattern),
+                        cb.like(unaccentLower(cb, serviceRoot.get("serviceType").get("name")), pattern)
+                )
+        );
+
+        Expression<String> tagsAsText = cb.function(
+                "array_to_string",
+                String.class,
+                root.get("tags"),
+                cb.literal(" ")
+        );
+
+        return cb.or(
+                cb.like(unaccentLower(cb, root.get("name")), pattern),
+                cb.like(unaccentLower(cb, cb.coalesce(root.get("description"), "")), pattern),
+                cb.like(unaccentLower(cb, root.get("category").get("name")), pattern),
+                cb.like(unaccentLower(cb, cb.coalesce(root.get("location").get("locationName"), "")), pattern),
+                cb.like(unaccentLower(cb, cb.coalesce(root.get("location").get("address"), "")), pattern),
+                cb.like(unaccentLower(cb, cb.coalesce(tagsAsText, "")), pattern),
+                cb.exists(serviceSubquery)
+        );
     }
 
     private static Predicate hasMatchingService(
@@ -99,13 +138,39 @@ public final class BusinessSpecification {
             CriteriaBuilder cb,
             BusinessFilterCriteria criteria
     ) {
-        Subquery<Integer> subquery = query.subquery(Integer.class);
-        Root<ServiceItem> serviceRoot = subquery.from(ServiceItem.class);
+        Subquery<Integer> serviceSubquery = query.subquery(Integer.class);
+        Root<ServiceItem> serviceRoot = serviceSubquery.from(ServiceItem.class);
 
-        subquery.select(cb.literal(1))
-                .where(buildServicePredicates(root, serviceRoot, cb, criteria));
+        List<Predicate> servicePredicates = buildServicePredicates(root, serviceRoot, cb, criteria);
+        serviceSubquery.select(cb.literal(1))
+                .where(servicePredicates.toArray(new Predicate[0]));
 
-        return cb.exists(subquery);
+        return cb.exists(serviceSubquery);
+    }
+
+    private static List<Predicate> buildServicePredicates(
+            Root<Business> businessRoot,
+            Root<ServiceItem> serviceRoot,
+            CriteriaBuilder cb,
+            BusinessFilterCriteria criteria
+    ) {
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(serviceRoot.get("business"), businessRoot));
+        predicates.add(cb.isTrue(serviceRoot.get("active")));
+
+        if (criteria != null) {
+            if (criteria.hasService()) {
+                predicates.add(cb.equal(serviceRoot.get("serviceType").get("id"), criteria.serviceTypeId()));
+            }
+            if (criteria.minPrice() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(serviceRoot.get("price"), criteria.minPrice()));
+            }
+            if (criteria.maxPrice() != null) {
+                predicates.add(cb.lessThanOrEqualTo(serviceRoot.get("price"), criteria.maxPrice()));
+            }
+        }
+
+        return predicates;
     }
 
     private static Predicate hasAvailableSchedule(
@@ -115,71 +180,48 @@ public final class BusinessSpecification {
             BusinessFilterCriteria criteria
     ) {
         Subquery<Integer> scheduleSubquery = query.subquery(Integer.class);
-        Root<WorkSchedule> wsRoot = scheduleSubquery.from(WorkSchedule.class);
+        Root<WorkSchedule> scheduleRoot = scheduleSubquery.from(WorkSchedule.class);
+        Join<WorkSchedule, Employee> employeeJoin = scheduleRoot.join("employee");
 
-        List<Predicate> wsPredicates = new ArrayList<>();
-        wsPredicates.add(cb.equal(wsRoot.get("employee").get("business"), root));
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(employeeJoin.get("business"), root));
+
+        if (criteria.hasService()) {
+            Join<Employee, ServiceItem> serviceJoin = employeeJoin.join("serviceItems");
+            predicates.add(cb.isTrue(serviceJoin.get("active")));
+            predicates.add(cb.equal(serviceJoin.get("serviceType").get("id"), criteria.serviceTypeId()));
+        }
 
         if (criteria.date() != null) {
-            wsPredicates.add(cb.equal(wsRoot.get("dayOfWeek"), criteria.date().getDayOfWeek()));
+            predicates.add(cb.equal(scheduleRoot.get("dayOfWeek"), criteria.date().getDayOfWeek()));
         }
 
-        if (criteria.time() != null) {
-            wsPredicates.add(coversTime(wsRoot.get("interval"), criteria.time(), cb));
+        if (criteria.timeFrom() != null) {
+            predicates.add(cb.greaterThan(scheduleRoot.get("interval").get("end"), criteria.timeFrom()));
         }
 
-        if (criteria.date() != null && criteria.time() != null) {
-            Subquery<Integer> unavailableSubquery = query.subquery(Integer.class);
-            Root<UnavailableSlot> slotRoot = unavailableSubquery.from(UnavailableSlot.class);
-
-            Predicate sameEmployee = cb.equal(slotRoot.get("employee"), wsRoot.get("employee"));
-            Predicate matchesDateOrDay = cb.or(
-                    cb.equal(slotRoot.get("specificDate"), criteria.date()),
-                    cb.equal(slotRoot.get("dayOfWeek"), criteria.date().getDayOfWeek())
-            );
-            Predicate timeBlocked = coversTime(slotRoot.get("interval"), criteria.time(), cb);
-
-            unavailableSubquery.select(cb.literal(1)).where(sameEmployee, matchesDateOrDay, timeBlocked);
-            wsPredicates.add(cb.not(cb.exists(unavailableSubquery)));
+        if (criteria.timeTo() != null) {
+            predicates.add(cb.lessThan(scheduleRoot.get("interval").get("start"), criteria.timeTo()));
         }
 
-        scheduleSubquery.select(cb.literal(1)).where(wsPredicates.toArray(new Predicate[0]));
+        scheduleSubquery.select(cb.literal(1))
+                .where(predicates.toArray(new Predicate[0]));
+
         return cb.exists(scheduleSubquery);
     }
 
-    private static Predicate[] buildServicePredicates(
-            Root<Business> businessRoot,
-            Root<ServiceItem> serviceRoot,
-            CriteriaBuilder cb,
-            BusinessFilterCriteria criteria) {
-        List<Predicate> predicates = new ArrayList<>();
-        predicates.add(cb.equal(serviceRoot.get("business"), businessRoot));
-        predicates.add(cb.isTrue(serviceRoot.get("active")));
-
-        if (criteria != null && criteria.hasService()) {
-            predicates.add(cb.like(
-                    cb.lower(serviceRoot.get("serviceType").get("name")),
-                    containsPattern(criteria.service())
-            ));
-
-            if (criteria.minPrice() != null) {
-                predicates.add(cb.greaterThanOrEqualTo(serviceRoot.get("price"), criteria.minPrice()));
-            }
-            if (criteria.maxPrice() != null) {
-                predicates.add(cb.lessThanOrEqualTo(serviceRoot.get("price"), criteria.maxPrice()));
-            }
-        }
-
-        return predicates.toArray(new Predicate[0]);
+    private static Expression<String> toSearchPattern(CriteriaBuilder cb, String value) {
+        return cb.concat(
+                cb.concat("%", unaccentLower(cb, value.trim())),
+                "%"
+        );
     }
 
-    private static Predicate coversTime(Path<?> intervalPath, LocalTime time, CriteriaBuilder cb) {
-        return cb.and(
-                cb.lessThanOrEqualTo(intervalPath.get("startTime"), time),
-                cb.greaterThan(intervalPath.get("endTime"), time));
+    private static Expression<String> unaccentLower(CriteriaBuilder cb, Expression<String> expr) {
+        return cb.function("unaccent", String.class, cb.lower(expr));
     }
 
-    private static String containsPattern(String value) {
-        return "%" + value.trim().toLowerCase() + "%";
+    private static Expression<String> unaccentLower(CriteriaBuilder cb, String value) {
+        return cb.function("unaccent", String.class, cb.lower(cb.literal(value)));
     }
 }

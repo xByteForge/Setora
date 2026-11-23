@@ -54,7 +54,7 @@
 
   <div class="results" [class.results--panel]="filtersOpen()">
     <app-business-list
-      [items]="service.result().items"
+      [items]="service.result().content"
       [single]="filtersOpen()"
       (view)="onView($event)"
     />
@@ -65,9 +65,9 @@
   </div>
 
   <app-pagination
-    [page]="service.result().page"
-    [pageSize]="service.result().pageSize"
-    [total]="service.result().total"
+    [page]="service.result().number + 1"
+    [pageSize]="service.result().size"
+    [total]="service.result().totalElements"
     (pageChange)="service.setPage($event)"
     (pageSizeChange)="service.setPageSize($event)"
   />

@@ -1,5 +1,6 @@
 package com.byteforge.setorabackend.business.controller;
 
+import com.byteforge.setorabackend.business.dtos.BusinessDetailedResponseDto;
 import com.byteforge.setorabackend.business.service.BusinessService;
 import com.byteforge.setorabackend.business.dtos.BusinessFilterCriteria;
 import com.byteforge.setorabackend.business.dtos.BusinessResponseDto;
@@ -26,7 +27,7 @@ public class BusinessController {
     private final EmployeeService employeeService;
 
     @GetMapping("/{businessId}")
-    public ResponseEntity<BusinessResponseDto> getBusinessById(@PathVariable int businessId) {
+    public ResponseEntity<BusinessDetailedResponseDto> getBusinessById(@PathVariable int businessId) {
         return ResponseEntity.ok(businessService.getBusinessById(businessId));
     }
 

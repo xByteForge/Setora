@@ -35,7 +35,7 @@
         <option value="" [selected]="draft().category === ''">
           {{ t('DISCOVER.FILTERS.ALL_CATEGORIES') }}
         </option>
-        @for (c of service.categories; track c) {
+        @for (c of service.categories(); track c) {
           <option [value]="c" [selected]="c === draft().category">{{ c }}</option>
         }
       </select>
