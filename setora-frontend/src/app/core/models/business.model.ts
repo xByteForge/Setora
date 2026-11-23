@@ -1,5 +1,5 @@
 import { BusinessLocation } from './business-location.model';
-import { BusinessCategory } from "./business-category.model";
+import { BusinessCategory } from './business-category.model';
 
 export interface Business {
   id: number;

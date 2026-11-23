@@ -1,10 +1,4 @@
-export type BusinessSort =
-    | 'newest'
-    | 'oldest'
-    | 'nameAsc'
-    | 'nameDesc'
-    | 'priceAsc'
-    | 'priceDesc';
+export type BusinessSort = 'newest' | 'oldest' | 'nameAsc' | 'nameDesc' | 'priceAsc' | 'priceDesc';
 
 export interface BusinessQuery {
   text: string;

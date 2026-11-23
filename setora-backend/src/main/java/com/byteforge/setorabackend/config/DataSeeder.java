@@ -416,8 +416,8 @@ public class DataSeeder implements CommandLineRunner {
         business.setEmail("contact" + (index + 1) + "@setora.test");
         business.setSlug(slug);
         business.setDescription("Professional beauty and wellness services.");
-        business.setLocation(
-                new Location(locationName, "Str. Memorandumului " + (10 + index) + ", " + locationName, 46.7694, 23.5899));
+        business.setLocation(new Location(
+                locationName, "Str. Memorandumului " + (10 + index) + ", " + locationName, 46.7694, 23.5899));
         business.setPhone("0264000000");
         business.setTimezone(ZONE);
 

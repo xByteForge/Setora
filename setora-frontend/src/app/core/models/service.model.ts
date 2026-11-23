@@ -1,5 +1,5 @@
 import { PaymentMethod } from './enums/payment-method.model';
-import { ServiceType } from "./service-type.model";
+import { ServiceType } from './service-type.model';
 
 export interface Service {
   id: number;

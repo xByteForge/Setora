@@ -18,8 +18,10 @@ public record BusinessFilterCriteria(
         Integer serviceTypeId,
         @PositiveOrZero BigDecimal minPrice,
         @PositiveOrZero BigDecimal maxPrice,
+
         @FutureOrPresent @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
         LocalDate date,
+
         @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime timeFrom,
         @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime timeTo) {
     @AssertTrue(message = "minPrice must be less than or equal to maxPrice")

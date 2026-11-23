@@ -1,10 +1,10 @@
 package com.byteforge.setorabackend.business.controller;
 
 import com.byteforge.setorabackend.business.dtos.BusinessDetailedResponseDto;
-import com.byteforge.setorabackend.business.service.BusinessService;
 import com.byteforge.setorabackend.business.dtos.BusinessFilterCriteria;
 import com.byteforge.setorabackend.business.dtos.BusinessResponseDto;
 import com.byteforge.setorabackend.business.dtos.BusinessSortBy;
+import com.byteforge.setorabackend.business.service.BusinessService;
 import com.byteforge.setorabackend.common.PaginationParams;
 import com.byteforge.setorabackend.employees.model.EmployeeResponseDto;
 import com.byteforge.setorabackend.employees.service.EmployeeService;
@@ -53,5 +53,10 @@ public class BusinessController {
     public ResponseEntity<Page<BusinessResponseDto>> getAllBusinesses(
             @Valid @ModelAttribute PaginationParams pageParams) {
         return ResponseEntity.ok(businessService.getAllBusinesses(pageParams));
+    }
+
+    @GetMapping("/locations")
+    public List<String> getLocations() {
+        return businessService.getAvailableLocations();
     }
 }

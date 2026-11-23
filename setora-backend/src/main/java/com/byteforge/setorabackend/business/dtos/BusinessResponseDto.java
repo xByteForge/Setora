@@ -20,5 +20,4 @@ public record BusinessResponseDto(
         List<String> photoUrls,
         String thumbnailUrl,
         List<String> tags,
-        BigDecimal minPrice
-) {}
+        BigDecimal minPrice) {}

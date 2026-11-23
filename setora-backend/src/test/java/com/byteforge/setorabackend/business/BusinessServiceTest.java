@@ -114,10 +114,7 @@ class BusinessServiceTest {
         Pageable captured = capturePageable();
         assertThat(captured.getPageNumber()).isEqualTo(0);
         assertThat(captured.getPageSize()).isEqualTo(10);
-        assertThat(captured.getSort()).containsExactly(
-                Sort.Order.desc("createdAt"),
-                Sort.Order.desc("id")
-        );
+        assertThat(captured.getSort()).containsExactly(Sort.Order.desc("createdAt"), Sort.Order.desc("id"));
     }
 
     @Test
@@ -141,19 +138,13 @@ class BusinessServiceTest {
         businessService.getBusinesses(emptyCriteria(), null, pageParams);
 
         Pageable captured = capturePageable();
-        assertThat(captured.getSort()).containsExactly(
-                Sort.Order.desc("createdAt"),
-                Sort.Order.desc("id")
-        );
+        assertThat(captured.getSort()).containsExactly(Sort.Order.desc("createdAt"), Sort.Order.desc("id"));
     }
 
     @ParameterizedTest
     @MethodSource("standardSortCases")
     void getBusinesses_standardSort_appliesExpectedOrderAndTieBreaker(
-            BusinessSortBy sortBy,
-            Sort.Order primaryOrder,
-            Sort.Order tieBreakerOrder
-    ) {
+            BusinessSortBy sortBy, Sort.Order primaryOrder, Sort.Order tieBreakerOrder) {
         PaginationParams pageParams = new PaginationParams(1, 10);
         when(businessRepository.findAll(ArgumentMatchers.<Specification<Business>>any(), any(Pageable.class)))
                 .thenReturn(Page.empty());
@@ -171,15 +162,14 @@ class BusinessServiceTest {
                 Arguments.of(BusinessSortBy.NAME_ASC, Sort.Order.asc("name"), Sort.Order.asc("id")),
                 Arguments.of(BusinessSortBy.NAME_DESC, Sort.Order.desc("name"), Sort.Order.desc("id")),
                 Arguments.of(BusinessSortBy.OLDEST, Sort.Order.asc("createdAt"), Sort.Order.asc("id")),
-                Arguments.of(BusinessSortBy.NEWEST, Sort.Order.desc("createdAt"), Sort.Order.desc("id"))
-        );
+                Arguments.of(BusinessSortBy.NEWEST, Sort.Order.desc("createdAt"), Sort.Order.desc("id")));
     }
 
     @ParameterizedTest
-    @EnumSource(value = BusinessSortBy.class, names = {"PRICE_ASC", "PRICE_DESC"})
-    void getBusinesses_priceSort_passesUnsortedPageableSoSpecificationOrderIsNotOverridden(
-            BusinessSortBy priceSort
-    ) {
+    @EnumSource(
+            value = BusinessSortBy.class,
+            names = {"PRICE_ASC", "PRICE_DESC"})
+    void getBusinesses_priceSort_passesUnsortedPageableSoSpecificationOrderIsNotOverridden(BusinessSortBy priceSort) {
         PaginationParams pageParams = new PaginationParams(2, 15);
         when(businessRepository.findAll(ArgumentMatchers.<Specification<Business>>any(), any(Pageable.class)))
                 .thenReturn(Page.empty());
@@ -210,8 +200,7 @@ class BusinessServiceTest {
                 new BigDecimal("150.00"),
                 LocalDate.of(2026, 11, 25),
                 LocalTime.of(6, 0),
-                LocalTime.of(12, 0)
-        );
+                LocalTime.of(12, 0));
 
         PaginationParams pageParams = new PaginationParams(0, 2);
         Page<Business> repoPage = new PageImpl<>(List.of(b1, b2), Pageable.ofSize(2), 5);
@@ -221,9 +210,7 @@ class BusinessServiceTest {
         when(businessMapper.toResponseDto(b1)).thenReturn(dto1);
         when(businessMapper.toResponseDto(b2)).thenReturn(dto2);
 
-        Page<BusinessResponseDto> result = businessService.getBusinesses(
-                criteria, BusinessSortBy.NAME_ASC, pageParams
-        );
+        Page<BusinessResponseDto> result = businessService.getBusinesses(criteria, BusinessSortBy.NAME_ASC, pageParams);
 
         assertThat(result.getContent()).containsExactly(dto1, dto2);
         assertThat(result.getTotalElements()).isEqualTo(5);
@@ -238,9 +225,8 @@ class BusinessServiceTest {
         when(businessRepository.findAll(ArgumentMatchers.<Specification<Business>>any(), any(Pageable.class)))
                 .thenReturn(Page.empty());
 
-        Page<BusinessResponseDto> result = businessService.getBusinesses(
-                emptyCriteria(), BusinessSortBy.NEWEST, new PaginationParams(0, 20)
-        );
+        Page<BusinessResponseDto> result =
+                businessService.getBusinesses(emptyCriteria(), BusinessSortBy.NEWEST, new PaginationParams(0, 20));
 
         assertThat(result).isEmpty();
         verifyNoInteractions(businessMapper);
@@ -251,9 +237,8 @@ class BusinessServiceTest {
         when(businessRepository.findAll(ArgumentMatchers.<Specification<Business>>any(), any(Pageable.class)))
                 .thenReturn(Page.empty());
 
-        Page<BusinessResponseDto> result = businessService.getBusinesses(
-                null, BusinessSortBy.NEWEST, new PaginationParams(null, null)
-        );
+        Page<BusinessResponseDto> result =
+                businessService.getBusinesses(null, BusinessSortBy.NEWEST, new PaginationParams(null, null));
 
         assertThat(result).isEmpty();
         Pageable captured = capturePageable();
@@ -265,26 +250,47 @@ class BusinessServiceTest {
     @Test
     void filterCriteria_validatesPriceAndTimeRanges() {
         BusinessFilterCriteria valid = new BusinessFilterCriteria(
-                null, null, null, null, null, null,
-                new BigDecimal("60"), new BigDecimal("120"),
-                null, LocalTime.of(12, 0), LocalTime.of(18, 0)
-        );
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                new BigDecimal("60"),
+                new BigDecimal("120"),
+                null,
+                LocalTime.of(12, 0),
+                LocalTime.of(18, 0));
         assertThat(valid.isPriceRangeValid()).isTrue();
         assertThat(valid.isTimeRangeValid()).isTrue();
 
         BusinessFilterCriteria equalBounds = new BusinessFilterCriteria(
-                null, null, null, null, null, null,
-                new BigDecimal("100"), new BigDecimal("100"),
-                null, LocalTime.of(12, 0), LocalTime.of(12, 0)
-        );
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                new BigDecimal("100"),
+                new BigDecimal("100"),
+                null,
+                LocalTime.of(12, 0),
+                LocalTime.of(12, 0));
         assertThat(equalBounds.isPriceRangeValid()).isTrue();
         assertThat(equalBounds.isTimeRangeValid()).isTrue();
 
         BusinessFilterCriteria invalid = new BusinessFilterCriteria(
-                null, null, null, null, null, null,
-                new BigDecimal("200"), new BigDecimal("50"),
-                null, LocalTime.of(18, 0), LocalTime.of(6, 0)
-        );
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                new BigDecimal("200"),
+                new BigDecimal("50"),
+                null,
+                LocalTime.of(18, 0),
+                LocalTime.of(6, 0));
         assertThat(invalid.isPriceRangeValid()).isFalse();
         assertThat(invalid.isTimeRangeValid()).isFalse();
     }
@@ -296,12 +302,32 @@ class BusinessServiceTest {
         assertThat(emptyCriteria().hasScheduleFilter()).isFalse();
 
         BusinessFilterCriteria active = new BusinessFilterCriteria(
-                null, "  barber ", null, null, null, 3,
-                null, null, null, LocalTime.of(18, 0), null
-        );
+                null, "  barber ", null, null, null, 3, null, null, null, LocalTime.of(18, 0), null);
         assertThat(active.hasText()).isTrue();
         assertThat(active.hasService()).isTrue();
         assertThat(active.hasScheduleFilter()).isTrue();
+    }
+
+    // getAvailableLocations
+    @Test
+    void getAvailableLocations_returnsDistinctSortedLocationsFromRepository() {
+        List<String> expected = List.of("Brașov", "București", "Cluj-Napoca");
+        when(businessRepository.findDistinctLocations()).thenReturn(expected);
+
+        List<String> result = businessService.getAvailableLocations();
+
+        assertThat(result).containsExactly("Brașov", "București", "Cluj-Napoca");
+        verify(businessRepository).findDistinctLocations();
+    }
+
+    @Test
+    void getAvailableLocations_returnsEmptyListWhenNoBusinessesHaveLocations() {
+        when(businessRepository.findDistinctLocations()).thenReturn(List.of());
+
+        List<String> result = businessService.getAvailableLocations();
+
+        assertThat(result).isEmpty();
+        verify(businessRepository).findDistinctLocations();
     }
 
     // helpers
@@ -312,9 +338,7 @@ class BusinessServiceTest {
     }
 
     private BusinessFilterCriteria emptyCriteria() {
-        return new BusinessFilterCriteria(
-                null, null, null, null, null, null, null, null, null, null, null
-        );
+        return new BusinessFilterCriteria(null, null, null, null, null, null, null, null, null, null, null);
     }
 
     private Business createBusiness(int id, String name) {
@@ -341,8 +365,7 @@ class BusinessServiceTest {
                 List.of(),
                 null,
                 List.of(),
-                BigDecimal.ZERO
-        );
+                BigDecimal.ZERO);
     }
 
     private BusinessDetailedResponseDto createDetailedDto(int id, String name) {
@@ -361,7 +384,6 @@ class BusinessServiceTest {
                 List.of(),
                 null,
                 List.of(),
-                List.of()
-        );
+                List.of());
     }
 }

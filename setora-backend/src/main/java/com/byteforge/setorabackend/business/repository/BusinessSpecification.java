@@ -7,7 +7,6 @@ import com.byteforge.setorabackend.employees.model.Employee;
 import com.byteforge.setorabackend.employees.model.WorkSchedule;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
 import jakarta.persistence.criteria.*;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,17 +39,21 @@ public final class BusinessSpecification {
             if (criteria.location() != null && !criteria.location().isBlank()) {
                 Expression<String> pattern = toSearchPattern(cb, criteria.location());
                 predicates.add(cb.or(
-                        cb.like(unaccentLower(cb, cb.coalesce(root.get("location").get("locationName"), "")), pattern),
-                        cb.like(unaccentLower(cb, cb.coalesce(root.get("location").get("address"), "")), pattern)
-                ));
+                        cb.like(
+                                unaccentLower(
+                                        cb, cb.coalesce(root.get("location").get("locationName"), "")),
+                                pattern),
+                        cb.like(
+                                unaccentLower(
+                                        cb, cb.coalesce(root.get("location").get("address"), "")),
+                                pattern)));
             }
 
             if (criteria.tags() != null && !criteria.tags().isEmpty()) {
                 for (String tag : criteria.tags()) {
                     if (tag != null && !tag.isBlank()) {
-                        predicates.add(cb.isNotNull(
-                                cb.function("array_position", Integer.class, root.get("tags"), cb.literal(tag.trim()))
-                        ));
+                        predicates.add(cb.isNotNull(cb.function(
+                                "array_position", Integer.class, root.get("tags"), cb.literal(tag.trim()))));
                     }
                 }
             }
@@ -83,43 +86,34 @@ public final class BusinessSpecification {
             Root<ServiceItem> serviceRoot = priceSubquery.from(ServiceItem.class);
 
             List<Predicate> servicePredicates = buildServicePredicates(root, serviceRoot, cb, criteria);
-            priceSubquery.select(cb.min(serviceRoot.get("price")))
-                    .where(servicePredicates.toArray(new Predicate[0]));
+            priceSubquery.select(cb.min(serviceRoot.get("price"))).where(servicePredicates.toArray(new Predicate[0]));
 
-            query.orderBy(
-                    ascending ? cb.asc(priceSubquery) : cb.desc(priceSubquery),
-                    cb.asc(root.get("id"))
-            );
+            query.orderBy(ascending ? cb.asc(priceSubquery) : cb.desc(priceSubquery), cb.asc(root.get("id")));
 
             return cb.conjunction();
         };
     }
 
     private static Predicate hasMatchingText(
-            Root<Business> root,
-            CriteriaQuery<?> query,
-            CriteriaBuilder cb,
-            String rawText
-    ) {
+            Root<Business> root, CriteriaQuery<?> query, CriteriaBuilder cb, String rawText) {
         Expression<String> pattern = toSearchPattern(cb, rawText);
 
         Subquery<Integer> serviceSubquery = query.subquery(Integer.class);
         Root<ServiceItem> serviceRoot = serviceSubquery.from(ServiceItem.class);
-        serviceSubquery.select(cb.literal(1)).where(
-                cb.equal(serviceRoot.get("business"), root),
-                cb.isTrue(serviceRoot.get("active")),
-                cb.or(
-                        cb.like(unaccentLower(cb, serviceRoot.get("name")), pattern),
-                        cb.like(unaccentLower(cb, serviceRoot.get("serviceType").get("name")), pattern)
-                )
-        );
+        serviceSubquery
+                .select(cb.literal(1))
+                .where(
+                        cb.equal(serviceRoot.get("business"), root),
+                        cb.isTrue(serviceRoot.get("active")),
+                        cb.or(
+                                cb.like(unaccentLower(cb, serviceRoot.get("name")), pattern),
+                                cb.like(
+                                        unaccentLower(
+                                                cb,
+                                                serviceRoot.get("serviceType").get("name")),
+                                        pattern)));
 
-        Expression<String> tagsAsText = cb.function(
-                "array_to_string",
-                String.class,
-                root.get("tags"),
-                cb.literal(" ")
-        );
+        Expression<String> tagsAsText = cb.function("array_to_string", String.class, root.get("tags"), cb.literal(" "));
 
         return cb.or(
                 cb.like(unaccentLower(cb, root.get("name")), pattern),
@@ -128,22 +122,16 @@ public final class BusinessSpecification {
                 cb.like(unaccentLower(cb, cb.coalesce(root.get("location").get("locationName"), "")), pattern),
                 cb.like(unaccentLower(cb, cb.coalesce(root.get("location").get("address"), "")), pattern),
                 cb.like(unaccentLower(cb, cb.coalesce(tagsAsText, "")), pattern),
-                cb.exists(serviceSubquery)
-        );
+                cb.exists(serviceSubquery));
     }
 
     private static Predicate hasMatchingService(
-            Root<Business> root,
-            CriteriaQuery<?> query,
-            CriteriaBuilder cb,
-            BusinessFilterCriteria criteria
-    ) {
+            Root<Business> root, CriteriaQuery<?> query, CriteriaBuilder cb, BusinessFilterCriteria criteria) {
         Subquery<Integer> serviceSubquery = query.subquery(Integer.class);
         Root<ServiceItem> serviceRoot = serviceSubquery.from(ServiceItem.class);
 
         List<Predicate> servicePredicates = buildServicePredicates(root, serviceRoot, cb, criteria);
-        serviceSubquery.select(cb.literal(1))
-                .where(servicePredicates.toArray(new Predicate[0]));
+        serviceSubquery.select(cb.literal(1)).where(servicePredicates.toArray(new Predicate[0]));
 
         return cb.exists(serviceSubquery);
     }
@@ -152,8 +140,7 @@ public final class BusinessSpecification {
             Root<Business> businessRoot,
             Root<ServiceItem> serviceRoot,
             CriteriaBuilder cb,
-            BusinessFilterCriteria criteria
-    ) {
+            BusinessFilterCriteria criteria) {
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(cb.equal(serviceRoot.get("business"), businessRoot));
         predicates.add(cb.isTrue(serviceRoot.get("active")));
@@ -174,11 +161,7 @@ public final class BusinessSpecification {
     }
 
     private static Predicate hasAvailableSchedule(
-            Root<Business> root,
-            CriteriaQuery<?> query,
-            CriteriaBuilder cb,
-            BusinessFilterCriteria criteria
-    ) {
+            Root<Business> root, CriteriaQuery<?> query, CriteriaBuilder cb, BusinessFilterCriteria criteria) {
         Subquery<Integer> scheduleSubquery = query.subquery(Integer.class);
         Root<WorkSchedule> scheduleRoot = scheduleSubquery.from(WorkSchedule.class);
         Join<WorkSchedule, Employee> employeeJoin = scheduleRoot.join("employee");
@@ -193,7 +176,8 @@ public final class BusinessSpecification {
         }
 
         if (criteria.date() != null) {
-            predicates.add(cb.equal(scheduleRoot.get("dayOfWeek"), criteria.date().getDayOfWeek()));
+            predicates.add(
+                    cb.equal(scheduleRoot.get("dayOfWeek"), criteria.date().getDayOfWeek()));
         }
 
         if (criteria.timeFrom() != null) {
@@ -204,17 +188,13 @@ public final class BusinessSpecification {
             predicates.add(cb.lessThan(scheduleRoot.get("interval").get("start"), criteria.timeTo()));
         }
 
-        scheduleSubquery.select(cb.literal(1))
-                .where(predicates.toArray(new Predicate[0]));
+        scheduleSubquery.select(cb.literal(1)).where(predicates.toArray(new Predicate[0]));
 
         return cb.exists(scheduleSubquery);
     }
 
     private static Expression<String> toSearchPattern(CriteriaBuilder cb, String value) {
-        return cb.concat(
-                cb.concat("%", unaccentLower(cb, value.trim())),
-                "%"
-        );
+        return cb.concat(cb.concat("%", unaccentLower(cb, value.trim())), "%");
     }
 
     private static Expression<String> unaccentLower(CriteriaBuilder cb, Expression<String> expr) {

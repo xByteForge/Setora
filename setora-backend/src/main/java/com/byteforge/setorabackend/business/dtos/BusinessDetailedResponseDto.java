@@ -1,7 +1,6 @@
 package com.byteforge.setorabackend.business.dtos;
 
 import com.byteforge.setorabackend.serviceItem.dtos.ServiceResponseDto;
-
 import java.time.Instant;
 import java.util.List;
 
@@ -20,5 +19,4 @@ public record BusinessDetailedResponseDto(
         List<String> photoUrls,
         String thumbnailUrl,
         List<String> tags,
-        List<ServiceResponseDto> services
-) {}
+        List<ServiceResponseDto> services) {}

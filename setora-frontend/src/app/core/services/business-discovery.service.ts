@@ -30,10 +30,10 @@ export class BusinessDiscoveryService {
   private readonly categoryList = signal<BusinessCategory[]>([]);
   private readonly serviceTypeList = signal<ServiceType[]>([]);
 
-  readonly cities = ['Cluj-Napoca', 'București'];
+  readonly cities = signal<string[]>([]);
   readonly categories = computed(() => this.categoryList().map((c) => c.name));
   readonly serviceOptions = computed(() =>
-      this.serviceTypeList().map((st) => ({ id: st.id, name: st.name })),
+    this.serviceTypeList().map((st) => ({ id: st.id, name: st.name })),
   );
 
   readonly query = signal<BusinessQuery>({ ...DEFAULT_BUSINESS_QUERY });
@@ -75,17 +75,17 @@ export class BusinessDiscoveryService {
       this.error.set(null);
 
       const sub = this.http
-          .get<PageResult<BusinessListItem>>(`${this.apiBase}/businesses`, { params })
-          .subscribe({
-            next: (page) => {
-              this.result.set(page);
-              this.loading.set(false);
-            },
-            error: () => {
-              this.error.set('Failed to load business list.');
-              this.loading.set(false);
-            },
-          });
+        .get<PageResult<BusinessListItem>>(`${this.apiBase}/businesses`, { params })
+        .subscribe({
+          next: (page) => {
+            this.result.set(page);
+            this.loading.set(false);
+          },
+          error: () => {
+            this.error.set('Failed to load business list.');
+            this.loading.set(false);
+          },
+        });
 
       onCleanup(() => sub.unsubscribe());
     });
@@ -104,8 +104,8 @@ export class BusinessDiscoveryService {
       return [];
     }
     return this.serviceTypeList()
-        .filter((st) => st.categoryId === matched.id)
-        .map((st) => ({ id: st.id, name: st.name }));
+      .filter((st) => st.categoryId === matched.id)
+      .map((st) => ({ id: st.id, name: st.name }));
   }
 
   searchByText(raw: string): Observable<BusinessListItem[]> {
@@ -115,8 +115,8 @@ export class BusinessDiscoveryService {
     }
     const params = new HttpParams().set('text', text).set('page', 0).set('size', 6);
     return this.http
-        .get<PageResult<BusinessListItem>>(`${this.apiBase}/businesses`, { params })
-        .pipe(map((page) => page.content));
+      .get<PageResult<BusinessListItem>>(`${this.apiBase}/businesses`, { params })
+      .pipe(map((page) => page.content));
   }
 
   quickSearch(raw: string): BusinessListItem[] {
@@ -146,8 +146,8 @@ export class BusinessDiscoveryService {
   count(q: BusinessQuery): Observable<number> {
     const params = this.buildParams({ ...q, page: 1, pageSize: 1 }, this.categoryList());
     return this.http
-        .get<PageResult<Business>>(`${this.apiBase}/businesses`, { params })
-        .pipe(map((page) => page.totalElements));
+      .get<PageResult<Business>>(`${this.apiBase}/businesses`, { params })
+      .pipe(map((page) => page.totalElements));
   }
 
   applyFilters(patch: Partial<BusinessQuery>) {
@@ -181,19 +181,23 @@ export class BusinessDiscoveryService {
 
   private loadFilterMetadata() {
     this.http
-        .get<BusinessCategory[]>(`${this.apiBase}/businesses/categories`)
-        .subscribe((data) => this.categoryList.set(data));
+      .get<string[]>(`${this.apiBase}/businesses/locations`)
+      .subscribe((data) => this.cities.set(data));
 
     this.http
-        .get<ServiceType[]>(`${this.apiBase}/services/types`)
-        .subscribe((data) => this.serviceTypeList.set(data));
+      .get<BusinessCategory[]>(`${this.apiBase}/businesses/categories`)
+      .subscribe((data) => this.categoryList.set(data));
+
+    this.http
+      .get<ServiceType[]>(`${this.apiBase}/services/types`)
+      .subscribe((data) => this.serviceTypeList.set(data));
   }
 
   private buildParams(q: BusinessQuery, categories: BusinessCategory[]): HttpParams {
     let params = new HttpParams()
-        .set('page', Math.max(0, q.page - 1))
-        .set('size', q.pageSize)
-        .set('sortBy', SORT_MAP[q.sort]);
+      .set('page', Math.max(0, q.page - 1))
+      .set('size', q.pageSize)
+      .set('sortBy', SORT_MAP[q.sort]);
 
     if (q.text.trim()) params = params.set('text', q.text.trim());
     if (q.city) params = params.set('location', q.city);
@@ -227,8 +231,8 @@ export class BusinessDiscoveryService {
 
   private minutesToTime(totalMinutes: number): string {
     const h = Math.floor(totalMinutes / 60)
-        .toString()
-        .padStart(2, '0');
+      .toString()
+      .padStart(2, '0');
     const m = (totalMinutes % 60).toString().padStart(2, '0');
     return `${h}:${m}`;
   }

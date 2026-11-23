@@ -12,7 +12,7 @@ export class CatalogService {
     ownerId: 1,
     category: {
       id: 1,
-      name: "bartane",
+      name: 'bartane',
     },
     name: 'Studio Armonia',
     slug: 'studio-armonia',
@@ -40,7 +40,7 @@ export class CatalogService {
       description: null,
       type: {
         id: 1,
-        name: "1",
+        name: '1',
         categoryId: null,
       },
       price: 150,
@@ -55,7 +55,7 @@ export class CatalogService {
       description: null,
       type: {
         id: 1,
-        name: "1",
+        name: '1',
         categoryId: null,
       },
       price: 250,
@@ -70,7 +70,7 @@ export class CatalogService {
       description: null,
       type: {
         id: 1,
-        name: "1",
+        name: '1',
         categoryId: null,
       },
       price: 120,
@@ -85,7 +85,7 @@ export class CatalogService {
       description: null,
       type: {
         id: 1,
-        name: "1",
+        name: '1',
         categoryId: null,
       },
       price: 100,

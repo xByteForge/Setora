@@ -13,7 +13,7 @@
       <div class="field">
         <label for="city">{{ 'DISCOVER.FILTERS.CITY' | transloco }}</label>
         <select id="city" (change)="setCity($any($event.target).value)">
-          @for (c of service.cities; track c) {
+          @for (c of service.cities(); track c) {
             <option [value]="c" [selected]="c === service.query().city">{{ c }}</option>
           }
         </select>

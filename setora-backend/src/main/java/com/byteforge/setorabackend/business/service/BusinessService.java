@@ -1,15 +1,16 @@
 package com.byteforge.setorabackend.business.service;
 
 import com.byteforge.setorabackend.business.dtos.BusinessDetailedResponseDto;
-import com.byteforge.setorabackend.business.model.Business;
-import com.byteforge.setorabackend.business.repository.BusinessRepository;
-import com.byteforge.setorabackend.business.repository.BusinessSpecification;
 import com.byteforge.setorabackend.business.dtos.BusinessFilterCriteria;
 import com.byteforge.setorabackend.business.dtos.BusinessResponseDto;
 import com.byteforge.setorabackend.business.dtos.BusinessSortBy;
 import com.byteforge.setorabackend.business.mapper.BusinessMapper;
+import com.byteforge.setorabackend.business.model.Business;
+import com.byteforge.setorabackend.business.repository.BusinessRepository;
+import com.byteforge.setorabackend.business.repository.BusinessSpecification;
 import com.byteforge.setorabackend.common.PaginationParams;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -56,6 +57,11 @@ public class BusinessService {
     @Transactional(readOnly = true)
     public Page<BusinessResponseDto> getAllBusinesses(PaginationParams pageParams) {
         return getBusinesses(null, null, pageParams);
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> getAvailableLocations() {
+        return businessRepository.findDistinctLocations();
     }
 
     private Sort buildStandardSort(BusinessSortBy sortBy) {

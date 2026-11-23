@@ -3,12 +3,11 @@ package com.byteforge.setorabackend.serviceItem;
 import com.byteforge.setorabackend.business.service.CategoryService;
 import com.byteforge.setorabackend.serviceItem.dtos.ServiceTypeDto;
 import com.byteforge.setorabackend.serviceItem.mapper.ServiceItemMapper;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,8 +30,6 @@ public class ServiceTypeService {
                 ? serviceTypeRepository.findByCategoryId(categoryId, sort)
                 : serviceTypeRepository.findAll(sort);
 
-        return types.stream()
-                .map(serviceItemMapper::toServiceTypeDto)
-                .toList();
+        return types.stream().map(serviceItemMapper::toServiceTypeDto).toList();
     }
 }

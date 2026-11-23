@@ -12,5 +12,4 @@ public record ServiceResponseDto(
         BigDecimal price,
         int durationMinutes,
         boolean active,
-        PaymentMethod paymentMethod
-) {}
+        PaymentMethod paymentMethod) {}
