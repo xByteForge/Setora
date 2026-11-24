@@ -240,21 +240,15 @@ public class AppointmentService {
 
         Business business = service.getBusiness();
 
-        User client = userService.findByEmail("ghost@gmail.com");
-
         // Validate business, employee and service compatibility.
         // TODO: Check time slots to prevent double bookings.
-        Appointment appointment =
-                AppointmentMapper.toEntity(request, employee, service, client, business.getTimezone());
+        Appointment appointment = AppointmentMapper.toEntity(request, employee, service, null, business.getTimezone());
 
-        String note = "";
-        note += "Appointment for: " + request.clientName() + "\n";
-        note += "Email: " + request.clientEmail() + "\n";
-        note += "Phone number: " + request.clientPhone() + "\n";
-        note += "\n --- Details ---\n";
-        note += request.clientName() + "\n";
+        appointment.setClientName(request.clientName());
+        appointment.setClientEmail(request.clientEmail());
+        appointment.setClientPhone(request.clientPhone());
 
-        appointment.setClientNote(note);
+        appointment.setClientNote(request.clientNote());
 
         return AppointmentMapper.toResponseDto(appointmentRepository.save(appointment));
     }
