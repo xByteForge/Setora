@@ -68,6 +68,10 @@ public class AuthService {
     private void validatePassword(String password) {
         if (password == null || password.isBlank() || password.length() < 8)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password must contain at least 8 characters");
+        if (!(password.matches(".*[a-z].*") && password.matches(".*[A-Z].*") && password.matches(".*[^a-zA-Z0-9].*")))
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Password must contain at least a small letter, a capital one and a special symbol.");
     }
 
     @Transactional

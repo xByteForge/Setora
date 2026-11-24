@@ -7,6 +7,7 @@ public record CreateUserRequestDto(
         @NotBlank @Size(max = 100) String firstName,
 
         @NotBlank @Size(max = 100) String lastName,
+        @NotBlank @Size(max = 100) String username,
 
         @NotBlank @Email @Size(max = 255) String email,
 
