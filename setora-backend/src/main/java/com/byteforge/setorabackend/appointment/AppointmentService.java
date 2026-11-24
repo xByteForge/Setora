@@ -240,16 +240,9 @@ public class AppointmentService {
 
         Business business = service.getBusiness();
 
-
         // Validate business, employee and service compatibility.
         // TODO: Check time slots to prevent double bookings.
-        Appointment appointment = AppointmentMapper.toEntity(
-                request,
-                employee,
-                service,
-                null,
-                business.getTimezone()
-        );
+        Appointment appointment = AppointmentMapper.toEntity(request, employee, service, null, business.getTimezone());
 
         appointment.setClientName(request.clientName());
         appointment.setClientEmail(request.clientEmail());

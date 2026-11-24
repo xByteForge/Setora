@@ -31,12 +31,10 @@ public class AppointmentMapper {
                 service.getId(),
                 service.getName(),
                 Math.toIntExact(Duration.between(startsAt, endsAt).toMinutes()),
-
                 client != null ? client.getId() : null,
                 client != null ? client.getName() : appointment.getClientName(),
                 client != null ? client.getPhoneNumber() : appointment.getClientPhone(),
                 client != null ? client.getEmail() : appointment.getClientEmail(),
-
                 employee.getId(),
                 employee.getUser().getName(),
                 start.toLocalDate(),
