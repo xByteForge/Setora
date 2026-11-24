@@ -15,19 +15,16 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import java.time.DayOfWeek;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.DayOfWeek;
-
-
-//working hours of an employee in a day of the week
+// working hours of an employee in a day of the week
 @Entity
 @Table(
         name = "work_schedules",
         uniqueConstraints = @UniqueConstraint(columnNames = {"employee_id", "day_of_week"}),
-        check = @CheckConstraint(constraint = "end_time > start_time")
-)
+        check = @CheckConstraint(constraint = "end_time > start_time"))
 @Getter
 @Setter
 public class WorkSchedule {

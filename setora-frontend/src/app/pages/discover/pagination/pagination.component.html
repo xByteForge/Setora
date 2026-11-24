@@ -1,32 +1,60 @@
 <div class="pagination">
-    <div class="pagination__top">
-    <span class="pagination__range">
-      {{ 'DISCOVER.RANGE' | transloco: { start: rangeStart(), end: rangeEnd(), total: total() } }}
-    </span>
-        <select class="pagination__size" [value]="pageSize()" (change)="onSizeChange($event)"
-                [attr.aria-label]="'DISCOVER.PAGE_SIZE_LABEL' | transloco">
-            @for (s of pageSizes(); track s) {
-                <option [value]="s" [selected]="s === pageSize()">{{ 'DISCOVER.PER_PAGE' | transloco: { count: s } }}</option>
-            }
-        </select>
-    </div>
+  <span class="pagination__range">
+    {{ 'DISCOVER.RANGE' | transloco: { start: rangeStart(), end: rangeEnd(), total: total() } }}
+  </span>
 
-    <nav class="pagination__nav" [attr.aria-label]="'DISCOVER.PAGINATION' | transloco">
-        <button type="button" class="pagination__btn" [disabled]="page() === 1" (click)="go(page() - 1)"
-                [attr.aria-label]="'DISCOVER.PREV' | transloco">‹</button>
+  <nav class="pagination__nav" [attr.aria-label]="'DISCOVER.PAGINATION' | transloco">
+    <button
+      type="button"
+      class="pagination__btn"
+      [disabled]="page() === 1"
+      (click)="go(page() - 1)"
+      [attr.aria-label]="'DISCOVER.PREV' | transloco"
+    >
+      ‹
+    </button>
 
-        @for (p of pages(); track $index) {
-            @if (p === null) {
-                <span class="pagination__dots">…</span>
-            } @else {
-                <button type="button" class="pagination__btn" [class.is-active]="p === page()"
-                        [attr.aria-current]="p === page() ? 'page' : null" (click)="go(p)">{{ p }}</button>
-            }
-        }
+    @for (p of pages(); track $index) {
+      @if (p === null) {
+        <span class="pagination__dots">…</span>
+      } @else {
+        <button
+          type="button"
+          class="pagination__btn"
+          [class.is-active]="p === page()"
+          [attr.aria-current]="p === page() ? 'page' : null"
+          (click)="go(p)"
+        >
+          {{ p }}
+        </button>
+      }
+    }
 
-        <button type="button" class="pagination__btn" [disabled]="page() === totalPages()" (click)="go(page() + 1)"
-                [attr.aria-label]="'DISCOVER.NEXT' | transloco">›</button>
-    </nav>
+    <button
+      type="button"
+      class="pagination__btn"
+      [disabled]="page() === totalPages()"
+      (click)="go(page() + 1)"
+      [attr.aria-label]="'DISCOVER.NEXT' | transloco"
+    >
+      ›
+    </button>
+  </nav>
 
-    <p class="pagination__info">{{ 'DISCOVER.PAGE_OF' | transloco: { page: page(), pages: totalPages() } }}</p>
+  <select
+    class="pagination__size"
+    [value]="pageSize()"
+    (change)="onSizeChange($event)"
+    [attr.aria-label]="'DISCOVER.PAGE_SIZE_LABEL' | transloco"
+  >
+    @for (s of pageSizes(); track s) {
+      <option [value]="s" [selected]="s === pageSize()">
+        {{ 'DISCOVER.PER_PAGE' | transloco: { count: s } }}
+      </option>
+    }
+  </select>
+
+  <p class="pagination__info">
+    {{ 'DISCOVER.PAGE_OF' | transloco: { page: page(), pages: totalPages() } }}
+  </p>
 </div>

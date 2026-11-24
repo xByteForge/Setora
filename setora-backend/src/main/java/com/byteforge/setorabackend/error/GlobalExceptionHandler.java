@@ -4,12 +4,10 @@ import com.byteforge.setorabackend.error.exceptions.InvalidStateException;
 import com.byteforge.setorabackend.error.exceptions.PriceChangedException;
 import com.byteforge.setorabackend.error.exceptions.SlotTakenException;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.http.HttpStatus;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -75,6 +73,11 @@ public class GlobalExceptionHandler {
     // ==========================================
     // STANDARD EXCEPTIONS
     // ==========================================
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidParameter(EntityNotFoundException ex) {
+        return ResponseEntity.badRequest().body(Map.of("message", "Entity not found:  " + ex.getMessage()));
+    }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiErrorResponse> handleNotFound(

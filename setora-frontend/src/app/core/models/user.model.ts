@@ -9,5 +9,5 @@ export interface User {
   email: string;
   phoneNumber: string | null;
   role: UserRole;
-  notificationPreferences?: UserNotificationPreference[]; 
+  notificationPreferences?: UserNotificationPreference[];
 }

@@ -1,4 +1,4 @@
-import { provideTransloco, Translation } from '@ngneat/transloco';
+import { provideTransloco } from '@ngneat/transloco';
 import { isDevMode } from '@angular/core';
 import { TranslocoHttpLoader } from './transloco-loader';
 
@@ -18,5 +18,5 @@ export const translocoConfig = provideTransloco({
     reRenderOnLangChange: true,
     prodMode: !isDevMode(),
   },
-  loader: TranslocoHttpLoader
+  loader: TranslocoHttpLoader,
 });

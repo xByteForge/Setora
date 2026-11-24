@@ -1,144 +1,173 @@
 .discover {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    font-family: Arimo, Arial, Helvetica, sans-serif;
-    color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-family: Arimo, Arial, Helvetica, sans-serif;
+  color: var(--ink);
 }
 
 .intro h1 {
-    margin: 0;
-    font-size: 36px;
-    line-height: 1.15;
+  margin: 0;
+  font-size: 36px;
+  line-height: 1.15;
 }
 
 .subtitle {
-    margin: 6px 0 0;
-    font-size: 16px;
-    color: var(--text-secondary);
+  margin: 6px 0 0;
+  font-size: 16px;
+  color: var(--text-secondary);
 }
 
 .results {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 24px;
-    align-items: start;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
 }
 
-.results--panel { grid-template-columns: minmax(0, 1fr) 300px; }
+.results--panel {
+  grid-template-columns: minmax(0, 1fr) 300px;
+}
 
 .demo-note {
-    margin-top: 12px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border-color);
-    font-size: 13px;
-    color: var(--text-secondary);
+  margin-top: 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  font-size: 13px;
+  color: var(--text-secondary);
 }
 
-.demo-note p { margin: 0 0 4px; }
-.demo-note strong { color: var(--ink); }
+.demo-note p {
+  margin: 0 0 4px;
+}
+.demo-note strong {
+  color: var(--ink);
+}
 
 .head-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 16px 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 24px;
 }
 
 .controls {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    gap: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
 }
 
-.field select { min-width: 180px; }
-
+.field select {
+  min-width: 180px;
+}
 
 .btn-filters {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    height: 40px;
-    padding: 0 16px;
-    border: 1px solid var(--control-border);
-    border-radius: 8px;
-    background: var(--paper);
-    color: var(--ink);
-    font: inherit;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--control-border);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .btn-filters:hover,
 .btn-filters.active {
-    background: var(--mint-wash);
-    color: var(--accent-text);
+  background: var(--mint-wash);
+  color: var(--accent-text);
 }
 
 .btn-filters:focus-visible {
-    outline: 2px solid var(--focus);
-    outline-offset: 2px;
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
 
 .field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .field label {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
 }
 
 .field-row {
-    display: flex;
-    gap: 12px;
+  display: flex;
+  gap: 12px;
 }
 
 .field select {
-    height: 40px;
-    min-width: 200px;
-    padding: 0 12px;
-    border: 1px solid var(--control-border);
-    border-radius: 8px;
-    background: var(--paper);
-    color: var(--ink);
-    font: inherit;
-    font-size: 14px;
+  height: 40px;
+  min-width: 200px;
+  padding: 0 12px;
+  border: 1px solid var(--control-border);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
 }
 
-.field select:focus-visible, .btn-search:focus-visible {
-    outline: 2px solid var(--focus);
-    outline-offset: 2px;
+.field select:focus-visible,
+.btn-search:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
 
 .btn-search {
-    height: 40px;
-    padding: 0 20px;
-    border: 0;
-    border-radius: 8px;
-    background: var(--brand-mint);
-    color: var(--ink);
-    font: inherit;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
+  height: 40px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--brand-mint);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.page-search {
+  display: none;
 }
 
 /* sub 900px panoul devine bottom sheet, deci lista ramane pe toata latimea */
 @media (max-width: 900px) {
-    .results--panel { grid-template-columns: minmax(0, 1fr); }
+  .results--panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .page-search {
+    display: block;
+  }
 }
 
 @media (max-width: 640px) {
-    .intro h1 { font-size: 28px; }
-    .controls { width: 100%; }
-    .field { flex: 1 1 140px; }
-    .field select { width: 100%; min-width: 0; }
-    .btn-filters { width: 100%; justify-content: center; }
+  .intro h1 {
+    font-size: 28px;
+  }
+  .controls {
+    width: 100%;
+  }
+  .field {
+    flex: 1 1 140px;
+  }
+  .field select {
+    width: 100%;
+    min-width: 0;
+  }
+  .btn-filters {
+    width: 100%;
+    justify-content: center;
+  }
 }

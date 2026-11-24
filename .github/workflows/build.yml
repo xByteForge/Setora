@@ -48,4 +48,6 @@ jobs:
 
       - name: Build with Gradle
         working-directory: ./setora-backend
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: ./gradlew build

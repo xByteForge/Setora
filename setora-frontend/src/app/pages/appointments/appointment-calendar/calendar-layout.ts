@@ -1,44 +1,44 @@
 import { CalendarAppointment } from '../../../core/ui-models/calendar-appointment.model';
 
 export interface PositionedAppointment {
-    appointment: CalendarAppointment;
-    lane: number;  // pe ce "banda" sta (0, 1, 2...)
-    lanes: number; // cate benzi are grupul de suprapuneri
+  appointment: CalendarAppointment;
+  lane: number; // pe ce "banda" sta (0, 1, 2...)
+  lanes: number; // cate benzi are grupul de suprapuneri
 }
 
 export const layoutOverlaps = (items: CalendarAppointment[]): PositionedAppointment[] => {
-    const sorted = [...items].sort((a, b) => Date.parse(a.start) - Date.parse(b.start));
+  const sorted = [...items].sort((a, b) => Date.parse(a.start) - Date.parse(b.start));
 
-    const result: PositionedAppointment[] = [];
-    let cluster: PositionedAppointment[] = [];
-    let laneEnds: number[] = [];
-    let clusterEnd = 0;
+  const result: PositionedAppointment[] = [];
+  let cluster: PositionedAppointment[] = [];
+  let laneEnds: number[] = [];
+  let clusterEnd = 0;
 
-    const flush = () => {
-        for (const p of cluster) p.lanes = laneEnds.length;
-        result.push(...cluster);
-        cluster = [];
-        laneEnds = [];
-    };
+  const flush = () => {
+    for (const p of cluster) p.lanes = laneEnds.length;
+    result.push(...cluster);
+    cluster = [];
+    laneEnds = [];
+  };
 
-    for (const appointment of sorted) {
-        const start = Date.parse(appointment.start);
-        const end = Date.parse(appointment.end);
+  for (const appointment of sorted) {
+    const start = Date.parse(appointment.start);
+    const end = Date.parse(appointment.end);
 
-        if (cluster.length && start >= clusterEnd) flush();
+    if (cluster.length && start >= clusterEnd) flush();
 
-        let lane = laneEnds.findIndex((laneEnd) => laneEnd <= start);
-        if (lane === -1) {
-            lane = laneEnds.length;
-            laneEnds.push(end);
-        } else {
-            laneEnds[lane] = end;
-        }
-
-        clusterEnd = cluster.length ? Math.max(clusterEnd, end) : end;
-        cluster.push({ appointment, lane, lanes: 1 });
+    let lane = laneEnds.findIndex((laneEnd) => laneEnd <= start);
+    if (lane === -1) {
+      lane = laneEnds.length;
+      laneEnds.push(end);
+    } else {
+      laneEnds[lane] = end;
     }
 
-    flush();
-    return result;
+    clusterEnd = cluster.length ? Math.max(clusterEnd, end) : end;
+    cluster.push({ appointment, lane, lanes: 1 });
+  }
+
+  flush();
+  return result;
 };

@@ -1,6 +1,5 @@
-import { PaymentMethod } from "./enums/payment-method.model";
-import { PaymentStatus } from "./enums/payment-status.model";
-
+import { PaymentMethod } from './enums/payment-method.model';
+import { PaymentStatus } from './enums/payment-status.model';
 
 export interface Payment {
   id: number;

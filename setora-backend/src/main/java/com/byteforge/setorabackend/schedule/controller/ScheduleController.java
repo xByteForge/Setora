@@ -1,14 +1,13 @@
 package com.byteforge.setorabackend.schedule.controller;
 
-import com.byteforge.setorabackend.schedule.service.ScheduleService;
 import com.byteforge.setorabackend.schedule.dtos.BusinessScheduleRequest;
 import com.byteforge.setorabackend.schedule.dtos.EmployeeScheduleDto;
+import com.byteforge.setorabackend.schedule.service.ScheduleService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -19,9 +18,7 @@ public class ScheduleController {
 
     @GetMapping("businesses/{businessId}/schedules")
     public ResponseEntity<List<EmployeeScheduleDto>> getEmployeesSchedules(
-            @PathVariable Integer businessId,
-            @Valid BusinessScheduleRequest request
-    ) {
+            @PathVariable Integer businessId, @Valid BusinessScheduleRequest request) {
         List<EmployeeScheduleDto> response =
                 scheduleService.getBusinessSchedules(businessId, request.startDate(), request.endDate());
         return ResponseEntity.ok(response);

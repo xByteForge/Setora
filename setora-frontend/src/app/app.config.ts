@@ -11,7 +11,6 @@ import { AuthService } from './core/services/auth.service';
 import { UserService } from './core/services/user.service';
 import { isPlatformBrowser } from '@angular/common';
 
-
 function getInitialLang(): string {
   if (typeof window === 'undefined') return 'ro';
   const saved = localStorage.getItem('setora_lang');
