@@ -145,14 +145,15 @@
     "CHIPS": {
       "ACTIVE": "Active filters",
       "TEXT": "“{{value}}”",
-      "PRICE_RANGE": "{{min}}–{{max}} lei",
-      "PRICE_MIN": "min {{min}} lei",
-      "PRICE_MAX": "max {{max}} lei",
+      "PRICE_RANGE": "{{min}}–{{max}} RON",
+      "PRICE_MIN": "min {{min}} RON",
+      "PRICE_MAX": "max {{max}} RON",
       "REMOVE": "Remove filter {{label}}",
       "CLEAR_ALL": "Clear filters"
     },
     "RESULTS_COUNT": "{{count}} businesses in {{city}}",
-    "FROM_PRICE": "from {{price}} lei",
+    "RESULTS_COUNT_ALL": "{{ count }} businesses across all locations",
+    "FROM_PRICE": "from {{price}} RON",
     "VIEW_BUSINESS": "View business",
     "EMPTY": "We couldn't find any businesses for the selected filters.",
     "RANGE": "{{start}}–{{end}} of {{total}} businesses",
@@ -166,17 +167,20 @@
       "relevance": "Relevance",
       "priceAsc": "Price: low to high",
       "priceDesc": "Price: high to low",
-      "nameAsc": "Name (A–Z)"
+      "nameAsc": "Name (A–Z)",
+      "nameDesc": "Name (Z–A)"
     },
     "FILTERS": {
       "TITLE": "Filter results",
       "CITY": "Location",
+      "ALL_CITIES": "All locations",
       "SORT": "Sort by",
       "CATEGORY": "Category",
       "ALL_CATEGORIES": "All categories",
       "SERVICE": "Service",
       "ALL_SERVICES": "All services",
-      "PRICE": "Price per service (lei)",
+      "SELECT_SERVICE_HINT": "Select a service to filter by price, date, and time.",
+      "PRICE": "Price per service (RON)",
       "MIN": "Min",
       "MAX": "Max",
       "DATE": "Date",
@@ -240,8 +244,8 @@
       "EMAIL": "Email address",
       "EMAIL_HINT": "The login email is changed from Settings.",
       "SAVE": "Save changes",
-      "PHOTO_HINT": "JPG, PNG or WEBP, maximum 5 MB.",
-      "PHOTO_TYPE_ERROR": "Select a JPG, PNG or WEBP photo.",
+      "PHOTO_HINT": "JPG or PNG or maximum 5 MB.",
+      "PHOTO_TYPE_ERROR": "Select a JPG or PNG photo.",
       "PHOTO_UPLOAD_ERROR": "Your details were saved, but the photo could not be uploaded. Please try again."
     },
     "ACCOUNT": {

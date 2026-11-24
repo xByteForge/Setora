@@ -1,9 +1,20 @@
 <div class="header" *transloco="let t">
   <div class="titles">
     <h2>
-      {{
-        t('DISCOVER.RESULTS_COUNT', { count: service.result().total, city: service.query().city })
-      }}
+      @if (service.query().city; as city) {
+        {{
+          t('DISCOVER.RESULTS_COUNT', {
+            count: service.result().totalElements,
+            city,
+          })
+        }}
+      } @else {
+        {{
+          t('DISCOVER.RESULTS_COUNT_ALL', {
+            count: service.result().totalElements,
+          })
+        }}
+      }
     </h2>
     <p>{{ t('DISCOVER.RESULTS_SUBTITLE') }}</p>
   </div>

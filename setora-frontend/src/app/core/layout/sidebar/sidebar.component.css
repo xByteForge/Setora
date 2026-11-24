@@ -152,15 +152,6 @@
   gap: 4px;
 }
 
-.sidebar .user-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 12px 0;
-  margin-top: 8px;
-  border-top: 1px solid var(--border-color, #dce5e1);
-}
-
 .sidebar .avatar {
   width: 36px;
   height: 36px;
@@ -177,26 +168,63 @@
   justify-content: center;
 }
 
-.sidebar .avatar-image {
+.sidebar .avatar__image {
   display: block;
   width: 100%;
   height: 100%;
+  border-radius: inherit;
   object-fit: cover;
-  border-radius: 50%;
 }
 
-.sidebar .user-info {
+/* User card: clickable footer block with name and role stacked */
+.sidebar .user-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  padding: 12px;
+  border-top: 1px solid var(--border-color, #dce5e1);
+  border-radius: 8px;
+  color: var(--ink, #000000);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.sidebar .user-card:hover,
+.sidebar .user-card.is-active {
+  background-color: var(--mint-wash, #e8f8f3);
+}
+
+.sidebar .user-card.is-active {
+  border-top-color: transparent;
+}
+
+.sidebar .user-card.is-active .user-card__name,
+.sidebar .user-card.is-active .user-card__role {
+  color: var(--accessible-green, #064e43);
+}
+
+.sidebar .user-card:focus-visible {
+  outline: 2px solid var(--focus, #087f6d);
+  outline-offset: 2px;
+}
+
+.sidebar .user-card__text {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
-.sidebar .user-name {
+.sidebar .user-card__name {
   font-size: 14px;
   font-weight: 700;
   color: var(--ink, #000000);
 }
 
-.sidebar .user-role {
+.sidebar .user-card__role {
   font-size: 12px;
   color: var(--text-secondary, #5b6b67);
 }
@@ -298,58 +326,4 @@
   .sidebar {
     transition: none;
   }
-}
-
-/* User card: clickable footer block with name and role stacked */
-.sidebar .user-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 8px;
-  padding: 12px;
-  border-top: 1px solid var(--border-color, #dce5e1);
-  border-radius: 8px;
-  color: var(--ink, #000000);
-  text-decoration: none;
-  cursor: pointer;
-  transition: background-color 160ms ease;
-}
-
-.sidebar .user-card:hover {
-  background-color: var(--mint-wash, #e8f8f3);
-}
-
-.sidebar .user-card:focus-visible {
-  outline: 2px solid var(--focus, #087f6d);
-  outline-offset: 2px;
-}
-
-.sidebar .user-card__text {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.sidebar .user-card__name {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--ink, #000000);
-}
-
-.sidebar .user-card__role {
-  font-size: 12px;
-  color: var(--text-secondary, #5b6b67);
-}
-
-/* Avatar: initials fallback, photo when it loads */
-.sidebar .avatar {
-  overflow: hidden;
-}
-
-.sidebar .avatar__image {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  object-fit: cover;
 }

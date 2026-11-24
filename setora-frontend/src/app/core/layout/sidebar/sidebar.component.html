@@ -56,9 +56,10 @@
   <div class="sidebar-footer">
     <a
       class="nav-link"
+      [class.active]="isSettingsTabActive()"
+      [attr.aria-current]="isSettingsTabActive() ? 'page' : null"
       routerLink="/settings"
       [queryParams]="{ tab: 'settings' }"
-      routerLinkActive="active"
       (click)="menu.close()"
     >
       <i class="fa-solid fa-gear" aria-hidden="true"></i>
@@ -74,6 +75,8 @@
 
     <a
       class="user-card"
+      [class.is-active]="isProfileTabActive()"
+      [attr.aria-current]="isProfileTabActive() ? 'page' : null"
       routerLink="/settings"
       [queryParams]="{ tab: 'profile' }"
       [attr.aria-label]="userName() + ', ' + userRole()"

@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
 import com.byteforge.setorabackend.appointment.Appointment;
 import com.byteforge.setorabackend.appointment.AppointmentRepository;
 import com.byteforge.setorabackend.appointment.AppointmentStatus;
-import com.byteforge.setorabackend.business.Business;
+import com.byteforge.setorabackend.business.model.Business;
 import com.byteforge.setorabackend.common.DateTimeInterval;
 import com.byteforge.setorabackend.common.TimeInterval;
 import com.byteforge.setorabackend.employees.model.AvailabilityDtos.*;

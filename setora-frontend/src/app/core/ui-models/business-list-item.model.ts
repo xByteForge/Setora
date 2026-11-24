@@ -1,9 +1,7 @@
 import { Business } from '../models/business.model';
-import { Service } from '../models/service.model';
 
-export interface BusinessListItem extends Business {
+export interface BusinessListItem extends Omit<Business, 'category'> {
   category: string;
   city: string;
   minPrice: number;
-  services: Service[];
 }

@@ -1,4 +1,5 @@
-export type BusinessSort = 'relevance' | 'priceAsc' | 'priceDesc' | 'nameAsc';
+export type BusinessSort =
+  'relevance' | 'newest' | 'oldest' | 'nameAsc' | 'nameDesc' | 'priceAsc' | 'priceDesc';
 
 export interface BusinessQuery {
   text: string;
@@ -17,7 +18,7 @@ export interface BusinessQuery {
 
 export const DEFAULT_BUSINESS_QUERY: BusinessQuery = {
   text: '',
-  city: 'București',
+  city: '',
   category: null,
   serviceId: null,
   minPrice: null,
@@ -25,7 +26,7 @@ export const DEFAULT_BUSINESS_QUERY: BusinessQuery = {
   date: null,
   timeFrom: null,
   timeTo: null,
-  sort: 'relevance',
+  sort: 'newest',
   page: 1,
   pageSize: 6,
 };

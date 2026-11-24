@@ -31,8 +31,7 @@ const COUNTRY_OPTIONS: CountryOption[] = [
   { code: '+34', flag: '🇪🇸', name: 'Spain' },
 ];
 
-// Aceleași formate ca în backend
-const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/png'];
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 
 @Component({

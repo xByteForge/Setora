@@ -32,7 +32,7 @@ export class DiscoverComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   readonly filtersOpen = signal(false);
-  readonly sortOptions = ['relevance', 'priceAsc', 'priceDesc', 'nameAsc'] as const;
+  readonly sortOptions = ['relevance', 'priceAsc', 'priceDesc', 'nameAsc', 'nameDesc'] as const;
 
   constructor() {
     // search-ul universal din topbar trimite textul prin ?q=

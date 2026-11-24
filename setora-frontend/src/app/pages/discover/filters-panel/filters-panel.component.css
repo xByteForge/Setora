@@ -127,6 +127,36 @@ button:focus-visible {
   color: var(--accent-text);
 }
 
+.filter-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: -6px 0 0;
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.4;
+  opacity: 0.75;
+}
+
+.filter-hint svg {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  color: var(--text-secondary);
+}
+
+.field:has(:disabled) label,
+.field:has(:disabled) .label {
+  color: var(--text-secondary);
+  opacity: 0.65;
+}
+
+select:disabled,
+input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .label-mobile {
   display: none;
 }

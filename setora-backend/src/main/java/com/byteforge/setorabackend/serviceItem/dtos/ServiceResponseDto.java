@@ -1,7 +1,6 @@
 package com.byteforge.setorabackend.serviceItem.dtos;
 
 import com.byteforge.setorabackend.appointment.PaymentMethod;
-import com.byteforge.setorabackend.serviceItem.ServiceItem;
 import java.math.BigDecimal;
 
 public record ServiceResponseDto(
@@ -9,19 +8,8 @@ public record ServiceResponseDto(
         int businessId,
         String name,
         String description,
+        ServiceTypeDto type,
         BigDecimal price,
         int durationMinutes,
         boolean active,
-        PaymentMethod paymentMethod) {
-    public static ServiceResponseDto from(ServiceItem item) {
-        return new ServiceResponseDto(
-                item.getId(),
-                item.getBusiness().getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getPrice(),
-                item.getDurationMinutes(),
-                item.isActive(),
-                item.getPaymentMethod());
-    }
-}
+        PaymentMethod paymentMethod) {}
