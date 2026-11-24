@@ -55,6 +55,12 @@ public class BusinessController {
         return ResponseEntity.ok(businessService.getAllBusinesses(pageParams));
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Long> countBusinesses(
+            @ModelAttribute BusinessFilterCriteria filter) {
+        return ResponseEntity.ok(businessService.countBusinesses(filter));
+    }
+
     @GetMapping("/locations")
     public List<String> getLocations() {
         return businessService.getAvailableLocations();

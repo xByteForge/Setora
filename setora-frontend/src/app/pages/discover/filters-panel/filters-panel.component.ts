@@ -7,7 +7,9 @@ import {
   output,
   signal,
 } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoModule } from '@ngneat/transloco';
+import { switchMap } from 'rxjs';
 import { BusinessDiscoveryService } from '../../../core/services/business-discovery.service';
 import { BusinessQuery } from '../../../core/ui-models/business-query.model';
 import {
@@ -53,12 +55,28 @@ export class FiltersPanelComponent {
   );
 
   // cate rezultate ar da filtrele din formular, inainte de a le aplica
-  readonly previewCount = computed(() =>
-    this.service.count({ ...this.service.query(), ...this.toPatch(this.draft()) }),
+  readonly previewCount = toSignal(
+      toObservable(this.draft).pipe(
+          switchMap((d) => this.service.count({ ...this.service.query(), ...this.toPatch(d) })),
+      ),
+      { initialValue: this.service.result().totalElements },
   );
 
   onField(key: keyof Draft, event: Event): void {
     const value = (event.target as HTMLInputElement | HTMLSelectElement).value;
+
+    if (key === 'serviceId' && value === '') {
+      this.edits.update((e) => ({
+        ...e,
+        serviceId: '',
+        minPrice: '',
+        maxPrice: '',
+        date: '',
+        time: slotOf(null, null),
+      }));
+      return;
+    }
+
     this.edits.update((e) => ({ ...e, [key]: value }));
   }
 
@@ -67,7 +85,20 @@ export class FiltersPanelComponent {
     const allowed = this.service.servicesByCategory(category || null);
     const current = this.draft().serviceId;
     const keepService = !current || allowed.some((s) => String(s.id) === current);
-    this.edits.update((e) => ({ ...e, category, ...(keepService ? {} : { serviceId: '' }) }));
+
+    this.edits.update((e) => ({
+      ...e,
+      category,
+      ...(keepService
+          ? {}
+          : {
+            serviceId: '',
+            minPrice: '',
+            maxPrice: '',
+            date: '',
+            time: slotOf(null, null),
+          }),
+    }));
   }
 
   apply(): void {
@@ -87,6 +118,18 @@ export class FiltersPanelComponent {
   }
 
   private toPatch(d: Draft): Partial<BusinessQuery> {
+    if (!d.serviceId) {
+      return {
+        category: d.category || null,
+        serviceId: null,
+        minPrice: null,
+        maxPrice: null,
+        date: null,
+        timeFrom: null,
+        timeTo: null,
+      };
+    }
+
     const [timeFrom, timeTo] = TIME_SLOTS[d.time];
     return {
       category: d.category || null,

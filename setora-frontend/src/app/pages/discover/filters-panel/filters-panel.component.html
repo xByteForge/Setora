@@ -53,6 +53,27 @@
       </select>
     </div>
 
+    @if (!draft().serviceId) {
+        <p class="filter-hint" role="status">
+            <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+            >
+                <circle cx="12" cy="12" r="9.5" />
+                <path d="M12 11.5v4.5" />
+                <circle cx="12" cy="8" r="1" fill="currentColor" stroke="none" />
+            </svg>
+            <span>{{ t('DISCOVER.FILTERS.SELECT_SERVICE_HINT') }}</span>
+        </p>
+    }
+
     <div class="field">
       <span class="label" id="fp-price-label">{{ t('DISCOVER.FILTERS.PRICE') }}</span>
       <div class="price-row" role="group" aria-labelledby="fp-price-label">
@@ -60,6 +81,7 @@
           type="number"
           min="0"
           inputmode="numeric"
+          [disabled]="!draft().serviceId"
           [placeholder]="t('DISCOVER.FILTERS.MIN')"
           [attr.aria-label]="t('DISCOVER.FILTERS.MIN')"
           [value]="draft().minPrice"
@@ -69,6 +91,7 @@
           type="number"
           min="0"
           inputmode="numeric"
+          [disabled]="!draft().serviceId"
           [placeholder]="t('DISCOVER.FILTERS.MAX')"
           [attr.aria-label]="t('DISCOVER.FILTERS.MAX')"
           [value]="draft().maxPrice"
@@ -79,12 +102,12 @@
 
     <div class="field">
       <label for="fp-date">{{ t('DISCOVER.FILTERS.DATE') }}</label>
-      <input id="fp-date" type="date" [value]="draft().date" (change)="onField('date', $event)" />
+      <input id="fp-date" type="date" [disabled]="!draft().serviceId" [value]="draft().date" (change)="onField('date', $event)" />
     </div>
 
     <div class="field">
       <label for="fp-time">{{ t('DISCOVER.FILTERS.TIME_LABEL') }}</label>
-      <select id="fp-time" (change)="onField('time', $event)">
+      <select id="fp-time" [disabled]="!draft().serviceId" (change)="onField('time', $event)">
         @for (s of timeSlots; track s) {
           <option [value]="s" [selected]="s === draft().time">
             {{ t('DISCOVER.FILTERS.TIME.' + s) }}

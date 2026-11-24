@@ -2,7 +2,6 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { Observable, map, of } from 'rxjs';
 import { BusinessCategory } from '../models/business-category.model';
-import { Business } from '../models/business.model';
 import { ServiceType } from '../models/service-type.model';
 import { PageResult } from '../ui-models/page-result.model';
 import { BusinessListItem } from '../ui-models/business-list-item.model';
@@ -14,6 +13,7 @@ import {
 } from '../ui-models/business-query.model';
 
 const SORT_MAP: Record<BusinessSort, string> = {
+  relevance: 'NEWEST',
   newest: 'NEWEST',
   oldest: 'OLDEST',
   nameAsc: 'NAME_ASC',
@@ -144,10 +144,11 @@ export class BusinessDiscoveryService {
   }
 
   count(q: BusinessQuery): Observable<number> {
-    const params = this.buildParams({ ...q, page: 1, pageSize: 1 }, this.categoryList());
-    return this.http
-      .get<PageResult<Business>>(`${this.apiBase}/businesses`, { params })
-      .pipe(map((page) => page.totalElements));
+    const params = this.buildParams(q, this.categoryList())
+        .delete('page')
+        .delete('size')
+        .delete('sortBy');
+    return this.http.get<number>(`${this.apiBase}/businesses/count`, { params });
   }
 
   applyFilters(patch: Partial<BusinessQuery>) {

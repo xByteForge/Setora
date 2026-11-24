@@ -62,6 +62,12 @@ public class BusinessService {
     }
 
     @Transactional(readOnly = true)
+    public long countBusinesses(BusinessFilterCriteria filter) {
+        Specification<Business> spec = BusinessSpecification.withCriteria(filter);
+        return businessRepository.count(spec);
+    }
+
+    @Transactional(readOnly = true)
     public List<String> getAvailableLocations() {
         return businessRepository.findDistinctLocations();
     }
