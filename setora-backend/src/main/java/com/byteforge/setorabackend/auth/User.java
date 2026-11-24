@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Locale;
-
 @Entity
 @Table(name = "users")
 @Getter
@@ -28,7 +26,7 @@ public class User {
     @Column(nullable = false)
     private String username;
 
-    //always saved in lower case, used for login
+    // always saved in lower case, used for login
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -51,7 +49,7 @@ public class User {
     @Column
     private String avatarPath;
 
-    //add the rest later on
+    // add the rest later on
 
     public void setEmail(String email) {
         this.email = email == null ? null : email.trim().toLowerCase();
@@ -72,15 +70,14 @@ public class User {
 
     @PrePersist
     @PreUpdate
-    private void prepareForSave() {                 // just to be safe
-        if (username == null || username.isBlank())
-            username = this.firstName;
+    private void prepareForSave() { // just to be safe
+        if (username == null || username.isBlank()) username = this.firstName;
 
         if (email != null)
-            setEmail(this.email);       // in case a constructor or generated setters bypass email normalization in the explicit constructor
+            setEmail(this.email); // in case a constructor or generated setters bypass email normalization in the
+        // explicit constructor
 
-        if (role == null)
-            role = UserRole.CLIENT;
+        if (role == null) role = UserRole.CLIENT;
     }
 
     public String getNameInitials() {
@@ -99,5 +96,4 @@ public class User {
 
         return (parts[0].substring(0, 1) + parts[parts.length - 1].charAt(0)).toUpperCase();
     }
-
 }

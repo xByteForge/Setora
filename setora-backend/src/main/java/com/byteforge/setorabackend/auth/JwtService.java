@@ -1,15 +1,14 @@
 package com.byteforge.setorabackend.auth;
 
 import com.byteforge.setorabackend.security.JwtConfig;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -68,6 +67,5 @@ public class JwtService {
         return jwtEncoder.encode(JwtEncoderParameters.from(header, claims)).getTokenValue();
     }
 
-    public record IssuedRefreshToken(String token, String tokenId, Instant expiresAt) {
-    }
+    public record IssuedRefreshToken(String token, String tokenId, Instant expiresAt) {}
 }

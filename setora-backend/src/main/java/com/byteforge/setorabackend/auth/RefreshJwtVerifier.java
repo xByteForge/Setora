@@ -1,12 +1,11 @@
 package com.byteforge.setorabackend.auth;
 
 import com.byteforge.setorabackend.security.JwtConfig;
+import javax.crypto.SecretKey;
 import org.springframework.security.oauth2.core.*;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Component;
-
-import javax.crypto.SecretKey;
 
 @Component
 public class RefreshJwtVerifier {
@@ -18,14 +17,20 @@ public class RefreshJwtVerifier {
                 .build();
 
         OAuth2TokenValidator<Jwt> refreshOnly = jwt -> {
-            boolean valid = "refresh".equals(jwt.getClaimAsString("token_type")) && jwt.getId() != null && !jwt.getId().isBlank() && jwt.getSubject() != null && jwt.getExpiresAt() != null;
+            boolean valid = "refresh".equals(jwt.getClaimAsString("token_type"))
+                    && jwt.getId() != null
+                    && !jwt.getId().isBlank()
+                    && jwt.getSubject() != null
+                    && jwt.getExpiresAt() != null;
 
-            return valid ? OAuth2TokenValidatorResult.success() : OAuth2TokenValidatorResult.failure(
-                    new OAuth2Error("invalid_token", "Invalid refresh token", null)
-            );
+            return valid
+                    ? OAuth2TokenValidatorResult.success()
+                    : OAuth2TokenValidatorResult.failure(
+                            new OAuth2Error("invalid_token", "Invalid refresh token", null));
         };
 
-        jwtDecoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(JwtValidators.createDefaultWithIssuer(JwtConfig.ISSUER), refreshOnly));
+        jwtDecoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
+                JwtValidators.createDefaultWithIssuer(JwtConfig.ISSUER), refreshOnly));
         this.decoder = jwtDecoder;
     }
 

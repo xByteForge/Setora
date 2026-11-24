@@ -9,8 +9,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -36,7 +34,8 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody RefreshTokenRequestDto request) {
+    public ResponseEntity<Void> logout(
+            @AuthenticationPrincipal Jwt jwt, @Valid @RequestBody RefreshTokenRequestDto request) {
         int userId = Integer.parseInt(jwt.getSubject());
         authService.logout(userId, request);
         return ResponseEntity.noContent().build();
@@ -49,7 +48,8 @@ public class AuthController {
     }
 
     @PutMapping("/me")
-    public ResponseEntity<UserResponseDto> updateCurrentUser(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody UpdateUserRequestDto request) {
+    public ResponseEntity<UserResponseDto> updateCurrentUser(
+            @AuthenticationPrincipal Jwt jwt, @Valid @RequestBody UpdateUserRequestDto request) {
         int userId = Integer.parseInt(jwt.getSubject());
 
         return ResponseEntity.ok(userService.updateUser(userId, request));
