@@ -14,7 +14,7 @@ public record AppointmentResponseDto(
         String serviceName,
         int durationMinutes,
 
-        int clientId,
+        Integer clientId,
         String clientName,
         String clientPhone,
         String clientEmail,
