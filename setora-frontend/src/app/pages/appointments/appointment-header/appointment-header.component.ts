@@ -5,12 +5,12 @@ import { AppointmentSummary } from '../../../core/ui-models/appointment-summary.
 import { AppointmentSummaryComponent } from '../appointment-summary/appointment-summary.component';
 
 @Component({
-    selector: 'app-appointments-header',
-    standalone: true,
-    imports: [TranslocoDirective, LucidePlus, AppointmentSummaryComponent],
-    styleUrl: './appointment-header.component.css',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    template: `
+  selector: 'app-appointments-header',
+  standalone: true,
+  imports: [TranslocoDirective, LucidePlus, AppointmentSummaryComponent],
+  styleUrl: './appointment-header.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
     <header class="page-header" *transloco="let t">
       <div class="top">
         <div class="titles">
@@ -29,6 +29,6 @@ import { AppointmentSummaryComponent } from '../appointment-summary/appointment-
   `,
 })
 export class AppointmentsHeaderComponent {
-    readonly summary = input.required<AppointmentSummary>();
-    readonly addClicked = output<void>();
+  readonly summary = input.required<AppointmentSummary>();
+  readonly addClicked = output<void>();
 }

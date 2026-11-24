@@ -3,16 +3,13 @@ package com.byteforge.setorabackend.auth;
 import com.byteforge.setorabackend.auth.dtos.CreateUserRequestDto;
 import com.byteforge.setorabackend.auth.dtos.UpdateUserRequestDto;
 import com.byteforge.setorabackend.auth.dtos.UserResponseDto;
-
 import jakarta.validation.Valid;
+import java.net.URI;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -23,14 +20,10 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserResponseDto> createUser(
-            @Valid @RequestBody CreateUserRequestDto request
-    ) {
+    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody CreateUserRequestDto request) {
         UserResponseDto response = userService.createUser(request);
 
-        return ResponseEntity
-                .created(URI.create("/api/users/" + response.id()))
-                .body(response);
+        return ResponseEntity.created(URI.create("/api/users/" + response.id())).body(response);
     }
 
     @GetMapping
@@ -39,28 +32,18 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDto> getUserById(
-            @PathVariable int id
-    ) {
-        return ResponseEntity.ok(
-                userService.getUserById(id)
-        );
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable int id) {
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDto> updateUser(
-            @PathVariable int id,
-            @Valid @RequestBody UpdateUserRequestDto request
-    ) {
-        return ResponseEntity.ok(
-                userService.updateUser(id, request)
-        );
+            @PathVariable int id, @Valid @RequestBody UpdateUserRequestDto request) {
+        return ResponseEntity.ok(userService.updateUser(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(
-            @PathVariable int id
-    ) {
+    public ResponseEntity<Void> deleteUser(@PathVariable int id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }

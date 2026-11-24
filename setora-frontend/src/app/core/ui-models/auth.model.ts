@@ -1,11 +1,9 @@
-import { User } from "../models/user.model";
-
+import { User } from '../models/user.model';
 
 export interface LoginRequest {
   email: string;
   password: string;
 }
-
 
 export interface AuthResponse {
   accessToken: string;
@@ -15,11 +13,9 @@ export interface AuthResponse {
   user: User;
 }
 
-
 export interface RefreshTokenRequest {
   refreshToken: string;
 }
-
 
 export interface LogoutRequest {
   refreshToken: string;

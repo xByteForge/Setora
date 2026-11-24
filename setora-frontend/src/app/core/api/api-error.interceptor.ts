@@ -19,13 +19,11 @@ export class ApiError extends Error {
   }
 }
 
-
 export function toApiError(error: unknown): ApiError {
   if (error instanceof ApiError) return error;
 
   if (error instanceof HttpErrorResponse) {
-    const backendMessage =
-      typeof error.error?.message === 'string' ? error.error.message : null;
+    const backendMessage = typeof error.error?.message === 'string' ? error.error.message : null;
     return new ApiError(error.status, backendMessage ?? 'ERRORS.GENERIC', error.error);
   }
 

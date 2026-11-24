@@ -1,22 +1,10 @@
-<app-appointments-header
-  [summary]="summary()"
-  (addClicked)="openAddAppointment()"
-/>
+<app-appointments-header [summary]="summary()" (addClicked)="openAddAppointment()" />
 
 @if (isMobile()) {
-  <label class="mobile-search">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-      <circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" />
-    </svg>
-    <!-- TODO: leagă la căutarea reală -->
-    <input type="search" [placeholder]="'HEADER.SEARCH' | transloco" />
-  </label>
+  <app-universal-search class="page-search" />
 }
 
-<app-appointment-filters
-  [employees]="employees()"
-  [(filters)]="filters"
-/>
+<app-appointment-filters [employees]="employees()" [(filters)]="filters" />
 
 <div class="calendar-layout" [class.calendar-layout--with-details]="selectedAppointment()">
   @if (isMobile()) {
@@ -26,7 +14,8 @@
       [timezone]="business().timezone"
       [selectedId]="selectedId()"
       (appointmentSelected)="selectedId.set($event)"
-      [(selectedDate)]="selectedDate" />
+      [(selectedDate)]="selectedDate"
+    />
   } @else {
     <app-appointment-calendar
       [employees]="visibleEmployees()"
@@ -36,16 +25,18 @@
       [selectedId]="selectedId()"
       (appointmentSelected)="selectedId.set($event)"
       [(selectedDate)]="selectedDate"
-      [(view)]="view" />
+      [(view)]="view"
+    />
   }
 
-  @if (selectedAppointment(); as appt) {   
+  @if (selectedAppointment(); as appt) {
     <app-appointment-details
       [appointment]="appt"
       [locationName]="locationLabel()"
       [timezone]="business().timezone"
       (closed)="closeDetails()"
-      (cancelRequested)="cancelAppointment($event)" />
+      (cancelRequested)="cancelAppointment($event)"
+    />
   }
 </div>
 
@@ -54,7 +45,8 @@
   <app-appointment-form-dialog
     [selectedDate]="selectedDate()"
     (closed)="closeAddAppointment()"
-    (created)="onAppointmentCreated($event)" />
+    (created)="onAppointmentCreated($event)"
+  />
 }
 
 <!-- Confirmare anulare -->
@@ -66,7 +58,8 @@
     [busy]="cancelBusy()"
     [failed]="cancelFailed()"
     (closed)="closeCancel()"
-    (confirmed)="confirmCancel()" />
+    (confirmed)="confirmCancel()"
+  />
 }
 
 @if (toast(); as key) {

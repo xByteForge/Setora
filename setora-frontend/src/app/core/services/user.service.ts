@@ -39,16 +39,13 @@ export class UserService {
   readonly currentUser = this.userSignal.asReadonly();
   readonly avatarUrl = this.avatarSignal.asReadonly();
 
-
   setCurrentUser(user: User): void {
     this.userSignal.set(user);
   }
 
-
   loadCurrentUser(): Observable<User> {
     return this.api.getMe().pipe(tap((user) => this.userSignal.set(user)));
   }
-
 
   loadAvatar(userId: number): Observable<string | null> {
     return this.api.getAvatar(userId).pipe(
@@ -63,16 +60,13 @@ export class UserService {
     );
   }
 
-  
   updateProfilePicture(file: File): Observable<string | null> {
     const user = this.userSignal();
     if (!user) {
       return throwError(() => new Error('Current user is not loaded yet.'));
     }
 
-    return this.api.uploadAvatar(file).pipe(
-      switchMap(() => this.loadAvatar(user.id)),
-    );
+    return this.api.uploadAvatar(file).pipe(switchMap(() => this.loadAvatar(user.id)));
   }
 
   updateProfile(update: ProfileUpdate): Observable<User> {
@@ -116,7 +110,6 @@ export class UserService {
     return of(prefs);
   }
 
-  
   deleteAccount(): Observable<void> {
     return of(void 0);
   }

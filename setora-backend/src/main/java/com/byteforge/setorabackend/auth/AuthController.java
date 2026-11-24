@@ -2,13 +2,12 @@ package com.byteforge.setorabackend.auth;
 
 import com.byteforge.setorabackend.auth.dtos.*;
 import jakarta.validation.Valid;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -18,7 +17,7 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDto> register(@Valid @RequestBody RegisterRequestDto request) {
+    public ResponseEntity<UserResponseDto> register(@Valid @RequestBody CreateUserRequestDto request) {
         UserResponseDto response = authService.register(request);
 
         return ResponseEntity.created(URI.create("/api/users/" + response.id())).body(response);
@@ -35,7 +34,8 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody LogoutRequestDto request) {
+    public ResponseEntity<Void> logout(
+            @AuthenticationPrincipal Jwt jwt, @Valid @RequestBody RefreshTokenRequestDto request) {
         int userId = Integer.parseInt(jwt.getSubject());
         authService.logout(userId, request);
         return ResponseEntity.noContent().build();
@@ -48,13 +48,14 @@ public class AuthController {
     }
 
     @PutMapping("/me")
-    public ResponseEntity<UserResponseDto> updateCurrentUser(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody UpdateUserRequestDto request) {
+    public ResponseEntity<UserResponseDto> updateCurrentUser(
+            @AuthenticationPrincipal Jwt jwt, @Valid @RequestBody UpdateUserRequestDto request) {
         int userId = Integer.parseInt(jwt.getSubject());
 
         return ResponseEntity.ok(userService.updateUser(userId, request));
     }
 
-    @PutMapping("/change-password")                 // these are placeholders, we'll change them when implementing the password change
+    @PutMapping("/change-password") // these are placeholders, we'll change them when implementing the password change
     public ResponseEntity<Void> changePassword() {
         return ResponseEntity.status(501).build();
     }
@@ -68,6 +69,4 @@ public class AuthController {
     public ResponseEntity<Void> resetPassword() {
         return ResponseEntity.status(501).build();
     }
-
-
 }

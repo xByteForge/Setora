@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, computed } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UserService } from '../../core/services/user.service';
 import { ProfileDetailsComponent } from './profile-details/profile-details.component';
@@ -6,7 +6,6 @@ import { AccountSettingsComponent } from './account-settings/account-settings.co
 import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
-
 
 export type SettingsTab = 'profile' | 'settings';
 
@@ -40,6 +39,5 @@ export class SettingsComponent {
       queryParams: { tab },
       replaceUrl: true,
     });
-}
-
+  }
 }

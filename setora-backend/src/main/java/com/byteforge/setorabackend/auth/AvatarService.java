@@ -1,10 +1,5 @@
 package com.byteforge.setorabackend.auth;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,27 +9,30 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import javax.imageio.ImageIO;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
 class AvatarService {
-    final private UserService userService;
+    private final UserService userService;
 
-    static Path uploadDir = Paths.get("uploads", "user-avatars")
-            .toAbsolutePath()
-            .normalize();
+    static Path uploadDir =
+            Paths.get("uploads", "user-avatars").toAbsolutePath().normalize();
 
     public void storeAvatar(MultipartFile file, int userId) {
         validateImage(file);
 
-        String ext = switch (Objects.requireNonNullElse(file.getContentType(), "")) {
-            case "image/png" -> "png";
-            case "image/webp" -> "webp";
-            default -> "jpg";
-        };
+        String ext =
+                switch (Objects.requireNonNullElse(file.getContentType(), "")) {
+                    case "image/png" -> "png";
+                    case "image/webp" -> "webp";
+                    default -> "jpg";
+                };
 
         String filename = UUID.randomUUID().toString() + "." + ext;
-
 
         Path fullPath = uploadDir.resolve(filename);
 
@@ -86,6 +84,5 @@ class AvatarService {
         if (oldAvatarPath != null && !oldAvatarPath.equals(newAvatarPath)) {
             Files.deleteIfExists(uploadDir.resolve(oldAvatarPath));
         }
-
     }
 }

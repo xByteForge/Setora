@@ -1,64 +1,79 @@
 <section class="discover">
-    <header class="intro">
-        <h1>{{ 'DISCOVER.TITLE' | transloco }}</h1>
-        <p class="subtitle">{{ 'DISCOVER.SUBTITLE' | transloco }}</p>
-    </header>
+  <header class="intro">
+    <h1>{{ 'DISCOVER.TITLE' | transloco }}</h1>
+    <p class="subtitle">{{ 'DISCOVER.SUBTITLE' | transloco }}</p>
+  </header>
 
-    <div class="head-row">
-        <app-results-header />
+  <app-universal-search class="page-search" />
 
-        <div class="controls">
-            <div class="field">
-                <label for="city">{{ 'DISCOVER.FILTERS.CITY' | transloco }}</label>
-                <select id="city" (change)="setCity($any($event.target).value)">
-                    @for (c of service.cities; track c) {
-                        <option [value]="c" [selected]="c === service.query().city">{{ c }}</option>
-                    }
-                </select>
-            </div>
+  <div class="head-row">
+    <app-results-header />
 
-            <div class="field">
-                <label for="sort">{{ 'DISCOVER.FILTERS.SORT' | transloco }}</label>
-                <select id="sort" (change)="setSort($any($event.target).value)">
-                    @for (s of sortOptions; track s) {
-                        <option [value]="s" [selected]="s === service.query().sort">
-                            {{ 'DISCOVER.SORT.' + s | transloco }}
-                        </option>
-                    }
-                </select>
-            </div>
+    <div class="controls">
+      <div class="field">
+        <label for="city">{{ 'DISCOVER.FILTERS.CITY' | transloco }}</label>
+        <select id="city" (change)="setCity($any($event.target).value)">
+          @for (c of service.cities; track c) {
+            <option [value]="c" [selected]="c === service.query().city">{{ c }}</option>
+          }
+        </select>
+      </div>
 
-            <button type="button" class="btn-filters" [class.active]="filtersOpen()"
-                    [attr.aria-expanded]="filtersOpen()" (click)="filtersOpen.set(!filtersOpen())">
-                <span>
-                    {{ service.activeFilterCount() > 0
-                    ? ('DISCOVER.FILTERS.BUTTON_COUNT' | transloco: { count: service.activeFilterCount() })
-                    : ('DISCOVER.FILTERS.BUTTON' | transloco) }}
-                </span>
-                <i class="fa-solid fa-sliders" aria-hidden="true"></i>
-            </button>
-        </div>
+      <div class="field">
+        <label for="sort">{{ 'DISCOVER.FILTERS.SORT' | transloco }}</label>
+        <select id="sort" (change)="setSort($any($event.target).value)">
+          @for (s of sortOptions; track s) {
+            <option [value]="s" [selected]="s === service.query().sort">
+              {{ 'DISCOVER.SORT.' + s | transloco }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <button
+        type="button"
+        class="btn-filters"
+        [class.active]="filtersOpen()"
+        [attr.aria-expanded]="filtersOpen()"
+        (click)="filtersOpen.set(!filtersOpen())"
+      >
+        <span>
+          {{
+            service.activeFilterCount() > 0
+              ? ('DISCOVER.FILTERS.BUTTON_COUNT'
+                | transloco: { count: service.activeFilterCount() })
+              : ('DISCOVER.FILTERS.BUTTON' | transloco)
+          }}
+        </span>
+        <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+      </button>
     </div>
+  </div>
 
-    <app-active-filters-chips />
+  <app-active-filters-chips />
 
-    <div class="results" [class.results--panel]="filtersOpen()">
-        <app-business-list [items]="service.result().items" [single]="filtersOpen()" (view)="onView($event)" />
+  <div class="results" [class.results--panel]="filtersOpen()">
+    <app-business-list
+      [items]="service.result().items"
+      [single]="filtersOpen()"
+      (view)="onView($event)"
+    />
 
-        @if (filtersOpen()) {
-            <app-filters-panel (closed)="filtersOpen.set(false)" />
-        }
-    </div>
+    @if (filtersOpen()) {
+      <app-filters-panel (closed)="filtersOpen.set(false)" />
+    }
+  </div>
 
-    <app-pagination
-            [page]="service.result().page"
-            [pageSize]="service.result().pageSize"
-            [total]="service.result().total"
-            (pageChange)="service.setPage($event)"
-            (pageSizeChange)="service.setPageSize($event)" />
+  <app-pagination
+    [page]="service.result().page"
+    [pageSize]="service.result().pageSize"
+    [total]="service.result().total"
+    (pageChange)="service.setPage($event)"
+    (pageSizeChange)="service.setPageSize($event)"
+  />
 
-    <footer class="demo-note">
-        <p>{{ 'DISCOVER.DISCLAIMER' | transloco }}</p>
-        <p><strong>SETORA · your time. scheduled.</strong></p>
-    </footer>
+  <footer class="demo-note">
+    <p>{{ 'DISCOVER.DISCLAIMER' | transloco }}</p>
+    <p><strong>SETORA · your time. scheduled.</strong></p>
+  </footer>
 </section>
