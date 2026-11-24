@@ -1,5 +1,7 @@
 package com.byteforge.setorabackend.auth.dtos;
 
+import com.byteforge.setorabackend.user.dtos.UserResponseDto;
+
 // response after login or token refresh
 public record AuthResponseDto(
         String accessToken,

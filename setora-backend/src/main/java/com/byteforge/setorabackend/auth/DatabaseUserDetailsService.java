@@ -1,5 +1,7 @@
 package com.byteforge.setorabackend.auth;
 
+import com.byteforge.setorabackend.user.User;
+import com.byteforge.setorabackend.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
