@@ -16,11 +16,29 @@ import {
 } from '../../../core/models/enums/notification-type.model';
 import { UserService } from '../../../core/services/user.service';
 import { ThemeService, Theme } from '../../../core/services/theme.service';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { finalize } from 'rxjs';
 
 export type ThemeMode = 'light' | 'dark';
 type PasswordField = 'current' | 'new' | 'confirm';
+
+const passwordsMatchValidator: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
+  const newPassword = group.get('newPassword')?.value;
+  const confirmPassword = group.get('confirmPassword')?.value;
+
+  if (!newPassword || !confirmPassword) {
+    return null;
+  }
+
+  return newPassword === confirmPassword ? null : { passwordMismatch: true };
+};
 
 const NOTIFICATION_ROWS: { event: NotificationEvent; titleKey: string; hintKey: string }[] = [
   {
@@ -98,11 +116,14 @@ export class AccountSettingsComponent {
     currentPassword: ['', Validators.required],
   });
 
-  readonly passwordForm = this.fb.nonNullable.group({
-    currentPassword: ['', Validators.required],
-    newPassword: ['', [Validators.required, Validators.minLength(8)]],
-    confirmPassword: ['', Validators.required],
-  });
+  readonly passwordForm = this.fb.nonNullable.group(
+    {
+      currentPassword: ['', Validators.required],
+      newPassword: ['', [Validators.required, Validators.minLength(8)]],
+      confirmPassword: ['', Validators.required],
+    },
+    { validators: passwordsMatchValidator },
+  );
 
   readonly deleteForm = this.fb.nonNullable.group({
     currentPassword: ['', Validators.required],

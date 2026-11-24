@@ -239,8 +239,8 @@
       "EMAIL": "Adresă de email",
       "EMAIL_HINT": "Emailul de autentificare se schimbă din Setări.",
       "SAVE": "Salvează modificările",
-      "PHOTO_HINT": "JPG, PNG sau WEBP, maximum 5 MB.",
-      "PHOTO_TYPE_ERROR": "Selectează o fotografie JPG, PNG sau WEBP.",
+      "PHOTO_HINT": "JPG sau PNG maximum 5 MB.",
+      "PHOTO_TYPE_ERROR": "Selectează o fotografie JPG sau PNG.",
       "PHOTO_UPLOAD_ERROR": "Datele au fost salvate, dar fotografia nu a putut fi încărcată. Încearcă din nou."
     },
     "ACCOUNT": {

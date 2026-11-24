@@ -303,11 +303,12 @@
           </button>
         </div>
 
-        @if (
-          passwordForm.controls.confirmPassword.touched &&
-          passwordForm.controls.confirmPassword.hasError('required')
-        ) {
-          <span class="field__error">Please confirm your new password.</span>
+        @if (passwordForm.controls.confirmPassword.touched) {
+          @if (passwordForm.controls.confirmPassword.hasError('required')) {
+            <span class="field__error">Please confirm your new password.</span>
+          } @else if (passwordForm.hasError('passwordMismatch')) {
+            <span class="field__error">Passwords do not match.</span>
+          }
         }
       </label>
     </div>
