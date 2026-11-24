@@ -1,6 +1,6 @@
 package com.byteforge.setorabackend.appointment;
 
-import com.byteforge.setorabackend.business.Business;
+import com.byteforge.setorabackend.business.model.Business;
 import com.byteforge.setorabackend.common.TimeInterval;
 import com.byteforge.setorabackend.employees.model.AvailabilityDtos;
 import com.byteforge.setorabackend.employees.model.Employee;
