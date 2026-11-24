@@ -117,7 +117,7 @@ public class UserService {
     }
 
     // finds all non-deleted users
-    private User findActiveUserById(int id) {
+    public User findActiveUserById(int id) {
         return userRepository.findById(id).filter(user -> !user.isDeleted())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,

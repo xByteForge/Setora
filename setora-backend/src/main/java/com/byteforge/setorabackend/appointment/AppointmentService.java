@@ -168,7 +168,7 @@ public class AppointmentService {
         String clientPhone = null;
 
         if (request.clientId() != null) {
-            client = userService.findById(request.clientId());
+            client = userService.findActiveUserById(request.clientId());
         } else {
             if (request.clientName() == null || request.clientName().isBlank()) {
                 throw new ResponseStatusException(

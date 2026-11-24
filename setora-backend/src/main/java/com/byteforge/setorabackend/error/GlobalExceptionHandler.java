@@ -74,10 +74,10 @@ public class GlobalExceptionHandler {
     // STANDARD EXCEPTIONS
     // ==========================================
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleInvalidParameter(EntityNotFoundException ex) {
-        return ResponseEntity.badRequest().body(Map.of("message", "Entity not found:  " + ex.getMessage()));
-    }
+//    @ExceptionHandler(EntityNotFoundException.class)
+//    public ResponseEntity<Map<String, String>> handleInvalidParameter(EntityNotFoundException ex) {
+//        return ResponseEntity.badRequest().body(Map.of("message", "Entity not found:  " + ex.getMessage()));
+//    }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiErrorResponse> handleNotFound(
