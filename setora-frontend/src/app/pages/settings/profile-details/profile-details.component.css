@@ -1,0 +1,138 @@
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.identity__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+.identity__name {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.identity__email {
+  margin: 2px 0 12px;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+.identity__text .hint {
+  margin-top: 8px;
+}
+
+.avatar {
+  position: relative;
+  width: 112px;
+  height: 112px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid var(--brand-mint);
+  background: var(--mint-wash);
+  color: var(--accent-text);
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 24px;
+  margin: 0;
+}
+.details dt {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.details dd {
+  margin: 4px 0 0;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.details__full {
+  grid-column: 1 / -1;
+}
+
+/* Prefix and input share one bordered box */
+.phone {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--control-border);
+  border-radius: 8px;
+  background: var(--paper);
+  overflow: hidden;
+  min-width: 0;
+}
+.phone:focus-within {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.phone__prefix {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  color: var(--text-secondary);
+  border-right: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+.phone .input {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.phone .input:focus-visible {
+  outline: none;
+}
+
+@media (max-width: 900px) {
+  .identity {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .details {
+    grid-template-columns: 1fr;
+  }
+}
+
+.phone__prefix-select {
+  appearance: none;
+  background-color: transparent;
+  border: 0;
+  border-right: 1px solid var(--border-color);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9375rem;
+  padding: 0 12px 0 12px;
+  cursor: pointer;
+  outline: none;
+}
+.phone__prefix-select option {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.avatar {
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.photo-error {
+  color: #dc2626;
+}

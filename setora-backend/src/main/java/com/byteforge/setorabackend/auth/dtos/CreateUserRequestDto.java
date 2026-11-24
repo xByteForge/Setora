@@ -1,9 +1,8 @@
 package com.byteforge.setorabackend.auth.dtos;
 
-import com.byteforge.setorabackend.auth.UserRole;
 import jakarta.validation.constraints.*;
 
-// for POST /api/users
+// for POST /api/users and POST /api/auth/register
 public record CreateUserRequestDto(
         @NotBlank @Size(max = 100) String firstName,
 
@@ -13,6 +12,4 @@ public record CreateUserRequestDto(
 
         @Size(max = 30) String phoneNumber,
 
-        @NotBlank @Size(min = 8, max = 64) String password,
-
-        @NotNull UserRole role) {}
+        @NotBlank @Size(min = 8, max = 64) String password) {}

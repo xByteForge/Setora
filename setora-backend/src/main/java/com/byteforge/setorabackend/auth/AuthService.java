@@ -99,7 +99,7 @@ public class AuthService {
     }
 
     @Transactional
-    public UserResponseDto register(RegisterRequestDto request) {
+    public UserResponseDto register(CreateUserRequestDto request) {
         validatePassword(request.password());
         String email = normalizeEmail(request.email());
         User user = userRepository.findByEmail(email).orElse(null);
@@ -179,7 +179,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void logout(int currentUserId, LogoutRequestDto request) {
+    public void logout(int currentUserId, RefreshTokenRequestDto request) {
         Jwt jwt = decodeRefreshToken(request.refreshToken());
 
         if (Integer.parseInt(jwt.getSubject()) != currentUserId) throw invalidRefreshToken();

@@ -120,6 +120,10 @@ body.dark-theme {
   --appt-selected-bg: #123e3c;
   --appt-selected-border: #43cdb6;
   --appt-selected-text: #93e3cb;
+
+  --control-border: #5a7d9a;
+  --accent-text: #7ef2dc;
+  --focus: #43cdb6;
 }
 
 /* Business card entrance animation */

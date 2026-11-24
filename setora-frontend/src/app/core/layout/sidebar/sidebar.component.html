@@ -54,7 +54,14 @@
   </div>
 
   <div class="sidebar-footer">
-    <a routerLink="/settings" routerLinkActive="active" class="nav-link" (click)="menu.close()">
+    <a
+      class="nav-link"
+      [class.active]="isSettingsTabActive()"
+      [attr.aria-current]="isSettingsTabActive() ? 'page' : null"
+      routerLink="/settings"
+      [queryParams]="{ tab: 'settings' }"
+      (click)="menu.close()"
+    >
       <i class="fa-solid fa-gear" aria-hidden="true"></i>
       <span class="nav-label">{{ 'NAV.SETTINGS' | transloco }}</span>
     </a>
@@ -66,12 +73,31 @@
       }}</strong>
     </button>
 
-    <div class="user-card">
-      <div class="avatar">{{ userInitials }}</div>
-      <div class="user-info">
-        <span class="user-name">{{ userName }}</span>
-        <span class="user-role">{{ userRole }}</span>
+    <a
+      class="user-card"
+      [class.is-active]="isProfileTabActive()"
+      [attr.aria-current]="isProfileTabActive() ? 'page' : null"
+      routerLink="/settings"
+      [queryParams]="{ tab: 'profile' }"
+      [attr.aria-label]="userName() + ', ' + userRole()"
+      (click)="menu.close()"
+    >
+      <div class="avatar">
+        @if (showAvatarImage()) {
+          <img
+            class="avatar__image"
+            [src]="userAvatarUrl()"
+            alt=""
+            (error)="avatarFailed.set(true)"
+          />
+        } @else {
+          {{ userInitials() }}
+        }
       </div>
-    </div>
+      <div class="user-card__text">
+        <span class="user-card__name">{{ userName() }}</span>
+        <span class="user-card__role">{{ userRole() }}</span>
+      </div>
+    </a>
   </div>
 </aside>

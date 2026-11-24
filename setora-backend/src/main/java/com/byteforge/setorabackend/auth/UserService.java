@@ -56,7 +56,7 @@ public class UserService {
 
         user.setPasswordHash(passwordEncoder.encode(request.password()));
 
-        user.setRole(request.role());
+        user.setRole(UserRole.EMPLOYEE);
         user.setDeleted(false);
 
         try {
@@ -99,7 +99,7 @@ public class UserService {
     }
 
     // finds all non-deleted users
-    private User findActiveUserById(int id) {
+    public User findActiveUserById(int id) {
         return userRepository
                 .findById(id)
                 .filter(user -> !user.isDeleted())
@@ -131,45 +131,46 @@ public class UserService {
         refreshTokenRepository.revokeAllActiveByUserId(user.getId(), Instant.now());
     }
 
-    public User findById(int id) {
-        return userRepository
-                .findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-    }
-
     public void updateClientDetails(User client, String lastName, String firstName, String email, String phoneNumber) {
         if (lastName != null) {
-            if (lastName.isBlank()) {
+            if (lastName.isBlank())
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "lastName cannot be blank");
-            }
 
             client.setLastName(lastName.trim());
         }
 
         if (firstName != null) {
-            if (firstName.isBlank()) {
+            if (firstName.isBlank())
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "firstName cannot be blank");
-            }
 
             client.setFirstName(firstName.trim());
         }
 
         if (email != null) {
-            if (email.isBlank()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email cannot be blank");
-            }
+            if (email.isBlank()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email cannot be blank");
 
-            client.setEmail(email.trim());
+            client.setEmail(email);
         }
 
-        if (phoneNumber != null) {
-            client.setPhoneNumber(phoneNumber.trim());
-        }
+        if (phoneNumber != null) client.setPhoneNumber(phoneNumber.trim());
 
         try {
             userRepository.saveAndFlush(client);
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Client details violate a database constraint", e);
         }
+    }
+
+    public String updateAvatarPathByUserId(int userId, String filename) {
+        User user = userRepository.findById(userId).orElseThrow();
+        String oldPath = user.getAvatarPath();
+        user.setAvatarPath(filename); // TODO maybe you can get user directly in controller
+        userRepository.save(user);
+        return oldPath;
+    }
+
+    public String getAvatarPathByUser(int userId) {
+        User user = userRepository.findById(userId).orElseThrow();
+        return user.getAvatarPath();
     }
 }
