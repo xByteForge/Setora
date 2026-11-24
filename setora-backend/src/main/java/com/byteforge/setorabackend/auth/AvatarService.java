@@ -2,14 +2,6 @@ package com.byteforge.setorabackend.auth;
 
 import com.byteforge.setorabackend.error.exceptions.AvatarStorageException;
 import com.byteforge.setorabackend.error.exceptions.InvalidAvatarException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -24,15 +16,21 @@ import java.nio.file.StandardOpenOption;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 class AvatarService {
 
-    private static final Path UPLOAD_DIR = Paths.get("uploads", "user-avatars")
-            .toAbsolutePath()
-            .normalize();
+    private static final Path UPLOAD_DIR =
+            Paths.get("uploads", "user-avatars").toAbsolutePath().normalize();
     private static final long MAX_BYTES = 2L * 1024 * 1024;
     private static final long MAX_PIXELS = 4_000_000;
     private static final int OUTPUT_SIZE = 512;
@@ -62,14 +60,14 @@ class AvatarService {
         try {
             oldFilename = userService.updateAvatarPathByUserId(userId, filename);
         } catch (RuntimeException e) {
-            deleteQuietly(target);   // DB failed, so the new file is useless
+            deleteQuietly(target); // DB failed, so the new file is useless
             throw e;
         }
 
         if (oldFilename != null) {
             Path old = tryResolve(oldFilename);
             if (old != null && !old.equals(target)) {
-                deleteQuietly(old);  // failure here is only logged
+                deleteQuietly(old); // failure here is only logged
             }
         }
     }
@@ -128,7 +126,7 @@ class AvatarService {
         }
 
         try (InputStream in = file.getInputStream();
-             ImageInputStream iis = ImageIO.createImageInputStream(in)) {
+                ImageInputStream iis = ImageIO.createImageInputStream(in)) {
 
             if (iis == null) throw new InvalidAvatarException("Invalid image file");
 
@@ -157,7 +155,7 @@ class AvatarService {
                 reader.dispose();
             }
         } catch (InvalidAvatarException ex) {
-            throw ex;   // our own messages pass through untouched
+            throw ex; // our own messages pass through untouched
         } catch (IOException | RuntimeException ex) {
             throw new InvalidAvatarException("Could not read uploaded image");
         }

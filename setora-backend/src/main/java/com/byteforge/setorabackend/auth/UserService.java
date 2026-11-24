@@ -160,6 +160,7 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Client details violate a database constraint", e);
         }
     }
+
     @Transactional
     public String updateAvatarPathByUserId(int userId, String filename) {
         User user = userRepository.findById(userId).orElseThrow();

@@ -14,10 +14,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
-import java.nio.file.AccessDeniedException;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -46,15 +42,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidAvatarException.class)
-    public ResponseEntity<ApiErrorResponse> handleInvalidAvatarException (
-            InvalidAvatarException ex
-    ){
+    public ResponseEntity<ApiErrorResponse> handleInvalidAvatarException(InvalidAvatarException ex) {
         return error(HttpStatus.BAD_REQUEST, "INVALID_AVATAR", ex.getMessage(), "");
     }
+
     @ExceptionHandler(AvatarStorageException.class)
-    public ResponseEntity<ApiErrorResponse> handleAvatarStorage(
-            AvatarStorageException ex
-    ){
+    public ResponseEntity<ApiErrorResponse> handleAvatarStorage(AvatarStorageException ex) {
         return error(HttpStatus.INTERNAL_SERVER_ERROR, "AVATAR_STORAGE_PROBLEM", ex.getMessage(), "");
     }
 
@@ -74,8 +67,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     ResponseEntity<ApiErrorResponse> tooLarge(MaxUploadSizeExceededException e) {
-        return error(HttpStatus.CONTENT_TOO_LARGE,
-                "UPLOAD_SIZE_ERROR", "Image is too large, max size is 2MB","");
+        return error(HttpStatus.CONTENT_TOO_LARGE, "UPLOAD_SIZE_ERROR", "Image is too large, max size is 2MB", "");
     }
 
     @ExceptionHandler(AccessDeniedException.class)

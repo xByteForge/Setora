@@ -5,4 +5,3 @@ public class AvatarStorageException extends RuntimeException {
         super(msg, cause);
     }
 }
-
