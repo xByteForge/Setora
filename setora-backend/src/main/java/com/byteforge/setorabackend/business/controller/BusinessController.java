@@ -56,8 +56,7 @@ public class BusinessController {
     }
 
     @GetMapping("/count")
-    public ResponseEntity<Long> countBusinesses(
-            @ModelAttribute BusinessFilterCriteria filter) {
+    public ResponseEntity<Long> countBusinesses(@ModelAttribute BusinessFilterCriteria filter) {
         return ResponseEntity.ok(businessService.countBusinesses(filter));
     }
 

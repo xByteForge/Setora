@@ -72,15 +72,10 @@ public class DataSeeder implements CommandLineRunner {
 
     private static final int BUSINESSES_PER_LOCATION = 20;
 
-    private static final int TOTAL_BUSINESSES =
-            BUSINESSES_PER_LOCATION * 5;
+    private static final int TOTAL_BUSINESSES = BUSINESSES_PER_LOCATION * 5;
 
-    private static final List<DayOfWeek> WORK_DAYS = List.of(
-            DayOfWeek.MONDAY,
-            DayOfWeek.TUESDAY,
-            DayOfWeek.WEDNESDAY,
-            DayOfWeek.THURSDAY,
-            DayOfWeek.FRIDAY);
+    private static final List<DayOfWeek> WORK_DAYS =
+            List.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY);
 
     private static final Map<String, List<String>> CATEGORY_SERVICE_TYPES = Map.of(
             "Barbershop",
@@ -114,8 +109,7 @@ public class DataSeeder implements CommandLineRunner {
             "Serenity Spa",
             "Chic Corner",
             "The Beauty Lab",
-            "Prime Look"
-    );
+            "Prime Look");
 
     private static final List<String> BUSINESS_CATEGORIES = List.of(
             "Hair Salon",
@@ -129,26 +123,17 @@ public class DataSeeder implements CommandLineRunner {
             "Hair Salon",
             "Spa & Wellness");
 
-    private static final List<String> LOCATIONS = List.of(
-            "Cluj-Napoca",
-            "Bucuresti",
-            "Brasov",
-            "Sibiu",
-            "Timisoara");
+    private static final List<String> LOCATIONS = List.of("Cluj-Napoca", "Bucuresti", "Brasov", "Sibiu", "Timisoara");
 
     private static final List<String> ADDRESSES = List.of(
-            "Str. Memorandumului",
-            "Calea Victoriei",
-            "Str. Republicii",
-            "Str. Nicolae Balcescu",
-            "Piata Unirii");
+            "Str. Memorandumului", "Calea Victoriei", "Str. Republicii", "Str. Nicolae Balcescu", "Piata Unirii");
 
     private static final double[][] COORDINATES = {
-            {46.7694, 23.5899},
-            {44.4268, 26.1025},
-            {45.6579, 25.6012},
-            {45.7983, 24.1256},
-            {45.7489, 21.2087}
+        {46.7694, 23.5899},
+        {44.4268, 26.1025},
+        {45.6579, 25.6012},
+        {45.7983, 24.1256},
+        {45.7489, 21.2087}
     };
 
     private static final List<String> BUSINESS_DESCRIPTIONS = List.of(
@@ -164,30 +149,59 @@ public class DataSeeder implements CommandLineRunner {
             "Premium wellness experiences designed to help you unwind.");
 
     private static final List<String> FIRST_NAMES = List.of(
-            "Maria", "Andrei", "Elena", "Alexandru", "Ioana",
-            "Mihai", "Ana", "David", "Sofia", "Gabriel",
-            "Irina", "Vlad", "Diana", "Matei", "Bianca",
-            "Radu", "Cristina", "Paul", "Laura", "Stefan");
+            "Maria",
+            "Andrei",
+            "Elena",
+            "Alexandru",
+            "Ioana",
+            "Mihai",
+            "Ana",
+            "David",
+            "Sofia",
+            "Gabriel",
+            "Irina",
+            "Vlad",
+            "Diana",
+            "Matei",
+            "Bianca",
+            "Radu",
+            "Cristina",
+            "Paul",
+            "Laura",
+            "Stefan");
 
     private static final List<String> SURNAMES = List.of(
-            "Popescu", "Ionescu", "Dumitru", "Stan", "Radu",
-            "Marin", "Dobre", "Munteanu", "Constantin", "Georgescu",
-            "Stoica", "Ilie", "Preda", "Tudor", "Nistor",
-            "Florea", "Petrescu", "Moldovan", "Enache", "Lazar");
+            "Popescu",
+            "Ionescu",
+            "Dumitru",
+            "Stan",
+            "Radu",
+            "Marin",
+            "Dobre",
+            "Munteanu",
+            "Constantin",
+            "Georgescu",
+            "Stoica",
+            "Ilie",
+            "Preda",
+            "Tudor",
+            "Nistor",
+            "Florea",
+            "Petrescu",
+            "Moldovan",
+            "Enache",
+            "Lazar");
 
     private static final BigDecimal[] BASE_PRICES = {
-            new BigDecimal("70.00"),
-            new BigDecimal("120.00"),
-            new BigDecimal("200.00"),
-            new BigDecimal("55.00")
+        new BigDecimal("70.00"), new BigDecimal("120.00"), new BigDecimal("200.00"), new BigDecimal("55.00")
     };
 
     private static final int[][] SERVICE_DURATIONS = {
-            {30, 45, 60, 30},
-            {45, 60, 90, 60},
-            {60, 75, 120, 30},
-            {30, 60, 90, 60},
-            {45, 90, 120, 45}
+        {30, 45, 60, 30},
+        {45, 60, 90, 60},
+        {60, 75, 120, 30},
+        {30, 60, 90, 60},
+        {45, 90, 120, 45}
     };
 
     private static final List<String> SERVICE_DESCRIPTIONS = List.of(
@@ -214,8 +228,7 @@ public class DataSeeder implements CommandLineRunner {
     public void run(String... args) {
 
         // Enable PostgreSQL accent-insensitive search.
-        jdbcTemplate.execute(
-                "CREATE EXTENSION IF NOT EXISTS unaccent SCHEMA public");
+        jdbcTemplate.execute("CREATE EXTENSION IF NOT EXISTS unaccent SCHEMA public");
 
         // Do not duplicate seed data on subsequent application starts.
         if (businessRepository.count() > 0) {
@@ -227,40 +240,28 @@ public class DataSeeder implements CommandLineRunner {
 
         Map<String, Category> categoriesByName = seedCategories();
 
-        Map<String, List<ServiceType>> serviceTypesByCategory =
-                seedServiceTypes(categoriesByName);
+        Map<String, List<ServiceType>> serviceTypesByCategory = seedServiceTypes(categoriesByName);
 
         List<User> clients = seedClients(10);
 
         List<Employee> allEmployees = new ArrayList<>();
 
-        LocalDate nextMonday = LocalDate.now(ZONE)
-                .with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+        LocalDate nextMonday = LocalDate.now(ZONE).with(TemporalAdjusters.next(DayOfWeek.MONDAY));
 
         LocalDate nextTuesday = nextMonday.plusDays(1);
 
         for (int i = 0; i < TOTAL_BUSINESSES; i++) {
 
             // Create business owner.
-            User owner = seedUser(
-                    "Owner",
-                    "Business" + (i + 1),
-                    "owner" + (i + 1) + "@setora.test");
+            User owner = seedUser("Owner", "Business" + (i + 1), "owner" + (i + 1) + "@setora.test");
 
             // Assign businesses evenly across locations.
-            String categoryName =
-                    BUSINESS_CATEGORIES.get(i % BUSINESS_CATEGORIES.size());
+            String categoryName = BUSINESS_CATEGORIES.get(i % BUSINESS_CATEGORIES.size());
 
-            Business business = seedBusiness(
-                    owner,
-                    categoriesByName.get(categoryName),
-                    i);
+            Business business = seedBusiness(owner, categoriesByName.get(categoryName), i);
 
             // Create four services.
-            List<ServiceItem> services = seedServices(
-                    business,
-                    serviceTypesByCategory.get(categoryName),
-                    i);
+            List<ServiceItem> services = seedServices(business, serviceTypesByCategory.get(categoryName), i);
 
             // Create four employees with different service assignments.
             List<Employee> employees = List.of(
@@ -420,11 +421,9 @@ public class DataSeeder implements CommandLineRunner {
         return categories;
     }
 
-    private Map<String, List<ServiceType>> seedServiceTypes(
-            Map<String, Category> categoriesByName) {
+    private Map<String, List<ServiceType>> seedServiceTypes(Map<String, Category> categoriesByName) {
 
-        Map<String, List<ServiceType>> serviceTypesByCategory =
-                new LinkedHashMap<>();
+        Map<String, List<ServiceType>> serviceTypesByCategory = new LinkedHashMap<>();
 
         for (Map.Entry<String, List<String>> entry : CATEGORY_SERVICE_TYPES.entrySet()) {
 
@@ -449,12 +448,7 @@ public class DataSeeder implements CommandLineRunner {
 
         userCounter++;
 
-        User user = new User(
-                surname,
-                firstname,
-                email,
-                String.format("070000%04d", userCounter),
-                "not-a-real-hash");
+        User user = new User(surname, firstname, email, String.format("070000%04d", userCounter), "not-a-real-hash");
 
         return userRepository.save(user);
     }
@@ -491,11 +485,9 @@ public class DataSeeder implements CommandLineRunner {
 
         String baseName = BUSINESS_NAMES.get(index % BUSINESS_NAMES.size());
         String locationName = LOCATIONS.get(locationIndex);
-        String name = BUSINESS_NAMES.get(index % BUSINESSES_PER_LOCATION)
-                + " " + locationName;
+        String name = BUSINESS_NAMES.get(index % BUSINESSES_PER_LOCATION) + " " + locationName;
 
-        String slug = name.toLowerCase()
-                .replace(" ", "-");
+        String slug = name.toLowerCase().replace(" ", "-");
 
         // Give businesses different street numbers within each city.
         int streetNumber = 10 + (index % BUSINESSES_PER_LOCATION) * 3;
@@ -505,8 +497,7 @@ public class DataSeeder implements CommandLineRunner {
         business.setName(name);
         business.setEmail("contact" + businessNumber + "@setora.test");
         business.setSlug(slug);
-        business.setDescription(
-                BUSINESS_DESCRIPTIONS.get(index % BUSINESS_DESCRIPTIONS.size()));
+        business.setDescription(BUSINESS_DESCRIPTIONS.get(index % BUSINESS_DESCRIPTIONS.size()));
 
         business.setLocation(new Location(
                 LOCATIONS.get(locationIndex),
@@ -520,21 +511,16 @@ public class DataSeeder implements CommandLineRunner {
         return businessRepository.save(business);
     }
 
-    private List<ServiceItem> seedServices(
-            Business business,
-            List<ServiceType> serviceTypes,
-            int businessIndex) {
+    private List<ServiceItem> seedServices(Business business, List<ServiceType> serviceTypes, int businessIndex) {
 
         int locationIndex = businessIndex / BUSINESSES_PER_LOCATION;
         int businessNumberInLocation = businessIndex % BUSINESSES_PER_LOCATION;
 
         // Different prices for every business within the same location.
         // Each city also has a different base price level.
-        BigDecimal priceOffset = BigDecimal.valueOf(
-                locationIndex * 25L + businessNumberInLocation * 8L);
+        BigDecimal priceOffset = BigDecimal.valueOf(locationIndex * 25L + businessNumberInLocation * 8L);
 
-        int[] durations =
-                SERVICE_DURATIONS[businessIndex % SERVICE_DURATIONS.length];
+        int[] durations = SERVICE_DURATIONS[businessIndex % SERVICE_DURATIONS.length];
 
         List<ServiceItem> services = new ArrayList<>();
 
@@ -544,8 +530,7 @@ public class DataSeeder implements CommandLineRunner {
                     business,
                     serviceTypes.get(i),
                     serviceTypes.get(i).getName(),
-                    SERVICE_DESCRIPTIONS.get(
-                            (i + businessIndex) % SERVICE_DESCRIPTIONS.size()),
+                    SERVICE_DESCRIPTIONS.get((i + businessIndex) % SERVICE_DESCRIPTIONS.size()),
                     BASE_PRICES[i].add(priceOffset),
                     durations[i]);
 
@@ -595,15 +580,11 @@ public class DataSeeder implements CommandLineRunner {
 
             WorkSchedule schedule = new WorkSchedule();
 
-            int offsetMinutes = (day.getValue() + employeeIndex) % 2 == 0
-                    ? 30
-                    : 0;
+            int offsetMinutes = (day.getValue() + employeeIndex) % 2 == 0 ? 30 : 0;
 
             schedule.setEmployee(employee);
             schedule.setDayOfWeek(day);
-            schedule.setInterval(new TimeInterval(
-                    from.plusMinutes(offsetMinutes),
-                    to.plusMinutes(offsetMinutes)));
+            schedule.setInterval(new TimeInterval(from.plusMinutes(offsetMinutes), to.plusMinutes(offsetMinutes)));
 
             workScheduleRepository.save(schedule);
         }
@@ -626,8 +607,7 @@ public class DataSeeder implements CommandLineRunner {
 
         Instant start = date.atTime(at).atZone(ZONE).toInstant();
 
-        Instant end = start.plus(
-                Duration.ofMinutes(serviceItem.getDurationMinutes()));
+        Instant end = start.plus(Duration.ofMinutes(serviceItem.getDurationMinutes()));
 
         Appointment appointment = new Appointment();
 
@@ -643,8 +623,7 @@ public class DataSeeder implements CommandLineRunner {
 
     private void seedUnavailableSlots(List<Employee> employees) {
 
-        LocalDate nextWednesday = LocalDate.now(ZONE)
-                .with(TemporalAdjusters.next(DayOfWeek.WEDNESDAY));
+        LocalDate nextWednesday = LocalDate.now(ZONE).with(TemporalAdjusters.next(DayOfWeek.WEDNESDAY));
 
         for (Employee employee : employees) {
 

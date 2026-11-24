@@ -23,7 +23,7 @@ public class BusinessMapper {
     private final ServiceItemMapper serviceItemMapper;
 
     public BusinessResponseDto toResponseDto(Business business) {
-        BigDecimal minPrice = business.getServiceItems() == null
+        BigDecimal defaultMinPrice = business.getServiceItems() == null
                 ? BigDecimal.ZERO
                 : business.getServiceItems().stream()
                         .filter(ServiceItem::isActive)
@@ -31,6 +31,10 @@ public class BusinessMapper {
                         .min(BigDecimal::compareTo)
                         .orElse(BigDecimal.ZERO);
 
+        return toResponseDto(business, defaultMinPrice);
+    }
+
+    public BusinessResponseDto toResponseDto(Business business, BigDecimal minPrice) {
         String categoryName =
                 business.getCategory() != null ? business.getCategory().getName() : "";
 
@@ -54,7 +58,7 @@ public class BusinessMapper {
                 business.getPhotoUrls() != null ? List.of(business.getPhotoUrls()) : List.of(),
                 business.getThumbnailUrl(),
                 business.getTags() != null ? List.of(business.getTags()) : List.of(),
-                minPrice);
+                minPrice != null ? minPrice : BigDecimal.ZERO);
     }
 
     public BusinessDetailedResponseDto toDetailedResponseDto(Business business) {

@@ -106,7 +106,7 @@ class BusinessServiceTest {
 
         when(businessRepository.findAll(ArgumentMatchers.<Specification<Business>>any(), any(Pageable.class)))
                 .thenReturn(repoPage);
-        when(businessMapper.toResponseDto(business)).thenReturn(dto);
+        when(businessMapper.toResponseDto(eq(business), any(BigDecimal.class))).thenReturn(dto);
 
         Page<BusinessResponseDto> result = businessService.getAllBusinesses(pageParams);
 
@@ -207,8 +207,8 @@ class BusinessServiceTest {
 
         when(businessRepository.findAll(ArgumentMatchers.<Specification<Business>>any(), any(Pageable.class)))
                 .thenReturn(repoPage);
-        when(businessMapper.toResponseDto(b1)).thenReturn(dto1);
-        when(businessMapper.toResponseDto(b2)).thenReturn(dto2);
+        when(businessMapper.toResponseDto(eq(b1), any(BigDecimal.class))).thenReturn(dto1);
+        when(businessMapper.toResponseDto(eq(b2), any(BigDecimal.class))).thenReturn(dto2);
 
         Page<BusinessResponseDto> result = businessService.getBusinesses(criteria, BusinessSortBy.NAME_ASC, pageParams);
 
@@ -216,8 +216,8 @@ class BusinessServiceTest {
         assertThat(result.getTotalElements()).isEqualTo(5);
         assertThat(result.getTotalPages()).isEqualTo(3);
         assertThat(result.getNumber()).isEqualTo(0);
-        verify(businessMapper).toResponseDto(b1);
-        verify(businessMapper).toResponseDto(b2);
+        verify(businessMapper).toResponseDto(eq(b1), any(BigDecimal.class));
+        verify(businessMapper).toResponseDto(eq(b2), any(BigDecimal.class));
     }
 
     @Test
@@ -328,6 +328,42 @@ class BusinessServiceTest {
 
         assertThat(result).isEmpty();
         verify(businessRepository).findDistinctLocations();
+    }
+
+    // countBusinesses
+    @Test
+    void countBusinesses_withFilterCriteria_returnsRepositoryCount() {
+        BusinessFilterCriteria criteria = new BusinessFilterCriteria(
+                null,
+                "salon",
+                "Cluj-Napoca",
+                List.of("haircut"),
+                1,
+                5,
+                new BigDecimal("50.00"),
+                new BigDecimal("200.00"),
+                LocalDate.of(2026, 11, 25),
+                LocalTime.of(9, 0),
+                LocalTime.of(17, 0));
+
+        when(businessRepository.count(ArgumentMatchers.<Specification<Business>>any()))
+                .thenReturn(14L);
+
+        long result = businessService.countBusinesses(criteria);
+
+        assertThat(result).isEqualTo(14L);
+        verify(businessRepository).count(ArgumentMatchers.<Specification<Business>>any());
+    }
+
+    @Test
+    void countBusinesses_withNullFilter_returnsTotalCount() {
+        when(businessRepository.count(ArgumentMatchers.<Specification<Business>>any()))
+                .thenReturn(0L);
+
+        long result = businessService.countBusinesses(null);
+
+        assertThat(result).isZero();
+        verify(businessRepository).count(ArgumentMatchers.<Specification<Business>>any());
     }
 
     // helpers

@@ -56,10 +56,10 @@ export class FiltersPanelComponent {
 
   // cate rezultate ar da filtrele din formular, inainte de a le aplica
   readonly previewCount = toSignal(
-      toObservable(this.draft).pipe(
-          switchMap((d) => this.service.count({ ...this.service.query(), ...this.toPatch(d) })),
-      ),
-      { initialValue: this.service.result().totalElements },
+    toObservable(this.draft).pipe(
+      switchMap((d) => this.service.count({ ...this.service.query(), ...this.toPatch(d) })),
+    ),
+    { initialValue: this.service.result().totalElements },
   );
 
   onField(key: keyof Draft, event: Event): void {
@@ -90,8 +90,8 @@ export class FiltersPanelComponent {
       ...e,
       category,
       ...(keepService
-          ? {}
-          : {
+        ? {}
+        : {
             serviceId: '',
             minPrice: '',
             maxPrice: '',

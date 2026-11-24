@@ -145,9 +145,9 @@ export class BusinessDiscoveryService {
 
   count(q: BusinessQuery): Observable<number> {
     const params = this.buildParams(q, this.categoryList())
-        .delete('page')
-        .delete('size')
-        .delete('sortBy');
+      .delete('page')
+      .delete('size')
+      .delete('sortBy');
     return this.http.get<number>(`${this.apiBase}/businesses/count`, { params });
   }
 
@@ -182,8 +182,8 @@ export class BusinessDiscoveryService {
 
   private loadFilterMetadata() {
     this.http
-        .get<string[]>(`${this.apiBase}/businesses/locations`)
-        .subscribe((data) => this.cities.set(data));
+      .get<string[]>(`${this.apiBase}/businesses/locations`)
+      .subscribe((data) => this.cities.set(data));
 
     this.http
       .get<BusinessCategory[]>(`${this.apiBase}/businesses/categories`)
