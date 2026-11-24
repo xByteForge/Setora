@@ -5,9 +5,21 @@
 <aside class="sidebar" [class.sidebar--open]="menu.open()">
   <div class="mobile-head">
     <h2 class="mobile-title">{{ 'MENU.TITLE' | transloco }}</h2>
-    <button type="button" class="mobile-close" (click)="menu.close()"
-            [attr.aria-label]="'APPOINTMENTS.DETAILS.CLOSE' | transloco">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+    <button
+      type="button"
+      class="mobile-close"
+      (click)="menu.close()"
+      [attr.aria-label]="'APPOINTMENTS.DETAILS.CLOSE' | transloco"
+    >
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        aria-hidden="true"
+      >
         <path d="M6 6l12 12M18 6L6 18" />
       </svg>
     </button>
@@ -42,29 +54,39 @@
   </div>
 
   <div class="sidebar-footer">
-    <a class="nav-link"
+    <a
+      class="nav-link"
       routerLink="/settings"
       [queryParams]="{ tab: 'settings' }"
       routerLinkActive="active"
-      (click)="menu.close()">
+      (click)="menu.close()"
+    >
       <i class="fa-solid fa-gear" aria-hidden="true"></i>
       <span class="nav-label">{{ 'NAV.SETTINGS' | transloco }}</span>
     </a>
 
     <button type="button" class="theme-row" (click)="theme.toggleTheme()">
       <span>{{ 'MENU.THEME' | transloco }}</span>
-      <strong>{{ (theme.currentTheme() === 'light' ? 'MENU.LIGHT' : 'MENU.DARK') | transloco }}</strong>
+      <strong>{{
+        (theme.currentTheme() === 'light' ? 'MENU.LIGHT' : 'MENU.DARK') | transloco
+      }}</strong>
     </button>
 
-    <a class="user-card"
+    <a
+      class="user-card"
       routerLink="/settings"
       [queryParams]="{ tab: 'profile' }"
       [attr.aria-label]="userName() + ', ' + userRole()"
-      (click)="menu.close()">
+      (click)="menu.close()"
+    >
       <div class="avatar">
         @if (showAvatarImage()) {
-          <img class="avatar__image" [src]="userAvatarUrl()" alt=""
-              (error)="avatarFailed.set(true)" />
+          <img
+            class="avatar__image"
+            [src]="userAvatarUrl()"
+            alt=""
+            (error)="avatarFailed.set(true)"
+          />
         } @else {
           {{ userInitials() }}
         }

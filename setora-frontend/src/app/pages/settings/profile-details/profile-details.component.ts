@@ -121,7 +121,7 @@ export class ProfileDetailsComponent {
   onPhotoSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
-    input.value = ''; 
+    input.value = '';
 
     if (!file) return;
 

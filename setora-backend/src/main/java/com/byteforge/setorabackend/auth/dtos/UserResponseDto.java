@@ -11,6 +11,4 @@ public record UserResponseDto(
         String email,
         String phoneNumber,
         UserRole role,
-        boolean isDeleted
-) {
-}
+        boolean isDeleted) {}

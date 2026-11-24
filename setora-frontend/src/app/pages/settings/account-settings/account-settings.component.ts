@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
 import { User } from '../../../core/models/user.model';
 import {
@@ -15,9 +23,21 @@ export type ThemeMode = 'light' | 'dark';
 type PasswordField = 'current' | 'new' | 'confirm';
 
 const NOTIFICATION_ROWS: { event: NotificationEvent; titleKey: string; hintKey: string }[] = [
-  { event: 'APPOINTMENT_CONFIRMED', titleKey: 'SETTINGS.NOTIFICATIONS.CONFIRMED', hintKey: 'SETTINGS.NOTIFICATIONS.CONFIRMED_HINT' },
-  { event: 'APPOINTMENT_CHANGED', titleKey: 'SETTINGS.NOTIFICATIONS.CHANGED', hintKey: 'SETTINGS.NOTIFICATIONS.CHANGED_HINT' },
-  { event: 'REMINDER', titleKey: 'SETTINGS.NOTIFICATIONS.REMINDER', hintKey: 'SETTINGS.NOTIFICATIONS.REMINDER_HINT' },
+  {
+    event: 'APPOINTMENT_CONFIRMED',
+    titleKey: 'SETTINGS.NOTIFICATIONS.CONFIRMED',
+    hintKey: 'SETTINGS.NOTIFICATIONS.CONFIRMED_HINT',
+  },
+  {
+    event: 'APPOINTMENT_CHANGED',
+    titleKey: 'SETTINGS.NOTIFICATIONS.CHANGED',
+    hintKey: 'SETTINGS.NOTIFICATIONS.CHANGED_HINT',
+  },
+  {
+    event: 'REMINDER',
+    titleKey: 'SETTINGS.NOTIFICATIONS.REMINDER',
+    hintKey: 'SETTINGS.NOTIFICATIONS.REMINDER_HINT',
+  },
 ];
 
 const CHANNELS: { id: NotificationChannel; labelKey: string }[] = [
@@ -139,7 +159,9 @@ export class AccountSettingsComponent {
           this.emailForm.reset();
         },
         error: () => {
-          this.emailError.set('Unable to update your email. Please check your password and try again.');
+          this.emailError.set(
+            'Unable to update your email. Please check your password and try again.',
+          );
         },
       });
   }
@@ -188,7 +210,9 @@ export class AccountSettingsComponent {
           });
         },
         error: () => {
-          this.passwordError.set('Unable to change password. Please check your current password and try again.');
+          this.passwordError.set(
+            'Unable to change password. Please check your current password and try again.',
+          );
         },
       });
   }
@@ -229,9 +253,10 @@ export class AccountSettingsComponent {
       .deleteAccount()
       .pipe(finalize(() => this.deleteLoading.set(false)))
       .subscribe({
-        next: () => {},
         error: () => {
-          this.deleteError.set('Unable to delete your account. Please check your password and try again.');
+          this.deleteError.set(
+            'Unable to delete your account. Please check your password and try again.',
+          );
         },
       });
   }

@@ -3,7 +3,7 @@ export interface Employee {
   businessId: number;
   userId: number;
   active: boolean;
-  serviceIds: number[]; 
-  name: string;     
-  employmentRole: string;    
+  serviceIds: number[];
+  name: string;
+  employmentRole: string;
 }

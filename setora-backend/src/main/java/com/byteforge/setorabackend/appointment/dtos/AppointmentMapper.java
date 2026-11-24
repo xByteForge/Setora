@@ -1,15 +1,15 @@
 package com.byteforge.setorabackend.appointment.dtos;
+
 import com.byteforge.setorabackend.appointment.Appointment;
 import com.byteforge.setorabackend.appointment.AppointmentStatus;
 import com.byteforge.setorabackend.auth.User;
 import com.byteforge.setorabackend.common.DateTimeInterval;
 import com.byteforge.setorabackend.employees.model.Employee;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
-
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.Duration;
 
 public class AppointmentMapper {
 
@@ -27,35 +27,30 @@ public class AppointmentMapper {
         ZonedDateTime start = startsAt.atZone(timezone);
         ZonedDateTime end = endsAt.atZone(timezone);
 
+        int clientId = client != null ? client.getId() : 0;
+        String clientName = client != null ? client.getName() : appointment.getClientName();
+        String clientPhone = client != null ? client.getPhoneNumber() : appointment.getClientPhone();
+        String clientEmail = client != null ? client.getEmail() : appointment.getClientEmail();
+
         return new AppointmentResponseDto(
                 appointment.getId(),
-
                 business.getId(),
-
                 service.getId(),
                 service.getName(),
                 Math.toIntExact(Duration.between(startsAt, endsAt).toMinutes()),
-
-                client.getId(),
-                client.getName(),
-                client.getPhoneNumber(),
-                client.getEmail(),
-
+                clientId,
+                clientName,
+                clientPhone,
+                clientEmail,
                 employee.getId(),
                 employee.getUser().getName(),
-
                 start.toLocalDate(),
                 start.toLocalTime(),
                 end.toLocalTime(),
-
                 appointment.getStatus(),
-
                 appointment.getPriceAtAppointment(),
-
                 appointment.getPaymentMethod(),
-
-                appointment.getClientNote()
-        );
+                appointment.getClientNote());
     }
 
     public static Appointment toEntity(
@@ -63,23 +58,17 @@ public class AppointmentMapper {
             Employee employee,
             ServiceItem service,
             User client,
-            ZoneId timezone
-    ) {
+            ZoneId timezone) {
         Appointment appointment = new Appointment();
         appointment.setClient(client);
         appointment.setEmployee(employee);
         appointment.setServiceItem(service);
 
-        ZonedDateTime start = request.date()
-                .atTime(request.startTime())
-                .atZone(timezone);
+        ZonedDateTime start = request.date().atTime(request.startTime()).atZone(timezone);
 
         ZonedDateTime end = start.plusMinutes(service.getDurationMinutes());
 
-        appointment.setInterval(new DateTimeInterval(
-                start.toInstant(),
-                end.toInstant()
-        ));
+        appointment.setInterval(new DateTimeInterval(start.toInstant(), end.toInstant()));
 
         appointment.setPaymentMethod(request.paymentMethod());
         appointment.setClientNote(request.clientNote());
@@ -89,5 +78,4 @@ public class AppointmentMapper {
 
         return appointment;
     }
-
 }

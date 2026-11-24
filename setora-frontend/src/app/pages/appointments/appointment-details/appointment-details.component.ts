@@ -43,7 +43,9 @@ export class AppointmentDetailsComponent {
   readonly dateLabel = computed(() => {
     const date = businessDate(this.appointment().start, this.timezone());
     const text = new Date(`${date}T00:00:00`).toLocaleDateString(this.lang(), {
-      weekday: 'long', day: 'numeric', month: 'long',
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
     });
     return text.charAt(0).toUpperCase() + text.slice(1);
   });

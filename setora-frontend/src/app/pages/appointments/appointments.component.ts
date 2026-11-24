@@ -1,10 +1,21 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AppointmentsHeaderComponent } from './appointment-header/appointment-header.component';
 import { AppointmentFiltersComponent } from './appointment-filters/appointment-filters.component';
 import { AppointmentCalendarComponent } from './appointment-calendar/appointment-calendar.component';
 import { AppointmentSummary } from '../../core/ui-models/appointment-summary.model';
-import { AppointmentFilters, DEFAULT_FILTERS } from '../../core/ui-models/appointment-filters.model';
+import {
+  AppointmentFilters,
+  DEFAULT_FILTERS,
+} from '../../core/ui-models/appointment-filters.model';
 import { CalendarView } from '../../core/ui-models/calendar-view.type';
 import { CalendarService } from '../../core/services/calendar.service';
 import { CatalogService } from '../../core/services/catalog.service';
@@ -14,7 +25,11 @@ import { AppointmentFormDialogComponent } from './appointment-form-dialog/appoin
 import { CancelAppointmentDialogComponent } from './cancel-appointment-dialog/cancel-appointment-dialog.component';
 import { Appointment } from '../../core/models/appointment.model';
 import { businessDate, todayIn } from '../../core/utils/date.util';
-import { filterAppointments, filterEmployees } from './appointment-filters/appointment-filters.util';
+import {
+  filterAppointments,
+  filterEmployees,
+} from './appointment-filters/appointment-filters.util';
+import { UniversalSearchComponent } from '../../core/layout/universal-search/universal-search.component';
 
 @Component({
   imports: [
@@ -26,6 +41,7 @@ import { filterAppointments, filterEmployees } from './appointment-filters/appoi
     AppointmentAgendaComponent,
     AppointmentFormDialogComponent,
     CancelAppointmentDialogComponent,
+    UniversalSearchComponent,
   ],
   selector: 'app-appointments',
   templateUrl: './appointments.component.html',

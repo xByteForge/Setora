@@ -6,17 +6,13 @@ import { API_BASE_URL } from './api.config';
 import { AuthService } from '../services/auth.service';
 import { toApiError } from './api-error.interceptor';
 
-
 const PUBLIC_PATHS = new Set(['/auth/login', '/auth/register', '/auth/refresh']);
 
-
-/** Returnează calea relativă la API-ul de bază, sau null dacă URL-ul nu aparține API-ului. */
 function relativeApiPath(requestUrl: string, apiBaseUrl: string): string | null {
   let api: URL;
   let target: URL;
 
   try {
-    // Ambele URL-uri trebuie să fie absolute. Cele relative (fără schemă) nu sunt apeluri API.
     api = new URL(apiBaseUrl);
     target = new URL(requestUrl);
   } catch {
@@ -37,7 +33,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const relativePath = relativeApiPath(req.url, inject(API_BASE_URL));
 
   if (relativePath === null) return next(req);
-  
+
   if (PUBLIC_PATHS.has(relativePath)) return next(req);
 
   const token = inject(AuthService).accessToken();
@@ -47,6 +43,4 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 };
 
 export const apiErrorInterceptor: HttpInterceptorFn = (req, next) =>
-  next(req).pipe(
-    catchError((error: unknown) => throwError(() => toApiError(error))),
-  );
+  next(req).pipe(catchError((error: unknown) => throwError(() => toApiError(error))));

@@ -3,11 +3,13 @@ package com.byteforge.setorabackend.auth;
 import com.byteforge.setorabackend.auth.dtos.*;
 import com.byteforge.setorabackend.auth.refresh_tokens.RefreshToken;
 import com.byteforge.setorabackend.auth.refresh_tokens.RefreshTokenRepository;
+import java.time.Instant;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -15,9 +17,6 @@ import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.time.Instant;
-import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -31,10 +30,7 @@ public class AuthService {
     private final RefreshJwtVerifier refreshJwtVerifier;
 
     private ResponseStatusException invalidRefreshToken() {
-        return new ResponseStatusException(
-                HttpStatus.UNAUTHORIZED,
-                "Invalid or expired refresh token"
-        );
+        return new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid or expired refresh token");
     }
 
     private Jwt decodeRefreshToken(String token) {
@@ -48,15 +44,19 @@ public class AuthService {
         }
     }
 
-
     private User validateRefreshSession(Jwt jwt, RefreshToken session) {
         User user = session.getUser();
         int tokenUserId = Integer.parseInt(jwt.getSubject());
         Object versionClaim = jwt.getClaims().get("token_version");
-        boolean validVersion = versionClaim instanceof Number && ((Number) versionClaim).intValue() == user.getTokenVersion();
+        boolean validVersion =
+                versionClaim instanceof Number && ((Number) versionClaim).intValue() == user.getTokenVersion();
 
-        if (session.getRevokedAt() != null || !session.getExpiresAt().isAfter(Instant.now()) || user.getId() != tokenUserId || user.isDeleted() || user.getRole() == null || !validVersion)
-            throw invalidRefreshToken();
+        if (session.getRevokedAt() != null
+                || !session.getExpiresAt().isAfter(Instant.now())
+                || user.getId() != tokenUserId
+                || user.isDeleted()
+                || user.getRole() == null
+                || !validVersion) throw invalidRefreshToken();
 
         return user;
     }
@@ -67,17 +67,15 @@ public class AuthService {
 
     private void validatePassword(String password) {
         if (password == null || password.isBlank() || password.length() < 8)
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Password must contain at least 8 characters"
-            );
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password must contain at least 8 characters");
     }
 
     @Transactional
     public AuthResponseDto refresh(RefreshTokenRequestDto request) {
         Jwt jwt = decodeRefreshToken(request.refreshToken());
 
-        RefreshToken oldSession = refreshTokenRepository.findByTokenIdForUpdate(jwt.getId()).orElseThrow(this::invalidRefreshToken);
+        RefreshToken oldSession =
+                refreshTokenRepository.findByTokenIdForUpdate(jwt.getId()).orElseThrow(this::invalidRefreshToken);
 
         User user = validateRefreshSession(jwt, oldSession);
         oldSession.setRevokedAt(Instant.now());
@@ -92,34 +90,31 @@ public class AuthService {
 
         refreshTokenRepository.save(newSession);
 
-        return new AuthResponseDto(accessToken, newRefresh.token(), "Bearer", jwtService.getAccessTokenLifetimeSeconds(), userService.toResponseDto(user));
+        return new AuthResponseDto(
+                accessToken,
+                newRefresh.token(),
+                "Bearer",
+                jwtService.getAccessTokenLifetimeSeconds(),
+                userService.toResponseDto(user));
     }
 
     @Transactional
-    public UserResponseDto register(RegisterRequestDto request) {
+    public UserResponseDto register(CreateUserRequestDto request) {
         validatePassword(request.password());
         String email = normalizeEmail(request.email());
         User user = userRepository.findByEmail(email).orElse(null);
 
         if (user != null) {
-            if (!user.isDeleted())
-                throw new ResponseStatusException(
-                        HttpStatus.CONFLICT,
-                        "Account already exists"
-                );
+            if (!user.isDeleted()) throw new ResponseStatusException(HttpStatus.CONFLICT, "Account already exists");
 
             if (user.getRole() != UserRole.CLIENT || "ghost@gmail.com".equals(email)) {
                 throw new ResponseStatusException(
-                        HttpStatus.CONFLICT,
-                        "This account cannot be restored through registration"
-                );
+                        HttpStatus.CONFLICT, "This account cannot be restored through registration");
             }
 
             if (!passwordEncoder.matches(request.password(), user.getPasswordHash()))
                 throw new ResponseStatusException(
-                        HttpStatus.CONFLICT,
-                        "Account restoration requires the previous password"
-                );
+                        HttpStatus.CONFLICT, "Account restoration requires the previous password");
 
             refreshTokenRepository.revokeAllActiveByUserId(user.getId(), Instant.now());
             user.setTokenVersion(user.getTokenVersion() + 1);
@@ -136,7 +131,8 @@ public class AuthService {
         user.setUsername(request.firstName().trim());
         user.setEmail(email);
 
-        user.setPhoneNumber(request.phoneNumber() == null ? null : request.phoneNumber().trim());
+        user.setPhoneNumber(
+                request.phoneNumber() == null ? null : request.phoneNumber().trim());
         user.setPasswordHash(passwordEncoder.encode(request.password()));
 
         try {
@@ -145,10 +141,7 @@ public class AuthService {
 
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Account information conflicts with database constraints",
-                    e
-            );
+                    HttpStatus.CONFLICT, "Account information conflicts with database constraints", e);
         }
     }
 
@@ -159,20 +152,13 @@ public class AuthService {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, request.password()));
         } catch (AuthenticationException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED,
-                    "Invalid email or password"
-            );
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
         }
 
         // we're here if the account exists
         User user = userService.findByEmail(email);
 
-        if (user.isDeleted())
-            throw new ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED,
-                    "Invalid email or password"
-            );
+        if (user.isDeleted()) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
 
         String accessToken = jwtService.generateAccessToken(user);
         JwtService.IssuedRefreshToken refresh = jwtService.generateRefreshToken(user);
@@ -184,17 +170,22 @@ public class AuthService {
 
         refreshTokenRepository.save(session);
 
-        return new AuthResponseDto(accessToken, refresh.token(), "Bearer", jwtService.getAccessTokenLifetimeSeconds(), userService.toResponseDto(user));
+        return new AuthResponseDto(
+                accessToken,
+                refresh.token(),
+                "Bearer",
+                jwtService.getAccessTokenLifetimeSeconds(),
+                userService.toResponseDto(user));
     }
 
     @Transactional
-    public void logout(int currentUserId, LogoutRequestDto request) {
+    public void logout(int currentUserId, RefreshTokenRequestDto request) {
         Jwt jwt = decodeRefreshToken(request.refreshToken());
 
-        if (Integer.parseInt(jwt.getSubject()) != currentUserId)
-            throw invalidRefreshToken();
+        if (Integer.parseInt(jwt.getSubject()) != currentUserId) throw invalidRefreshToken();
 
-        RefreshToken session = refreshTokenRepository.findByTokenIdForUpdate(jwt.getId()).orElseThrow(this::invalidRefreshToken);
+        RefreshToken session =
+                refreshTokenRepository.findByTokenIdForUpdate(jwt.getId()).orElseThrow(this::invalidRefreshToken);
         validateRefreshSession(jwt, session);
         session.setRevokedAt(Instant.now());
     }
@@ -203,6 +194,4 @@ public class AuthService {
     public UserResponseDto getCurrentUser(int userId) {
         return userService.getUserById(userId);
     }
-
-
 }

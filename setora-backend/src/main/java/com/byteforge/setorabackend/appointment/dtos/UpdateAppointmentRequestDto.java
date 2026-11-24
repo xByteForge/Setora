@@ -3,15 +3,11 @@ package com.byteforge.setorabackend.appointment.dtos;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 
-public record UpdateAppointmentRequestDto(//TODO id of entity to update??
+public record UpdateAppointmentRequestDto( // TODO id of entity to update??
         String surname,
         String firstname,
 
-        @Email
-        String email,
+        @Email String email,
         String phoneNumber,
 
-        @Size(max = 1000)
-        String clientNote
-) {
-}
+        @Size(max = 1000) String clientNote) {}
