@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, computed } from '@angular/core';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UserService } from '../../core/services/user.service';
 import { ProfileDetailsComponent } from './profile-details/profile-details.component';

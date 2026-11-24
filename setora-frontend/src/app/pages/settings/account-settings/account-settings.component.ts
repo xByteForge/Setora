@@ -253,7 +253,6 @@ export class AccountSettingsComponent {
       .deleteAccount()
       .pipe(finalize(() => this.deleteLoading.set(false)))
       .subscribe({
-        next: () => {},
         error: () => {
           this.deleteError.set(
             'Unable to delete your account. Please check your password and try again.',
