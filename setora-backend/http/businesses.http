@@ -10,6 +10,14 @@ GET http://localhost:8080/api/businesses?page=0&size=5
 GET http://localhost:8080/api/businesses?ownerId=1
 
 
+### Get businesses by category
+GET http://localhost:8080/api/businesses?categoryId=1
+
+
+### Get businesses by free-text search (matches name, description, category, location, or service)
+GET http://localhost:8080/api/businesses?text=tuns
+
+
 ### Get businesses by location (matches locationName or address)
 GET http://localhost:8080/api/businesses?location=Piezisa
 
@@ -18,24 +26,24 @@ GET http://localhost:8080/api/businesses?location=Piezisa
 GET http://localhost:8080/api/businesses?tags=barber&tags=men
 
 
-### Get businesses offering a specific service (title contains, case-insensitive)
-GET http://localhost:8080/api/businesses?service=tuns
+### Get businesses offering a specific service type
+GET http://localhost:8080/api/businesses?serviceTypeId=1
 
 
-### Get businesses by service and price range
-GET http://localhost:8080/api/businesses?service=tuns&minPrice=30&maxPrice=100
+### Get businesses by service type and price range
+GET http://localhost:8080/api/businesses?serviceTypeId=1&minPrice=30&maxPrice=100
 
 
-### Get businesses by service and availability date
-GET http://localhost:8080/api/businesses?service=tuns&date=2026-11-23
+### Get businesses by service type and availability date
+GET http://localhost:8080/api/businesses?serviceTypeId=1&date=2026-11-23
 
 
-### Get businesses by service, date, and time
-GET http://localhost:8080/api/businesses?service=tuns&date=2026-11-23&time=14:00
+### Get businesses by service type, date, and time window (Afternoon: 12:00 - 18:00)
+GET http://localhost:8080/api/businesses?serviceTypeId=1&date=2026-11-23&timeFrom=12:00&timeTo=18:00
 
 
-### Verify priceRange, date, and time are ignored when service is omitted
-GET http://localhost:8080/api/businesses?minPrice=30&maxPrice=100&date=2026-11-23&time=14:00
+### Get businesses by standalone price range, date, and time window (without serviceTypeId)
+GET http://localhost:8080/api/businesses?minPrice=30&maxPrice=100&date=2026-11-23&timeFrom=12:00&timeTo=18:00
 
 
 ### Sort by name ascending
@@ -50,24 +58,28 @@ GET http://localhost:8080/api/businesses?sortBy=NAME_DESC
 GET http://localhost:8080/api/businesses?sortBy=OLDEST
 
 
-### Sort by price ascending (with service filter)
-GET http://localhost:8080/api/businesses?service=tuns&sortBy=PRICE_ASC
+### Sort by price ascending (with service type filter)
+GET http://localhost:8080/api/businesses?serviceTypeId=1&sortBy=PRICE_ASC
 
 
-### Sort by price descending (with service filter)
-GET http://localhost:8080/api/businesses?service=tuns&sortBy=PRICE_DESC
+### Sort by price descending (with service type filter)
+GET http://localhost:8080/api/businesses?serviceTypeId=1&sortBy=PRICE_DESC
 
 
 ### Combined filters + sorting + pagination
-GET http://localhost:8080/api/businesses?location=Cluj&service=tuns&minPrice=30&maxPrice=150&date=2026-11-23&time=14:00&sortBy=PRICE_ASC&page=0&size=10
+GET http://localhost:8080/api/businesses?location=Cluj&categoryId=1&serviceTypeId=1&minPrice=30&maxPrice=150&date=2026-11-23&timeFrom=06:00&timeTo=12:00&sortBy=PRICE_ASC&page=0&size=10
 
 
 ### Validation test: minPrice > maxPrice (expect 400 Bad Request)
-GET http://localhost:8080/api/businesses?service=tuns&minPrice=200&maxPrice=50
+GET http://localhost:8080/api/businesses?minPrice=200&maxPrice=50
+
+
+### Validation test: timeFrom > timeTo (expect 400 Bad Request)
+GET http://localhost:8080/api/businesses?timeFrom=18:00&timeTo=12:00
 
 
 ### Validation test: past date (expect 400 Bad Request)
-GET http://localhost:8080/api/businesses?service=tuns&date=2020-01-01
+GET http://localhost:8080/api/businesses?date=2020-01-01
 
 
 ### Get business by ID

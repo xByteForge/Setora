@@ -10,6 +10,10 @@ export class CatalogService {
   private readonly business: Business = {
     id: 1,
     ownerId: 1,
+    category: {
+      id: 1,
+      name: 'bartane',
+    },
     name: 'Studio Armonia',
     slug: 'studio-armonia',
     description: 'Spațiu business · București',
@@ -34,6 +38,11 @@ export class CatalogService {
       businessId: 1,
       name: 'Tuns & coafat',
       description: null,
+      type: {
+        id: 1,
+        name: '1',
+        categoryId: null,
+      },
       price: 150,
       durationMinutes: 60,
       active: true,
@@ -44,6 +53,11 @@ export class CatalogService {
       businessId: 1,
       name: 'Vopsit & coafat',
       description: null,
+      type: {
+        id: 1,
+        name: '1',
+        categoryId: null,
+      },
       price: 250,
       durationMinutes: 90,
       active: true,
@@ -54,6 +68,11 @@ export class CatalogService {
       businessId: 1,
       name: 'Tuns & barbă',
       description: null,
+      type: {
+        id: 1,
+        name: '1',
+        categoryId: null,
+      },
       price: 120,
       durationMinutes: 60,
       active: true,
@@ -64,6 +83,11 @@ export class CatalogService {
       businessId: 1,
       name: 'Manichiură',
       description: null,
+      type: {
+        id: 1,
+        name: '1',
+        categoryId: null,
+      },
       price: 100,
       durationMinutes: 60,
       active: true,

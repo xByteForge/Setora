@@ -1,6 +1,7 @@
 package com.byteforge.setorabackend.serviceItem;
 
 import com.byteforge.setorabackend.serviceItem.dtos.ServiceResponseDto;
+import com.byteforge.setorabackend.serviceItem.mapper.ServiceItemMapper;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ServiceItemService {
     private final ServiceItemRepository serviceItemRepository;
 
+    private final ServiceItemMapper serviceItemMapper;
+
     public ServiceItem findById(int serviceId) {
         return serviceItemRepository
                 .findById(serviceId)
@@ -21,7 +24,7 @@ public class ServiceItemService {
     @Transactional(readOnly = true)
     public List<ServiceResponseDto> getServicesByBusinessId(int businessId) {
         return serviceItemRepository.findByBusinessId(businessId).stream()
-                .map(ServiceResponseDto::from)
+                .map(serviceItemMapper::toResponseDto)
                 .toList();
     }
 }

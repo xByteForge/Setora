@@ -1,11 +1,15 @@
-package com.byteforge.setorabackend.business;
+package com.byteforge.setorabackend.business.model;
 
 import com.byteforge.setorabackend.auth.User;
+import com.byteforge.setorabackend.serviceItem.ServiceItem;
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -66,4 +70,12 @@ public class Business {
     @JdbcTypeCode(SqlTypes.ARRAY)
     @Column(name = "tags", columnDefinition = "text[]")
     private String[] tags;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @OneToMany(mappedBy = "business", fetch = FetchType.LAZY)
+    @BatchSize(size = 20)
+    private List<ServiceItem> serviceItems = new ArrayList<>();
 }

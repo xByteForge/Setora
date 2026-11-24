@@ -50,7 +50,7 @@ export class SearchService {
   }
 
   private searchBusinesses(raw: string): SearchResult[] {
-    return this.discovery.searchByText(raw).map((b) => ({
+    return this.discovery.quickSearch(raw).map((b) => ({
       id: `business:${b.id}`,
       category: 'businesses' as const,
       title: b.name,

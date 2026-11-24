@@ -1,7 +1,7 @@
 package com.byteforge.setorabackend.serviceItem;
 
 import com.byteforge.setorabackend.appointment.PaymentMethod;
-import com.byteforge.setorabackend.business.Business;
+import com.byteforge.setorabackend.business.model.Business;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import lombok.Getter;
@@ -40,4 +40,8 @@ public class ServiceItem {
     @Column(nullable = false)
     // for services where payment depends and needs to be decided on site
     private PaymentMethod paymentMethod = PaymentMethod.PHYSICAL;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_type_id")
+    private ServiceType serviceType;
 }

@@ -2,8 +2,8 @@ package com.byteforge.setorabackend.schedule.service;
 
 import com.byteforge.setorabackend.appointment.Appointment;
 import com.byteforge.setorabackend.appointment.AppointmentService;
-import com.byteforge.setorabackend.business.Business;
-import com.byteforge.setorabackend.business.BusinessService;
+import com.byteforge.setorabackend.business.model.Business;
+import com.byteforge.setorabackend.business.service.BusinessService;
 import com.byteforge.setorabackend.employees.model.Employee;
 import com.byteforge.setorabackend.employees.model.UnavailableSlot;
 import com.byteforge.setorabackend.employees.model.WorkSchedule;
