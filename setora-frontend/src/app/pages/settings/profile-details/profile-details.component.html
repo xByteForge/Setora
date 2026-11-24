@@ -9,8 +9,17 @@
 
     @if (!editing()) {
       <button type="button" class="btn btn--primary" (click)="startEditing()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-          <circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
         </svg>
         {{ 'SETTINGS.PROFILE.EDIT' | transloco }}
       </button>
@@ -20,12 +29,7 @@
   <div class="identity">
     <div class="avatar">
       @if (avatarSrc(); as src) {
-        <img
-          class="avatar__image"
-          [src]="src"
-          alt=""
-          (error)="imageFailed.set(true)"
-        />
+        <img class="avatar__image" [src]="src" alt="" (error)="imageFailed.set(true)" />
       } @else {
         <span aria-hidden="true">{{ initials() }}</span>
       }
@@ -37,8 +41,17 @@
 
       @if (editing()) {
         <button type="button" class="btn btn--sm" (click)="photoInput.click()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-            <path d="M4 8h3l2-3h6l2 3h3v11H4z" /><circle cx="12" cy="13" r="3.5" />
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            aria-hidden="true"
+          >
+            <path d="M4 8h3l2-3h6l2 3h3v11H4z" />
+            <circle cx="12" cy="13" r="3.5" />
           </svg>
           {{ 'SETTINGS.PROFILE.CHANGE_PHOTO' | transloco }}
         </button>
@@ -105,8 +118,17 @@
         <label class="field">
           <span class="field__label">{{ 'SETTINGS.PROFILE.USERNAME' | transloco }}</span>
           <div class="input-group">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-              <circle cx="12" cy="12" r="4" /><path d="M16 8v5a3 3 0 006 0v-1a10 10 0 10-4 8" />
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="4" />
+              <path d="M16 8v5a3 3 0 006 0v-1a10 10 0 10-4 8" />
             </svg>
             <input class="input" formControlName="username" autocomplete="username" />
           </div>
@@ -120,7 +142,12 @@
                 <option [value]="c.code">{{ c.flag }} {{ c.code }}</option>
               }
             </select>
-            <input class="input" formControlName="phoneNumber" inputmode="tel" autocomplete="tel-national" />
+            <input
+              class="input"
+              formControlName="phoneNumber"
+              inputmode="tel"
+              autocomplete="tel-national"
+            />
           </div>
         </label>
       </div>
@@ -136,7 +163,15 @@
           {{ 'SETTINGS.COMMON.CANCEL' | transloco }}
         </button>
         <button type="submit" class="btn btn--primary" [disabled]="saving()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
             <path d="M5 12l5 5 9-10" />
           </svg>
           {{ 'SETTINGS.PROFILE.SAVE' | transloco }}

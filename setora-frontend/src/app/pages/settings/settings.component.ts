@@ -7,7 +7,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 
-
 export type SettingsTab = 'profile' | 'settings';
 
 @Component({
@@ -40,6 +39,5 @@ export class SettingsComponent {
       queryParams: { tab },
       replaceUrl: true,
     });
-}
-
+  }
 }

@@ -1,8 +1,29 @@
-.identity { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
-.identity__text { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
-.identity__name { margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--ink); }
-.identity__email { margin: 2px 0 12px; color: var(--text-secondary); overflow-wrap: anywhere; }
-.identity__text .hint { margin-top: 8px; }
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.identity__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+.identity__name {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.identity__email {
+  margin: 2px 0 12px;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+.identity__text .hint {
+  margin-top: 8px;
+}
 
 .avatar {
   position: relative;
@@ -19,16 +40,25 @@
   font-weight: 700;
 }
 
-
 .details {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px 24px;
   margin: 0;
 }
-.details dt { font-size: 0.875rem; font-weight: 700; color: var(--ink); }
-.details dd { margin: 4px 0 0; color: var(--ink); overflow-wrap: anywhere; }
-.details__full { grid-column: 1 / -1; }
+.details dt {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.details dd {
+  margin: 4px 0 0;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.details__full {
+  grid-column: 1 / -1;
+}
 
 /* Prefix and input share one bordered box */
 .phone {
@@ -40,7 +70,10 @@
   overflow: hidden;
   min-width: 0;
 }
-.phone:focus-within { outline: 2px solid var(--focus); outline-offset: 2px; }
+.phone:focus-within {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
 .phone__prefix {
   display: flex;
   align-items: center;
@@ -50,12 +83,24 @@
   border-right: 1px solid var(--border-color);
   white-space: nowrap;
 }
-.phone .input { border: 0; border-radius: 0; background: transparent; }
-.phone .input:focus-visible { outline: none; }
+.phone .input {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.phone .input:focus-visible {
+  outline: none;
+}
 
 @media (max-width: 900px) {
-  .identity { flex-direction: column; align-items: flex-start; gap: 16px; }
-  .details { grid-template-columns: 1fr; }
+  .identity {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .details {
+    grid-template-columns: 1fr;
+  }
 }
 
 .phone__prefix-select {

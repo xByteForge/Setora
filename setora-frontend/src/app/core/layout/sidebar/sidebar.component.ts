@@ -3,7 +3,15 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { ThemeService } from '../../services/theme.service';
 import { MobileMenuService } from '../../services/mobile-menu.service';
 import { UserService } from '../../services/user.service';
-import { ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  HostListener,
+  inject,
+  signal,
+} from '@angular/core';
 
 interface NavItem {
   path: string;
@@ -31,7 +39,6 @@ export class SidebarComponent {
   businessName = 'Studio Armonia';
   businessSubtitle = 'Spațiu business · București';
 
-  
   readonly currentUser = this.userService.currentUser;
 
   constructor() {
@@ -65,7 +72,6 @@ export class SidebarComponent {
     return `${u.firstName?.charAt(0) ?? ''}${u.lastName?.charAt(0) ?? ''}`.toUpperCase();
   });
 
-  
   readonly userAvatarUrl = this.userService.avatarUrl;
 
   navItems: NavItem[] = [

@@ -54,11 +54,13 @@
   </div>
 
   <div class="sidebar-footer">
-    <a class="nav-link"
+    <a
+      class="nav-link"
       routerLink="/settings"
       [queryParams]="{ tab: 'settings' }"
       routerLinkActive="active"
-      (click)="menu.close()">
+      (click)="menu.close()"
+    >
       <i class="fa-solid fa-gear" aria-hidden="true"></i>
       <span class="nav-label">{{ 'NAV.SETTINGS' | transloco }}</span>
     </a>
@@ -70,15 +72,21 @@
       }}</strong>
     </button>
 
-    <a class="user-card"
+    <a
+      class="user-card"
       routerLink="/settings"
       [queryParams]="{ tab: 'profile' }"
       [attr.aria-label]="userName() + ', ' + userRole()"
-      (click)="menu.close()">
+      (click)="menu.close()"
+    >
       <div class="avatar">
         @if (showAvatarImage()) {
-          <img class="avatar__image" [src]="userAvatarUrl()" alt=""
-              (error)="avatarFailed.set(true)" />
+          <img
+            class="avatar__image"
+            [src]="userAvatarUrl()"
+            alt=""
+            (error)="avatarFailed.set(true)"
+          />
         } @else {
           {{ userInitials() }}
         }

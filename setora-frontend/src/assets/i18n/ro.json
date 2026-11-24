@@ -136,7 +136,6 @@
       "CANCELLING": "Se anulează…",
       "SUCCESS": "Programarea a fost anulată."
     }
-    
   },
   "DISCOVER": {
     "TITLE": "Timp pentru ce contează.",
@@ -211,9 +210,7 @@
   },
   "ERRORS": {
     "GENERIC": "A apărut o eroare. Încearcă din nou."
-  }
-  ,
-
+  },
   "SETTINGS": {
     "COMMON": { "CANCEL": "Anulează" },
     "HEADER": {
@@ -245,7 +242,7 @@
       "PHOTO_HINT": "JPG, PNG sau WEBP, maximum 5 MB.",
       "PHOTO_TYPE_ERROR": "Selectează o fotografie JPG, PNG sau WEBP.",
       "PHOTO_UPLOAD_ERROR": "Datele au fost salvate, dar fotografia nu a putut fi încărcată. Încearcă din nou."
-      },
+    },
     "ACCOUNT": {
       "TITLE": "Cont",
       "SUBTITLE": "Datele de bază ale contului tău.",

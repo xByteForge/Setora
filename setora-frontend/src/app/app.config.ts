@@ -1,4 +1,11 @@
-import { ApplicationConfig, PLATFORM_ID, provideBrowserGlobalErrorListeners, isDevMode, inject, provideAppInitializer } from '@angular/core';
+import {
+  ApplicationConfig,
+  PLATFORM_ID,
+  provideBrowserGlobalErrorListeners,
+  isDevMode,
+  inject,
+  provideAppInitializer,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
@@ -36,26 +43,26 @@ export const appConfig: ApplicationConfig = {
     }),
     provideApi(),
     provideAppInitializer(async () => {
-    // Login-ul temporar rulează doar în browser: pe server nu există sesiune per utilizator.
-    if (!isPlatformBrowser(inject(PLATFORM_ID))) return;
+      // Login-ul temporar rulează doar în browser: pe server nu există sesiune per utilizator.
+      if (!isPlatformBrowser(inject(PLATFORM_ID))) return;
 
-    const auth = inject(AuthService);
-    const users = inject(UserService);
+      const auth = inject(AuthService);
+      const users = inject(UserService);
 
-    try {
-      const session = await auth.autoLogin();
-      users.setCurrentUser(session.user);
-    } catch (error) {
-      console.error('Auto-login failed', error);
-      return;
-    }
+      try {
+        const session = await auth.autoLogin();
+        users.setCurrentUser(session.user);
+      } catch (error) {
+        console.error('Auto-login failed', error);
+        return;
+      }
 
-    try {
-      const user = users.currentUser();
-      if (user) await firstValueFrom(users.loadAvatar(user.id));
-    } catch (error) {
-      console.error('Avatar load failed', error);
-    }
-  }),
+      try {
+        const user = users.currentUser();
+        if (user) await firstValueFrom(users.loadAvatar(user.id));
+      } catch (error) {
+        console.error('Avatar load failed', error);
+      }
+    }),
   ],
 };

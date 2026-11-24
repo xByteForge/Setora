@@ -1,5 +1,5 @@
-import { UserRole } from "./enums/user-role.model";
-import { UserNotificationPreference } from "./enums/notification-type.model";
+import { UserRole } from './enums/user-role.model';
+import { UserNotificationPreference } from './enums/notification-type.model';
 
 export interface User {
   id: number;
