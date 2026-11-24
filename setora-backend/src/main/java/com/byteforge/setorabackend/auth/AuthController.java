@@ -18,7 +18,7 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDto> register(@Valid @RequestBody RegisterRequestDto request) {
+    public ResponseEntity<UserResponseDto> register(@Valid @RequestBody CreateUserRequestDto request) {
         UserResponseDto response = authService.register(request);
 
         return ResponseEntity.created(URI.create("/api/users/" + response.id())).body(response);
@@ -35,7 +35,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody LogoutRequestDto request) {
+    public ResponseEntity<Void> logout(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody RefreshTokenRequestDto request) {
         int userId = Integer.parseInt(jwt.getSubject());
         authService.logout(userId, request);
         return ResponseEntity.noContent().build();

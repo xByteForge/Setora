@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.List;
 
@@ -64,7 +63,7 @@ public class UserService {
 
         user.setPasswordHash(passwordEncoder.encode(request.password()));
 
-        user.setRole(request.role());
+        user.setRole(UserRole.EMPLOYEE);
         user.setDeleted(false);
 
         try {
