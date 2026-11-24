@@ -14,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class User {
     @Id
-    @GeneratedValue(strategy= GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
     @Column(nullable = false)
@@ -24,9 +24,9 @@ public class User {
     private String lastName;
 
     @Column(nullable = false)
-    private String username = firstName;
+    private String username;
 
-    //always saved in lower case, used for login
+    // always saved in lower case, used for login
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -37,16 +37,22 @@ public class User {
     private String passwordHash;
 
     @Enumerated(EnumType.STRING)
-    @Column
-    private UserRole role=UserRole.CLIENT;
+    @Column(nullable = false)
+    private UserRole role = UserRole.CLIENT;
 
-    //add the rest later on
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
+
+    @Column(name = "token_version", nullable = false)
+    private int tokenVersion = 0;
+
+    // add the rest later on
 
     public void setEmail(String email) {
         this.email = email == null ? null : email.trim().toLowerCase();
     }
 
-    public String getName(){
+    public String getName() {
         return this.firstName + " " + this.lastName;
     }
 
@@ -54,9 +60,21 @@ public class User {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = firstName;
-        this.email = email;
+        setEmail(email);
         this.phoneNumber = phoneNumber;
         this.passwordHash = passwordHash;
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void prepareForSave() { // just to be safe
+        if (username == null || username.isBlank()) username = this.firstName;
+
+        if (email != null)
+            setEmail(this.email); // in case a constructor or generated setters bypass email normalization in the
+        // explicit constructor
+
+        if (role == null) role = UserRole.CLIENT;
     }
 
     public String getNameInitials() {
@@ -75,5 +93,4 @@ public class User {
 
         return (parts[0].substring(0, 1) + parts[parts.length - 1].charAt(0)).toUpperCase();
     }
-
 }

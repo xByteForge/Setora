@@ -1,0 +1,100 @@
+@host = http://localhost:8080
+@businessId = 1
+@serviceId = 1
+@employeeId = 1
+@clientId = 1
+
+### 1a. Retrieve all services by Business ID (path variable)
+GET {{host}}/api/businesses/{{businessId}}/services
+Accept: application/json
+
+### 1b. Retrieve all services by Business ID (query parameter)
+GET {{host}}/api/services?businessId={{businessId}}
+Accept: application/json
+
+### 1c. Services - Non-existent Business (Expects 400 or 404 Entity Not Found)
+GET {{host}}/api/businesses/99999/services
+Accept: application/json
+
+### 2a. Retrieve all employees by Business ID (path variable)
+GET {{host}}/api/businesses/{{businessId}}/employees
+Accept: application/json
+
+### 2b. Retrieve all employees by Business ID (query parameter)
+GET {{host}}/api/employees?businessId={{businessId}}
+Accept: application/json
+
+### 2c. Employees - Non-existent Business (Expects 400 or 404 Entity Not Found)
+GET {{host}}/api/businesses/99999/employees
+Accept: application/json
+
+### 3a. Create appointment with registered client
+POST {{host}}/api/appointments
+Content-Type: application/json
+
+{
+  "businessId": {{businessId}},
+  "serviceId": {{serviceId}},
+  "employeeId": {{employeeId}},
+  "clientId": {{clientId}},
+  "date": "2026-11-23",
+  "startTime": "10:00:00",
+  "paymentMethod": "PHYSICAL",
+  "status": "CONFIRMED",
+  "clientNote": "First time booking with registered client"
+}
+
+### 3b. Create appointment with guest / new client (name + email/phone)
+POST {{host}}/api/appointments
+Content-Type: application/json
+
+{
+  "businessId": {{businessId}},
+  "serviceId": {{serviceId}},
+  "employeeId": {{employeeId}},
+  "clientName": "Ana Popescu",
+  "clientEmail": "ana.popescu@example.com",
+  "clientPhone": "0712345678",
+  "date": "2026-11-23",
+  "startTime": "11:30:00",
+  "paymentMethod": "PHYSICAL",
+  "status": "CONFIRMED",
+  "clientNote": "Guest client haircut request"
+}
+
+### 3c. Create appointment - Validation Error: missing serviceId (Expects 400 Bad Request)
+POST {{host}}/api/appointments
+Content-Type: application/json
+
+{
+  "businessId": {{businessId}},
+  "employeeId": {{employeeId}},
+  "clientId": {{clientId}},
+  "date": "2026-11-23",
+  "startTime": "10:00:00"
+}
+
+### 3d. Create appointment - Validation Error: missing client info (Expects 400 Bad Request)
+POST {{host}}/api/appointments
+Content-Type: application/json
+
+{
+  "businessId": {{businessId}},
+  "serviceId": {{serviceId}},
+  "employeeId": {{employeeId}},
+  "date": "2026-11-23",
+  "startTime": "10:00:00"
+}
+
+### 3e. Create appointment - Non-existent service (Expects 400 or 404 Entity Not Found)
+POST {{host}}/api/appointments
+Content-Type: application/json
+
+{
+  "businessId": {{businessId}},
+  "serviceId": 99999,
+  "employeeId": {{employeeId}},
+  "clientId": {{clientId}},
+  "date": "2026-11-23",
+  "startTime": "10:00:00"
+}

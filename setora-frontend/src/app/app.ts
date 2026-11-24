@@ -22,5 +22,4 @@ export class App {
     // Un singur loc pentru datele mock ale businessului: CatalogService.
     this.businessService.setCurrent(this.catalog.getBusiness());
   }
-
 }
