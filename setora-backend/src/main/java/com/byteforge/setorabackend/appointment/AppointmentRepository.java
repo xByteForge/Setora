@@ -46,8 +46,6 @@ public interface AppointmentRepository
             @Param("startDate") Instant startDate,
             @Param("endDate") Instant endDate);
 
-
-
     @Query("""
     SELECT a
     FROM Appointment a
@@ -56,7 +54,5 @@ public interface AppointmentRepository
       AND a.interval.end < :end
 """)
     List<Appointment> findByEmployee_IdOnDate(
-            @Param("employeeId") int employeeId,
-            @Param("start") Instant start,
-            @Param("end") Instant end);
+            @Param("employeeId") int employeeId, @Param("start") Instant start, @Param("end") Instant end);
 }

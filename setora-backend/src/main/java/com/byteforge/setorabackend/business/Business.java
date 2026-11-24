@@ -67,7 +67,6 @@ public class Business {
     @Column(name = "tags", columnDefinition = "text[]")
     private String[] tags;
 
-    @Column(name="time_slice")
-    private int timeSlice=30;//default time slice
-
+    @Column(name = "time_slice")
+    private int timeSlice = 30; // default time slice
 }

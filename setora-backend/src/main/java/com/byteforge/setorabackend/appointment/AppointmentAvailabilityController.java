@@ -1,13 +1,12 @@
 package com.byteforge.setorabackend.appointment;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,9 +33,9 @@ public class AppointmentAvailabilityController {
             @PathVariable int businessId,
             @RequestParam LocalDate date,
             @RequestParam int serviceId,
-            @RequestParam(required = false) Integer employeeId)
-    {
-        List<LocalTime> retList = appointmentAvailabilityService.getAllAvailableAppointmentTimesForToday(businessId, date, serviceId, employeeId);
+            @RequestParam(required = false) Integer employeeId) {
+        List<LocalTime> retList = appointmentAvailabilityService.getAllAvailableAppointmentTimesForToday(
+                businessId, date, serviceId, employeeId);
 
         return ResponseEntity.ok().body(retList);
     }

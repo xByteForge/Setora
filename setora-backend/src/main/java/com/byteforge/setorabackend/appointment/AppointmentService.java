@@ -7,11 +7,11 @@ import com.byteforge.setorabackend.business.Business;
 import com.byteforge.setorabackend.business.BusinessService;
 import com.byteforge.setorabackend.common.DateTimeInterval;
 import com.byteforge.setorabackend.employees.model.Employee;
-import com.byteforge.setorabackend.employees.model.WorkSchedule;
 import com.byteforge.setorabackend.employees.service.EmployeeService;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
 import com.byteforge.setorabackend.serviceItem.ServiceItemService;
 import jakarta.validation.Valid;
+import java.time.*;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -26,10 +26,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.time.*;
-import java.util.List;
-import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -129,9 +125,6 @@ public class AppointmentService {
 
         return AppointmentMapper.toResponseDto(savedAppointment);
     }
-
-
-
 
     @Transactional
     public AppointmentResponseDto createAppointment(@Valid CreateAppointmentRequestDto request) {
@@ -333,8 +326,6 @@ public class AppointmentService {
         Instant start = date.atStartOfDay(zone).toInstant();
         Instant end = date.plusDays(1).atStartOfDay(zone).toInstant();
 
-        return appointmentRepository.findByEmployee_IdOnDate(
-                employeeId, start, end
-        );
+        return appointmentRepository.findByEmployee_IdOnDate(employeeId, start, end);
     }
 }
