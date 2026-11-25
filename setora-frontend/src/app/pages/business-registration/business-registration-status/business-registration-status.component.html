@@ -1,0 +1,68 @@
+<div class="status-page" *transloco="let t">
+  <main class="stage">
+    <section
+      class="card"
+      [class.is-success]="status() === 'success'"
+      [attr.aria-busy]="status() === 'pending'"
+    >
+      <!-- Icon -->
+      <div class="icon-circle" aria-hidden="true">
+        @if (status() === 'pending') {
+          <svg viewBox="0 0 24 24" class="icon">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 7v5l3 2" />
+          </svg>
+        } @else {
+          <svg viewBox="0 0 24 24" class="icon">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M8.5 12.5l2.5 2.5 4.5-5" />
+          </svg>
+        }
+      </div>
+
+      <!-- Title + subtitle (live region so screen readers announce the change) -->
+      <div role="status" aria-live="polite">
+        @if (status() === 'pending') {
+          <h1>{{ t('BUSINESS_REGISTRATION.STATUS.PENDING_TITLE') }}</h1>
+          <p class="subtitle">{{ t('BUSINESS_REGISTRATION.STATUS.PENDING_SUBTITLE') }}</p>
+        } @else {
+          <h1>{{ t('BUSINESS_REGISTRATION.STATUS.SUCCESS_TITLE') }}</h1>
+          <p class="subtitle">
+            {{ t('BUSINESS_REGISTRATION.STATUS.SUCCESS_SUBTITLE', { name: business().name }) }}
+          </p>
+        }
+      </div>
+
+      <!-- Progress (pending) / cover (success) -->
+      @if (status() === 'pending') {
+        <div class="progress" aria-hidden="true"><span class="progress-bar"></span></div>
+      } @else if (business().coverUrl; as cover) {
+        <img class="cover" [src]="cover" alt="" />
+      }
+
+      <!-- Business details -->
+      <div class="details">
+        <p class="biz-name">{{ business().name }}</p>
+        <p class="url-prefix">setora.com/business/</p>
+        <p class="slug">{{ business().slug }}</p>
+        <p class="address">{{ business().address }}</p>
+      </div>
+
+      @if (status() === 'pending') {
+        <p class="wait-note">{{ t('BUSINESS_REGISTRATION.STATUS.PENDING_NOTE') }}</p>
+        <button type="button" class="btn btn-disabled" disabled>
+          {{ t('BUSINESS_REGISTRATION.STATUS.PENDING_BUTTON') }}
+        </button>
+      } @else {
+        <div class="actions">
+          <a class="btn btn-primary" [routerLink]="discoverRoute">
+            {{ t('BUSINESS_REGISTRATION.STATUS.VIEW_PROFILE') }}
+          </a>
+          <a class="btn btn-outline" [routerLink]="discoverRoute">
+            {{ t('BUSINESS_REGISTRATION.STATUS.BACK_TO_DISCOVER') }}
+          </a>
+        </div>
+      }
+    </section>
+  </main>
+</div>

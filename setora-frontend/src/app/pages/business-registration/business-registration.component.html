@@ -1,760 +1,780 @@
 <div class="registration-page" *transloco="let t">
-  <div class="content">
-    <!-- ============================ Page header ============================ -->
-    <div class="page-head">
-      <h1>{{ t('BUSINESS_REGISTRATION.TITLE') }}</h1>
-      <p class="subtitle">{{ t('BUSINESS_REGISTRATION.SUBTITLE') }}</p>
-      <p class="required-hint">
-        {{ t('BUSINESS_REGISTRATION.REQUIRED_HINT') }}
-        <span class="required-mark" aria-hidden="true">*</span>
-        {{ t('BUSINESS_REGISTRATION.REQUIRED_HINT_END') }}
-      </p>
+  @if (registrationStatus() === 'form') {
+    <div class="content">
+      <!-- ============================ Page header ============================ -->
+      <div class="page-head">
+        <h1>{{ t('BUSINESS_REGISTRATION.TITLE') }}</h1>
+        <p class="subtitle">{{ t('BUSINESS_REGISTRATION.SUBTITLE') }}</p>
+        <p class="required-hint">
+          {{ t('BUSINESS_REGISTRATION.REQUIRED_HINT') }}
+          <span class="required-mark" aria-hidden="true">*</span>
+          {{ t('BUSINESS_REGISTRATION.REQUIRED_HINT_END') }}
+        </p>
 
-      <!-- Desktop / tablet: section tabs -->
-      <nav class="tabs" [attr.aria-label]="t('BUSINESS_REGISTRATION.JUMP_TO')">
-        <button
-          type="button"
-          [class.active]="activeSection() === 'section-profile'"
-          (click)="scrollTo('section-profile')"
-        >
-          1. {{ t('BUSINESS_REGISTRATION.TABS.PROFILE') }}
-        </button>
-        <button
-          type="button"
-          [class.active]="activeSection() === 'section-photos'"
-          (click)="scrollTo('section-photos')"
-        >
-          2. {{ t('BUSINESS_REGISTRATION.TABS.PHOTOS') }}
-        </button>
-        <button
-          type="button"
-          [class.active]="activeSection() === 'section-contact'"
-          (click)="scrollTo('section-contact')"
-        >
-          3. {{ t('BUSINESS_REGISTRATION.TABS.CONTACT') }}
-        </button>
-        <button
-          type="button"
-          [class.active]="activeSection() === 'section-location'"
-          (click)="scrollTo('section-location')"
-        >
-          4. {{ t('BUSINESS_REGISTRATION.TABS.LOCATION') }}
-        </button>
-        <button
-          type="button"
-          [class.active]="activeSection() === 'section-verification'"
-          (click)="scrollTo('section-verification')"
-        >
-          5. {{ t('BUSINESS_REGISTRATION.TABS.VERIFICATION') }}
-        </button>
-      </nav>
+        <!-- Desktop / tablet: section tabs -->
+        <nav class="tabs" [attr.aria-label]="t('BUSINESS_REGISTRATION.JUMP_TO')">
+          <button
+            type="button"
+            [class.active]="activeSection() === 'section-profile'"
+            (click)="scrollTo('section-profile')"
+          >
+            1. {{ t('BUSINESS_REGISTRATION.TABS.PROFILE') }}
+          </button>
+          <button
+            type="button"
+            [class.active]="activeSection() === 'section-photos'"
+            (click)="scrollTo('section-photos')"
+          >
+            2. {{ t('BUSINESS_REGISTRATION.TABS.PHOTOS') }}
+          </button>
+          <button
+            type="button"
+            [class.active]="activeSection() === 'section-contact'"
+            (click)="scrollTo('section-contact')"
+          >
+            3. {{ t('BUSINESS_REGISTRATION.TABS.CONTACT') }}
+          </button>
+          <button
+            type="button"
+            [class.active]="activeSection() === 'section-location'"
+            (click)="scrollTo('section-location')"
+          >
+            4. {{ t('BUSINESS_REGISTRATION.TABS.LOCATION') }}
+          </button>
+          <button
+            type="button"
+            [class.active]="activeSection() === 'section-verification'"
+            (click)="scrollTo('section-verification')"
+          >
+            5. {{ t('BUSINESS_REGISTRATION.TABS.VERIFICATION') }}
+          </button>
+        </nav>
 
-      <!-- Mobile: jump-to select -->
-      <div class="jump">
-        <label for="jump-select">{{ t('BUSINESS_REGISTRATION.JUMP_TO') }}</label>
-        <div class="select-wrap">
-          <select id="jump-select" (change)="onJump($event)">
-            <option value="section-profile" [selected]="activeSection() === 'section-profile'">
-              {{ t('BUSINESS_REGISTRATION.SECTIONS.BUSINESS_PROFILE') }}
-            </option>
-            <option value="section-photos" [selected]="activeSection() === 'section-photos'">
-              {{ t('BUSINESS_REGISTRATION.SECTIONS.PHOTOS') }}
-            </option>
-            <option value="section-contact" [selected]="activeSection() === 'section-contact'">
-              {{ t('BUSINESS_REGISTRATION.SECTIONS.PUBLIC_CONTACT') }}
-            </option>
-            <option value="section-location" [selected]="activeSection() === 'section-location'">
-              {{ t('BUSINESS_REGISTRATION.SECTIONS.LOCATION_AND_TIMEZONE') }}
-            </option>
-            <option
-              value="section-verification"
-              [selected]="activeSection() === 'section-verification'"
-            >
-              {{ t('BUSINESS_REGISTRATION.SECTIONS.VERIFICATION') }}
-            </option>
-          </select>
-          <span class="ico ico-chevron" aria-hidden="true"></span>
+        <!-- Mobile: jump-to select -->
+        <div class="jump">
+          <label for="jump-select">{{ t('BUSINESS_REGISTRATION.JUMP_TO') }}</label>
+          <div class="select-wrap">
+            <select id="jump-select" (change)="onJump($event)">
+              <option value="section-profile" [selected]="activeSection() === 'section-profile'">
+                {{ t('BUSINESS_REGISTRATION.SECTIONS.BUSINESS_PROFILE') }}
+              </option>
+              <option value="section-photos" [selected]="activeSection() === 'section-photos'">
+                {{ t('BUSINESS_REGISTRATION.SECTIONS.PHOTOS') }}
+              </option>
+              <option value="section-contact" [selected]="activeSection() === 'section-contact'">
+                {{ t('BUSINESS_REGISTRATION.SECTIONS.PUBLIC_CONTACT') }}
+              </option>
+              <option value="section-location" [selected]="activeSection() === 'section-location'">
+                {{ t('BUSINESS_REGISTRATION.SECTIONS.LOCATION_AND_TIMEZONE') }}
+              </option>
+              <option
+                value="section-verification"
+                [selected]="activeSection() === 'section-verification'"
+              >
+                {{ t('BUSINESS_REGISTRATION.SECTIONS.VERIFICATION') }}
+              </option>
+            </select>
+            <span class="ico ico-chevron" aria-hidden="true"></span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <form class="layout" [formGroup]="form" (ngSubmit)="submit()" novalidate>
-      <!-- ============================ Main column ============================ -->
-      <div class="form-col">
-        <!-- ---------- 1. Profile ---------- -->
-        <section class="section" id="section-profile" aria-labelledby="h-profile">
-          <h2 id="h-profile">{{ t('BUSINESS_REGISTRATION.SECTIONS.BUSINESS_PROFILE') }}</h2>
+      <form class="layout" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <!-- ============================ Main column ============================ -->
+        <div class="form-col">
+          <!-- ---------- 1. Profile ---------- -->
+          <section class="section" id="section-profile" aria-labelledby="h-profile">
+            <h2 id="h-profile">{{ t('BUSINESS_REGISTRATION.SECTIONS.BUSINESS_PROFILE') }}</h2>
 
-          <div class="field">
-            <label for="name"
-              >{{ t('BUSINESS_REGISTRATION.FIELDS.BUSINESS_NAME') }}
-              <span class="required-mark" aria-hidden="true">*</span></label
-            >
-            <input
-              id="name"
-              type="text"
-              formControlName="name"
-              autocomplete="organization"
-              maxlength="80"
-              required
-              [placeholder]="t('BUSINESS_REGISTRATION.PLACEHOLDERS.NAME')"
-              [attr.aria-invalid]="showError('name')"
-              aria-describedby="name-error"
-            />
-            @if (showError('name')) {
-              <p class="msg error" id="name-error" role="alert">
-                <span class="ico ico-error" aria-hidden="true"></span
-                >{{ t('BUSINESS_REGISTRATION.ERRORS.NAME') }}
-              </p>
-            }
-          </div>
-
-          <div class="field">
-            <label for="slug"
-              >{{ t('BUSINESS_REGISTRATION.FIELDS.URL_HANDLE') }}
-              <span class="required-mark" aria-hidden="true">*</span></label
-            >
-            <span class="url-prefix" aria-hidden="true">setora.com/business/</span>
-            <input
-              id="slug"
-              type="text"
-              formControlName="slug"
-              autocomplete="off"
-              autocapitalize="none"
-              spellcheck="false"
-              maxlength="60"
-              required
-              [placeholder]="t('BUSINESS_REGISTRATION.PLACEHOLDERS.SLUG')"
-              (input)="onSlugInput($event)"
-              [attr.aria-invalid]="slugError !== null"
-              aria-describedby="slug-help slug-error"
-            />
-            <p class="msg hint" id="slug-help">{{ t('BUSINESS_REGISTRATION.URL_HELPER') }}</p>
-            @if (slugError) {
-              <p class="msg error" id="slug-error" role="alert">
-                <span class="ico ico-error" aria-hidden="true"></span>
-                @switch (slugError) {
-                  @case ('taken') {
-                    {{ t('BUSINESS_REGISTRATION.ERRORS.URL_TAKEN') }}
-                  }
-                  @case ('format') {
-                    {{ t('BUSINESS_REGISTRATION.ERRORS.URL_FORMAT') }}
-                  }
-                  @default {
-                    {{ t('BUSINESS_REGISTRATION.ERRORS.URL_REQUIRED') }}
-                  }
-                }
-              </p>
-            }
-            @if (slugError === 'taken' && suggestion()) {
-              <p class="suggestion">
-                {{ t('BUSINESS_REGISTRATION.URL_SUGGESTION') }}
-                <button type="button" class="link-btn" (click)="applySuggestion()">
-                  {{ suggestion() }}
-                </button>
-              </p>
-            }
-          </div>
-
-          <div class="field">
-            <label for="description">{{ t('BUSINESS_REGISTRATION.FIELDS.DESCRIPTION') }}</label>
-            <textarea
-              id="description"
-              rows="3"
-              maxlength="500"
-              formControlName="description"
-              [placeholder]="t('BUSINESS_REGISTRATION.PLACEHOLDERS.DESCRIPTION')"
-              [attr.aria-invalid]="showError('description')"
-            ></textarea>
-          </div>
-
-          <fieldset class="field">
-            <legend>{{ t('BUSINESS_REGISTRATION.FIELDS.CATEGORIES') }}</legend>
-            <div class="chips-container">
-              @for (cat of categories; track cat.id) {
-                <button
-                  type="button"
-                  class="chip"
-                  [class.active]="selectedCategory()?.id === cat.id"
-                  [attr.aria-pressed]="selectedCategory()?.id === cat.id"
-                  (click)="toggleCategory(cat)"
-                >
-                  {{ t('BUSINESS_REGISTRATION.CATEGORY_OPTIONS.' + cat.name) }}
-                </button>
-              }
-            </div>
-          </fieldset>
-
-          <div class="field">
-            <span class="label" id="selected-tags-label">{{
-              t('BUSINESS_REGISTRATION.FIELDS.SELECTED_TAGS')
-            }}</span>
-            @if (tags().length) {
-              <ul class="tag-list" aria-labelledby="selected-tags-label">
-                @for (tag of tags(); track tag) {
-                  <li class="tag">
-                    {{ tagLabel(tag) }}
-                    <button
-                      type="button"
-                      class="tag-remove"
-                      (click)="removeTag(tag)"
-                      [attr.aria-label]="
-                        t('BUSINESS_REGISTRATION.FIELDS.REMOVE_TAG', { tag: tagLabel(tag) })
-                      "
-                    >
-                      <span class="ico ico-close" aria-hidden="true"></span>
-                    </button>
-                  </li>
-                }
-              </ul>
-            } @else {
-              <p class="msg hint">{{ t('BUSINESS_REGISTRATION.FIELDS.NO_TAGS_SELECTED') }}</p>
-            }
-          </div>
-
-          <div class="field">
-            <label for="tag-search">{{ t('BUSINESS_REGISTRATION.FIELDS.ADD_TAG') }}</label>
-            <div class="tag-combobox select-wrap">
-              <input
-                id="tag-search"
-                type="text"
-                role="combobox"
-                autocomplete="off"
-                aria-autocomplete="list"
-                aria-controls="tag-listbox"
-                [attr.aria-expanded]="tagOpen()"
-                [attr.aria-activedescendant]="
-                  tagOpen() && tagOptionCount() ? 'tag-opt-' + tagActive() : null
-                "
-                [placeholder]="t('BUSINESS_REGISTRATION.FIELDS.SEARCH_TAGS')"
-                (focus)="openTags()"
-                (click)="openTags()"
-                (input)="onTagInput($event)"
-                (keydown)="onTagKeydown($event)"
-              />
-              <span class="ico ico-chevron" aria-hidden="true"></span>
-
-              @if (tagOpen()) {
-                <ul class="listbox" id="tag-listbox" role="listbox">
-                  @for (opt of availableTags(); track opt.id; let i = $index) {
-                    <li
-                      role="option"
-                      [id]="'tag-opt-' + i"
-                      [class.active]="tagActive() === i"
-                      [attr.aria-selected]="tagActive() === i"
-                      (mousedown)="$event.preventDefault(); addTag(opt.id)"
-                    >
-                      {{ opt.label }}
-                    </li>
-                  }
-                  @if (customTagCandidate(); as custom) {
-                    <li
-                      role="option"
-                      class="custom"
-                      [id]="'tag-opt-' + availableTags().length"
-                      [class.active]="tagActive() === availableTags().length"
-                      [attr.aria-selected]="tagActive() === availableTags().length"
-                      (mousedown)="$event.preventDefault(); addCustomTag(custom)"
-                    >
-                      <span class="ico ico-plus" aria-hidden="true"></span>
-                      {{ t('BUSINESS_REGISTRATION.FIELDS.ADD_CUSTOM_TAG', { tag: custom }) }}
-                    </li>
-                  }
-                  @if (tagOptionCount() === 0) {
-                    <li class="empty" role="presentation">
-                      {{ t('BUSINESS_REGISTRATION.FIELDS.NO_TAG_RESULTS') }}
-                    </li>
-                  }
-                </ul>
-              }
-            </div>
-          </div>
-        </section>
-
-        <!-- ---------- 2. Photos ---------- -->
-        <section class="section" id="section-photos" aria-labelledby="h-photos">
-          <h2 id="h-photos">{{ t('BUSINESS_REGISTRATION.SECTIONS.PHOTOS') }}</h2>
-          <p class="section-hint">{{ t('BUSINESS_REGISTRATION.PHOTOS.HINT') }}</p>
-
-          <div
-            class="dropzone"
-            [class.drag-over]="dragOver()"
-            (dragover)="onDragOver($event)"
-            (dragleave)="dragOver.set(false)"
-            (drop)="onDrop($event)"
-          >
-            <input
-              #fileInput
-              type="file"
-              class="visually-hidden"
-              multiple
-              accept="image/jpeg,image/png,image/webp"
-              tabindex="-1"
-              (change)="onFilesSelected($event)"
-            />
-            <button type="button" class="btn-secondary btn-upload" (click)="fileInput.click()">
-              {{ t('BUSINESS_REGISTRATION.PHOTOS.UPLOAD') }}
-              <span class="ico ico-plus" aria-hidden="true"></span>
-            </button>
-            <p class="msg hint">{{ t('BUSINESS_REGISTRATION.PHOTOS.DROP') }}</p>
-          </div>
-
-          @if (photoError(); as err) {
-            <p class="msg error" role="alert">
-              <span class="ico ico-error" aria-hidden="true"></span>
-              @switch (err) {
-                @case ('type') {
-                  {{ t('BUSINESS_REGISTRATION.PHOTOS.ERROR_TYPE') }}
-                }
-                @case ('size') {
-                  {{ t('BUSINESS_REGISTRATION.PHOTOS.ERROR_SIZE') }}
-                }
-                @default {
-                  {{ t('BUSINESS_REGISTRATION.PHOTOS.ERROR_MAX') }}
-                }
-              }
-            </p>
-          }
-
-          @if (photos().length) {
-            <ul
-              class="photo-grid"
-              role="radiogroup"
-              [attr.aria-label]="t('BUSINESS_REGISTRATION.PHOTOS.SET_MAIN')"
-            >
-              @for (photo of photos(); track photo.id; let i = $index) {
-                <li class="photo">
-                  <div class="photo-frame">
-                    <img
-                      [src]="photo.src"
-                      [alt]="t('BUSINESS_REGISTRATION.PHOTOS.ALT', { n: i + 1 })"
-                    />
-                    <button
-                      type="button"
-                      class="photo-remove"
-                      (click)="removePhoto(photo)"
-                      [attr.aria-label]="t('BUSINESS_REGISTRATION.PHOTOS.REMOVE')"
-                    >
-                      <span class="ico ico-close" aria-hidden="true"></span>
-                    </button>
-                  </div>
-                  <label class="cover-choice" [class.selected]="coverPhoto()?.id === photo.id">
-                    <input
-                      type="radio"
-                      name="cover"
-                      [checked]="coverPhoto()?.id === photo.id"
-                      (change)="setCover(photo.id)"
-                    />
-                    <span class="radio-dot" aria-hidden="true"></span>
-                    <span>{{
-                      coverPhoto()?.id === photo.id
-                        ? t('BUSINESS_REGISTRATION.PHOTOS.MAIN')
-                        : t('BUSINESS_REGISTRATION.PHOTOS.SET_MAIN')
-                    }}</span>
-                  </label>
-                  @if (coverPhoto()?.id !== photo.id) {
-                    <label class="gallery-choice">
-                      <input
-                        type="checkbox"
-                        [checked]="galleryIds().includes(photo.id)"
-                        (change)="toggleGallery(photo.id)"
-                      />
-                      <span>{{ t('BUSINESS_REGISTRATION.PHOTOS.GALLERY') }}</span>
-                    </label>
-                  }
-                </li>
-              }
-            </ul>
-          }
-        </section>
-
-        <!-- ---------- 3. Public contact ---------- -->
-        <section class="section" id="section-contact" aria-labelledby="h-contact">
-          <h2 id="h-contact">{{ t('BUSINESS_REGISTRATION.SECTIONS.PUBLIC_CONTACT') }}</h2>
-
-          <div class="banner">
-            <span class="ico ico-info" aria-hidden="true"></span>
-            <p>{{ t('BUSINESS_REGISTRATION.CONTACT.INFO') }}</p>
-          </div>
-
-          <div class="field-row">
             <div class="field">
-              <label for="email"
-                >{{ t('BUSINESS_REGISTRATION.FIELDS.EMAIL') }}
+              <label for="name"
+                >{{ t('BUSINESS_REGISTRATION.FIELDS.BUSINESS_NAME') }}
                 <span class="required-mark" aria-hidden="true">*</span></label
               >
               <input
-                id="email"
-                type="email"
-                formControlName="email"
-                autocomplete="email"
+                id="name"
+                type="text"
+                formControlName="name"
+                autocomplete="organization"
+                maxlength="80"
                 required
-                [placeholder]="t('BUSINESS_REGISTRATION.PLACEHOLDERS.EMAIL')"
-                [attr.aria-invalid]="showError('email')"
-                aria-describedby="email-error"
+                [placeholder]="t('BUSINESS_REGISTRATION.PLACEHOLDERS.NAME')"
+                [attr.aria-invalid]="showError('name')"
+                aria-describedby="name-error"
               />
-              @if (showError('email')) {
-                <p class="msg error" id="email-error" role="alert">
+              @if (showError('name')) {
+                <p class="msg error" id="name-error" role="alert">
                   <span class="ico ico-error" aria-hidden="true"></span
-                  >{{ t('BUSINESS_REGISTRATION.ERRORS.EMAIL') }}
+                  >{{ t('BUSINESS_REGISTRATION.ERRORS.NAME') }}
                 </p>
               }
             </div>
 
             <div class="field">
-              <label for="phone">{{ t('BUSINESS_REGISTRATION.FIELDS.PHONE') }}</label>
-              <div class="phone-row">
-                <div class="select-wrap phone-code">
-                  <select
-                    formControlName="phoneCode"
-                    (change)="onPhoneCodeChange()"
-                    [attr.aria-label]="t('BUSINESS_REGISTRATION.FIELDS.PHONE_CODE')"
+              <label for="slug"
+                >{{ t('BUSINESS_REGISTRATION.FIELDS.URL_HANDLE') }}
+                <span class="required-mark" aria-hidden="true">*</span></label
+              >
+              <span class="url-prefix" aria-hidden="true">setora.com/business/</span>
+              <input
+                id="slug"
+                type="text"
+                formControlName="slug"
+                autocomplete="off"
+                autocapitalize="none"
+                spellcheck="false"
+                maxlength="60"
+                required
+                [placeholder]="t('BUSINESS_REGISTRATION.PLACEHOLDERS.SLUG')"
+                (input)="onSlugInput($event)"
+                [attr.aria-invalid]="slugError !== null"
+                aria-describedby="slug-help slug-error"
+              />
+              <p class="msg hint" id="slug-help">{{ t('BUSINESS_REGISTRATION.URL_HELPER') }}</p>
+              @if (slugError) {
+                <p class="msg error" id="slug-error" role="alert">
+                  <span class="ico ico-error" aria-hidden="true"></span>
+                  @switch (slugError) {
+                    @case ('taken') {
+                      {{ t('BUSINESS_REGISTRATION.ERRORS.URL_TAKEN') }}
+                    }
+                    @case ('format') {
+                      {{ t('BUSINESS_REGISTRATION.ERRORS.URL_FORMAT') }}
+                    }
+                    @default {
+                      {{ t('BUSINESS_REGISTRATION.ERRORS.URL_REQUIRED') }}
+                    }
+                  }
+                </p>
+              }
+              @if (slugError === 'taken' && suggestion()) {
+                <p class="suggestion">
+                  {{ t('BUSINESS_REGISTRATION.URL_SUGGESTION') }}
+                  <button type="button" class="link-btn" (click)="applySuggestion()">
+                    {{ suggestion() }}
+                  </button>
+                </p>
+              }
+            </div>
+
+            <div class="field">
+              <label for="description">{{ t('BUSINESS_REGISTRATION.FIELDS.DESCRIPTION') }}</label>
+              <textarea
+                id="description"
+                rows="3"
+                maxlength="500"
+                formControlName="description"
+                [placeholder]="t('BUSINESS_REGISTRATION.PLACEHOLDERS.DESCRIPTION')"
+                [attr.aria-invalid]="showError('description')"
+              ></textarea>
+            </div>
+
+            <fieldset class="field">
+              <legend>{{ t('BUSINESS_REGISTRATION.FIELDS.CATEGORIES') }}</legend>
+              <div class="chips-container">
+                @for (cat of categories; track cat.id) {
+                  <button
+                    type="button"
+                    class="chip"
+                    [class.active]="selectedCategory()?.id === cat.id"
+                    [attr.aria-pressed]="selectedCategory()?.id === cat.id"
+                    (click)="toggleCategory(cat)"
                   >
-                    @for (d of dialCodes; track d.code) {
-                      <option [value]="d.dial">{{ d.code }} {{ d.dial }}</option>
+                    {{ t('BUSINESS_REGISTRATION.CATEGORY_OPTIONS.' + cat.name) }}
+                  </button>
+                }
+              </div>
+            </fieldset>
+
+            <div class="field">
+              <span class="label" id="selected-tags-label">{{
+                t('BUSINESS_REGISTRATION.FIELDS.SELECTED_TAGS')
+              }}</span>
+              @if (tags().length) {
+                <ul class="tag-list" aria-labelledby="selected-tags-label">
+                  @for (tag of tags(); track tag) {
+                    <li class="tag">
+                      {{ tagLabel(tag) }}
+                      <button
+                        type="button"
+                        class="tag-remove"
+                        (click)="removeTag(tag)"
+                        [attr.aria-label]="
+                          t('BUSINESS_REGISTRATION.FIELDS.REMOVE_TAG', { tag: tagLabel(tag) })
+                        "
+                      >
+                        <span class="ico ico-close" aria-hidden="true"></span>
+                      </button>
+                    </li>
+                  }
+                </ul>
+              } @else {
+                <p class="msg hint">{{ t('BUSINESS_REGISTRATION.FIELDS.NO_TAGS_SELECTED') }}</p>
+              }
+            </div>
+
+            <div class="field">
+              <label for="tag-search">{{ t('BUSINESS_REGISTRATION.FIELDS.ADD_TAG') }}</label>
+              <div class="tag-combobox select-wrap">
+                <input
+                  id="tag-search"
+                  type="text"
+                  role="combobox"
+                  autocomplete="off"
+                  aria-autocomplete="list"
+                  aria-controls="tag-listbox"
+                  [attr.aria-expanded]="tagOpen()"
+                  [attr.aria-activedescendant]="
+                    tagOpen() && tagOptionCount() ? 'tag-opt-' + tagActive() : null
+                  "
+                  [placeholder]="t('BUSINESS_REGISTRATION.FIELDS.SEARCH_TAGS')"
+                  (focus)="openTags()"
+                  (click)="openTags()"
+                  (input)="onTagInput($event)"
+                  (keydown)="onTagKeydown($event)"
+                />
+                <span class="ico ico-chevron" aria-hidden="true"></span>
+
+                @if (tagOpen()) {
+                  <ul class="listbox" id="tag-listbox" role="listbox">
+                    @for (opt of availableTags(); track opt.id; let i = $index) {
+                      <li
+                        role="option"
+                        [id]="'tag-opt-' + i"
+                        [class.active]="tagActive() === i"
+                        [attr.aria-selected]="tagActive() === i"
+                        (mousedown)="$event.preventDefault(); addTag(opt.id)"
+                      >
+                        {{ opt.label }}
+                      </li>
+                    }
+                    @if (customTagCandidate(); as custom) {
+                      <li
+                        role="option"
+                        class="custom"
+                        [id]="'tag-opt-' + availableTags().length"
+                        [class.active]="tagActive() === availableTags().length"
+                        [attr.aria-selected]="tagActive() === availableTags().length"
+                        (mousedown)="$event.preventDefault(); addCustomTag(custom)"
+                      >
+                        <span class="ico ico-plus" aria-hidden="true"></span>
+                        {{ t('BUSINESS_REGISTRATION.FIELDS.ADD_CUSTOM_TAG', { tag: custom }) }}
+                      </li>
+                    }
+                    @if (tagOptionCount() === 0) {
+                      <li class="empty" role="presentation">
+                        {{ t('BUSINESS_REGISTRATION.FIELDS.NO_TAG_RESULTS') }}
+                      </li>
+                    }
+                  </ul>
+                }
+              </div>
+            </div>
+          </section>
+
+          <!-- ---------- 2. Photos ---------- -->
+          <section class="section" id="section-photos" aria-labelledby="h-photos">
+            <h2 id="h-photos">{{ t('BUSINESS_REGISTRATION.SECTIONS.PHOTOS') }}</h2>
+            <p class="section-hint">{{ t('BUSINESS_REGISTRATION.PHOTOS.HINT') }}</p>
+
+            <div
+              class="dropzone"
+              [class.drag-over]="dragOver()"
+              (dragover)="onDragOver($event)"
+              (dragleave)="dragOver.set(false)"
+              (drop)="onDrop($event)"
+            >
+              <input
+                #fileInput
+                type="file"
+                class="visually-hidden"
+                multiple
+                accept="image/jpeg,image/png,image/webp"
+                tabindex="-1"
+                (change)="onFilesSelected($event)"
+              />
+              <button type="button" class="btn-secondary btn-upload" (click)="fileInput.click()">
+                {{ t('BUSINESS_REGISTRATION.PHOTOS.UPLOAD') }}
+                <span class="ico ico-plus" aria-hidden="true"></span>
+              </button>
+              <p class="msg hint">{{ t('BUSINESS_REGISTRATION.PHOTOS.DROP') }}</p>
+            </div>
+
+            @if (photoError(); as err) {
+              <p class="msg error" role="alert">
+                <span class="ico ico-error" aria-hidden="true"></span>
+                @switch (err) {
+                  @case ('type') {
+                    {{ t('BUSINESS_REGISTRATION.PHOTOS.ERROR_TYPE') }}
+                  }
+                  @case ('size') {
+                    {{ t('BUSINESS_REGISTRATION.PHOTOS.ERROR_SIZE') }}
+                  }
+                  @default {
+                    {{ t('BUSINESS_REGISTRATION.PHOTOS.ERROR_MAX') }}
+                  }
+                }
+              </p>
+            }
+
+            @if (photos().length) {
+              <ul
+                class="photo-grid"
+                role="radiogroup"
+                [attr.aria-label]="t('BUSINESS_REGISTRATION.PHOTOS.SET_MAIN')"
+              >
+                @for (photo of photos(); track photo.id; let i = $index) {
+                  <li class="photo">
+                    <div class="photo-frame">
+                      <img
+                        [src]="photo.src"
+                        [alt]="t('BUSINESS_REGISTRATION.PHOTOS.ALT', { n: i + 1 })"
+                      />
+                      <button
+                        type="button"
+                        class="photo-remove"
+                        (click)="removePhoto(photo)"
+                        [attr.aria-label]="t('BUSINESS_REGISTRATION.PHOTOS.REMOVE')"
+                      >
+                        <span class="ico ico-close" aria-hidden="true"></span>
+                      </button>
+                    </div>
+                    <label class="cover-choice" [class.selected]="coverPhoto()?.id === photo.id">
+                      <input
+                        type="radio"
+                        name="cover"
+                        [checked]="coverPhoto()?.id === photo.id"
+                        (change)="setCover(photo.id)"
+                      />
+                      <span class="radio-dot" aria-hidden="true"></span>
+                      <span>{{
+                        coverPhoto()?.id === photo.id
+                          ? t('BUSINESS_REGISTRATION.PHOTOS.MAIN')
+                          : t('BUSINESS_REGISTRATION.PHOTOS.SET_MAIN')
+                      }}</span>
+                    </label>
+                    @if (coverPhoto()?.id !== photo.id) {
+                      <label class="gallery-choice">
+                        <input
+                          type="checkbox"
+                          [checked]="galleryIds().includes(photo.id)"
+                          (change)="toggleGallery(photo.id)"
+                        />
+                        <span>{{ t('BUSINESS_REGISTRATION.PHOTOS.GALLERY') }}</span>
+                      </label>
+                    }
+                  </li>
+                }
+              </ul>
+            }
+          </section>
+
+          <!-- ---------- 3. Public contact ---------- -->
+          <section class="section" id="section-contact" aria-labelledby="h-contact">
+            <h2 id="h-contact">{{ t('BUSINESS_REGISTRATION.SECTIONS.PUBLIC_CONTACT') }}</h2>
+
+            <div class="banner">
+              <span class="ico ico-info" aria-hidden="true"></span>
+              <p>{{ t('BUSINESS_REGISTRATION.CONTACT.INFO') }}</p>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="email"
+                  >{{ t('BUSINESS_REGISTRATION.FIELDS.EMAIL') }}
+                  <span class="required-mark" aria-hidden="true">*</span></label
+                >
+                <input
+                  id="email"
+                  type="email"
+                  formControlName="email"
+                  autocomplete="email"
+                  required
+                  [placeholder]="t('BUSINESS_REGISTRATION.PLACEHOLDERS.EMAIL')"
+                  [attr.aria-invalid]="showError('email')"
+                  aria-describedby="email-error"
+                />
+                @if (showError('email')) {
+                  <p class="msg error" id="email-error" role="alert">
+                    <span class="ico ico-error" aria-hidden="true"></span
+                    >{{ t('BUSINESS_REGISTRATION.ERRORS.EMAIL') }}
+                  </p>
+                }
+              </div>
+
+              <div class="field">
+                <label for="phone">{{ t('BUSINESS_REGISTRATION.FIELDS.PHONE') }}</label>
+                <div class="phone-row">
+                  <div class="select-wrap phone-code">
+                    <select
+                      formControlName="phoneCode"
+                      (change)="onPhoneCodeChange()"
+                      [attr.aria-label]="t('BUSINESS_REGISTRATION.FIELDS.PHONE_CODE')"
+                    >
+                      @for (d of dialCodes; track d.code) {
+                        <option [value]="d.dial">{{ d.code }} {{ d.dial }}</option>
+                      }
+                    </select>
+                    <span class="ico ico-chevron" aria-hidden="true"></span>
+                  </div>
+                  <input
+                    id="phone"
+                    type="tel"
+                    formControlName="phone"
+                    autocomplete="tel-national"
+                    inputmode="tel"
+                    [placeholder]="t('BUSINESS_REGISTRATION.PLACEHOLDERS.PHONE')"
+                    [attr.aria-invalid]="showError('phone')"
+                    aria-describedby="phone-error"
+                  />
+                </div>
+                @if (showError('phone')) {
+                  <p class="msg error" id="phone-error" role="alert">
+                    <span class="ico ico-error" aria-hidden="true"></span
+                    >{{ t('BUSINESS_REGISTRATION.ERRORS.PHONE') }}
+                  </p>
+                }
+              </div>
+            </div>
+          </section>
+
+          <!-- ---------- 4. Location & timezone ---------- -->
+          <section class="section" id="section-location" aria-labelledby="h-location">
+            <h2 id="h-location">
+              {{ t('BUSINESS_REGISTRATION.SECTIONS.LOCATION_AND_TIMEZONE') }}
+            </h2>
+            <p class="section-hint">{{ t('BUSINESS_REGISTRATION.LOCATION.HINT') }}</p>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="country"
+                  >{{ t('BUSINESS_REGISTRATION.FIELDS.COUNTRY') }}
+                  <span class="required-mark" aria-hidden="true">*</span></label
+                >
+                <div class="select-wrap">
+                  <select id="country" formControlName="country" required>
+                    @for (c of countries; track c.id) {
+                      <option [value]="c.id">
+                        {{ t('BUSINESS_REGISTRATION.COUNTRIES.' + c.id) }}
+                      </option>
                     }
                   </select>
                   <span class="ico ico-chevron" aria-hidden="true"></span>
                 </div>
-                <input
-                  id="phone"
-                  type="tel"
-                  formControlName="phone"
-                  autocomplete="tel-national"
-                  inputmode="tel"
-                  [placeholder]="t('BUSINESS_REGISTRATION.PLACEHOLDERS.PHONE')"
-                  [attr.aria-invalid]="showError('phone')"
-                  aria-describedby="phone-error"
-                />
               </div>
-              @if (showError('phone')) {
-                <p class="msg error" id="phone-error" role="alert">
-                  <span class="ico ico-error" aria-hidden="true"></span
-                  >{{ t('BUSINESS_REGISTRATION.ERRORS.PHONE') }}
-                </p>
-              }
+
+              <div class="field">
+                <label for="city"
+                  >{{ t('BUSINESS_REGISTRATION.FIELDS.CITY') }}
+                  <span class="required-mark" aria-hidden="true">*</span></label
+                >
+                <div class="select-wrap">
+                  <select
+                    id="city"
+                    formControlName="city"
+                    required
+                    [attr.aria-invalid]="showError('city')"
+                  >
+                    @for (c of cities(); track c.id) {
+                      <option [value]="c.id">
+                        {{ t('BUSINESS_REGISTRATION.CITIES.' + c.id) }}
+                      </option>
+                    }
+                  </select>
+                  <span class="ico ico-chevron" aria-hidden="true"></span>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="address"
+                  >{{ t('BUSINESS_REGISTRATION.FIELDS.ADDRESS') }}
+                  <span class="required-mark" aria-hidden="true">*</span></label
+                >
+                <input
+                  id="address"
+                  type="text"
+                  formControlName="address"
+                  autocomplete="street-address"
+                  maxlength="120"
+                  required
+                  [placeholder]="t('BUSINESS_REGISTRATION.PLACEHOLDERS.ADDRESS')"
+                  [attr.aria-invalid]="showError('address')"
+                  aria-describedby="address-error"
+                />
+                @if (showError('address')) {
+                  <p class="msg error" id="address-error" role="alert">
+                    <span class="ico ico-error" aria-hidden="true"></span
+                    >{{ t('BUSINESS_REGISTRATION.ERRORS.ADDRESS') }}
+                  </p>
+                }
+              </div>
+
+              <div class="field">
+                <label for="postal">{{ t('BUSINESS_REGISTRATION.FIELDS.POSTAL_CODE') }}</label>
+                <input
+                  id="postal"
+                  type="text"
+                  formControlName="postalCode"
+                  autocomplete="postal-code"
+                  maxlength="10"
+                  [placeholder]="t('BUSINESS_REGISTRATION.PLACEHOLDERS.POSTAL')"
+                  [attr.aria-invalid]="showError('postalCode')"
+                  aria-describedby="postal-error"
+                />
+                @if (showError('postalCode')) {
+                  <p class="msg error" id="postal-error" role="alert">
+                    <span class="ico ico-error" aria-hidden="true"></span
+                    >{{ t('BUSINESS_REGISTRATION.ERRORS.POSTAL') }}
+                  </p>
+                }
+              </div>
             </div>
-          </div>
-        </section>
 
-        <!-- ---------- 4. Location & timezone ---------- -->
-        <section class="section" id="section-location" aria-labelledby="h-location">
-          <h2 id="h-location">{{ t('BUSINESS_REGISTRATION.SECTIONS.LOCATION_AND_TIMEZONE') }}</h2>
-          <p class="section-hint">{{ t('BUSINESS_REGISTRATION.LOCATION.HINT') }}</p>
+            @if (values().address.trim().length >= 3 && currentCity()) {
+              <p class="auto-located">{{ t('BUSINESS_REGISTRATION.LOCATION.AUTO_DETECTED') }}</p>
+            }
 
-          <div class="field-row">
+            <!-- Illustrative map -->
+            <div
+              #map
+              class="map"
+              [class.adjusting]="adjusting()"
+              role="group"
+              [attr.aria-label]="t('BUSINESS_REGISTRATION.LOCATION.MAP_LABEL')"
+              (pointerdown)="onMapPointerDown($event, map)"
+              (pointermove)="onMapPointerMove($event, map)"
+            >
+              <div
+                class="map-canvas"
+                [style.transform]="'scale(' + zoom() + ')'"
+                aria-hidden="true"
+              >
+                <span class="block b1"></span>
+                <span class="block b2"></span>
+                <span class="block b3"></span>
+                <span class="block b4"></span>
+                <span class="road road-v"></span>
+                <span class="road road-h"
+                  ><span class="road-label">{{ streetLabel() }}</span></span
+                >
+              </div>
+
+              <div class="pin" [style.left.%]="pin().x" [style.top.%]="pin().y">
+                <span class="pin-tip">{{
+                  values().name.trim() || t('BUSINESS_REGISTRATION.PREVIEW.NAME_FALLBACK')
+                }}</span>
+                <button
+                  type="button"
+                  class="pin-dot"
+                  [attr.aria-label]="t('BUSINESS_REGISTRATION.LOCATION.PIN_LABEL')"
+                  (keydown)="onPinKeydown($event)"
+                >
+                  <span class="ico ico-pin" aria-hidden="true"></span>
+                </button>
+              </div>
+
+              <div class="zoom" (pointerdown)="$event.stopPropagation()">
+                <button
+                  type="button"
+                  (click)="zoomIn()"
+                  [attr.aria-label]="t('BUSINESS_REGISTRATION.LOCATION.ZOOM_IN')"
+                >
+                  <span class="ico ico-plus" aria-hidden="true"></span>
+                </button>
+                <button
+                  type="button"
+                  (click)="zoomOut()"
+                  [attr.aria-label]="t('BUSINESS_REGISTRATION.LOCATION.ZOOM_OUT')"
+                >
+                  <span class="ico ico-minus" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+            <p class="msg hint map-note">{{ t('BUSINESS_REGISTRATION.LOCATION.MAP_NOTE') }}</p>
+
+            <button
+              type="button"
+              class="btn-secondary btn-block"
+              [attr.aria-pressed]="adjusting()"
+              (click)="toggleAdjust()"
+            >
+              {{
+                adjusting()
+                  ? t('BUSINESS_REGISTRATION.LOCATION.ADJUST_DONE')
+                  : t('BUSINESS_REGISTRATION.LOCATION.ADJUST_PIN')
+              }}
+            </button>
+
+            <div class="coords">
+              <p class="coords-value">
+                {{ (location().latitude ?? 0).toFixed(3) }}° N ·
+                {{ (location().longitude ?? 0).toFixed(3) }}° E
+              </p>
+              <p class="msg hint">{{ t('BUSINESS_REGISTRATION.LOCATION.COORDS_NOTE') }}</p>
+            </div>
+
             <div class="field">
-              <label for="country"
-                >{{ t('BUSINESS_REGISTRATION.FIELDS.COUNTRY') }}
+              <label for="timezone"
+                >{{ t('BUSINESS_REGISTRATION.FIELDS.TIMEZONE') }}
                 <span class="required-mark" aria-hidden="true">*</span></label
               >
               <div class="select-wrap">
-                <select id="country" formControlName="country" required>
-                  @for (c of countries; track c.id) {
-                    <option [value]="c.id">
-                      {{ t('BUSINESS_REGISTRATION.COUNTRIES.' + c.id) }}
+                <select
+                  id="timezone"
+                  formControlName="timezone"
+                  required
+                  (change)="onTimezoneChange()"
+                >
+                  @for (z of timezones; track z) {
+                    <option [value]="z">
+                      {{ t('BUSINESS_REGISTRATION.TIMEZONES.' + tzKey(z)) }} · {{ tzOffset(z) }}
                     </option>
                   }
                 </select>
                 <span class="ico ico-chevron" aria-hidden="true"></span>
               </div>
+              <p class="msg tz-note">
+                {{
+                  timezoneManual()
+                    ? t('BUSINESS_REGISTRATION.LOCATION.TIMEZONE_MANUAL', {
+                        zone: values().timezone,
+                      })
+                    : t('BUSINESS_REGISTRATION.LOCATION.TIMEZONE_AUTO', { zone: values().timezone })
+                }}
+              </p>
             </div>
+          </section>
 
-            <div class="field">
-              <label for="city"
-                >{{ t('BUSINESS_REGISTRATION.FIELDS.CITY') }}
-                <span class="required-mark" aria-hidden="true">*</span></label
-              >
-              <div class="select-wrap">
-                <select
-                  id="city"
-                  formControlName="city"
-                  required
-                  [attr.aria-invalid]="showError('city')"
-                >
-                  @for (c of cities(); track c.id) {
-                    <option [value]="c.id">{{ t('BUSINESS_REGISTRATION.CITIES.' + c.id) }}</option>
-                  }
-                </select>
-                <span class="ico ico-chevron" aria-hidden="true"></span>
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="address"
-                >{{ t('BUSINESS_REGISTRATION.FIELDS.ADDRESS') }}
-                <span class="required-mark" aria-hidden="true">*</span></label
-              >
-              <input
-                id="address"
-                type="text"
-                formControlName="address"
-                autocomplete="street-address"
-                maxlength="120"
-                required
-                [placeholder]="t('BUSINESS_REGISTRATION.PLACEHOLDERS.ADDRESS')"
-                [attr.aria-invalid]="showError('address')"
-                aria-describedby="address-error"
-              />
-              @if (showError('address')) {
-                <p class="msg error" id="address-error" role="alert">
-                  <span class="ico ico-error" aria-hidden="true"></span
-                  >{{ t('BUSINESS_REGISTRATION.ERRORS.ADDRESS') }}
-                </p>
-              }
-            </div>
-
-            <div class="field">
-              <label for="postal">{{ t('BUSINESS_REGISTRATION.FIELDS.POSTAL_CODE') }}</label>
-              <input
-                id="postal"
-                type="text"
-                formControlName="postalCode"
-                autocomplete="postal-code"
-                maxlength="10"
-                [placeholder]="t('BUSINESS_REGISTRATION.PLACEHOLDERS.POSTAL')"
-                [attr.aria-invalid]="showError('postalCode')"
-                aria-describedby="postal-error"
-              />
-              @if (showError('postalCode')) {
-                <p class="msg error" id="postal-error" role="alert">
-                  <span class="ico ico-error" aria-hidden="true"></span
-                  >{{ t('BUSINESS_REGISTRATION.ERRORS.POSTAL') }}
-                </p>
-              }
-            </div>
-          </div>
-
-          @if (values().address.trim().length >= 3 && currentCity()) {
-            <p class="auto-located">{{ t('BUSINESS_REGISTRATION.LOCATION.AUTO_DETECTED') }}</p>
-          }
-
-          <!-- Illustrative map -->
-          <div
-            #map
-            class="map"
-            [class.adjusting]="adjusting()"
-            role="group"
-            [attr.aria-label]="t('BUSINESS_REGISTRATION.LOCATION.MAP_LABEL')"
-            (pointerdown)="onMapPointerDown($event, map)"
-            (pointermove)="onMapPointerMove($event, map)"
-          >
-            <div class="map-canvas" [style.transform]="'scale(' + zoom() + ')'" aria-hidden="true">
-              <span class="block b1"></span>
-              <span class="block b2"></span>
-              <span class="block b3"></span>
-              <span class="block b4"></span>
-              <span class="road road-v"></span>
-              <span class="road road-h"
-                ><span class="road-label">{{ streetLabel() }}</span></span
-              >
-            </div>
-
-            <div class="pin" [style.left.%]="pin().x" [style.top.%]="pin().y">
-              <span class="pin-tip">{{
-                values().name.trim() || t('BUSINESS_REGISTRATION.PREVIEW.NAME_FALLBACK')
-              }}</span>
-              <button
-                type="button"
-                class="pin-dot"
-                [attr.aria-label]="t('BUSINESS_REGISTRATION.LOCATION.PIN_LABEL')"
-                (keydown)="onPinKeydown($event)"
-              >
-                <span class="ico ico-pin" aria-hidden="true"></span>
-              </button>
-            </div>
-
-            <div class="zoom" (pointerdown)="$event.stopPropagation()">
-              <button
-                type="button"
-                (click)="zoomIn()"
-                [attr.aria-label]="t('BUSINESS_REGISTRATION.LOCATION.ZOOM_IN')"
-              >
-                <span class="ico ico-plus" aria-hidden="true"></span>
-              </button>
-              <button
-                type="button"
-                (click)="zoomOut()"
-                [attr.aria-label]="t('BUSINESS_REGISTRATION.LOCATION.ZOOM_OUT')"
-              >
-                <span class="ico ico-minus" aria-hidden="true"></span>
-              </button>
-            </div>
-          </div>
-          <p class="msg hint map-note">{{ t('BUSINESS_REGISTRATION.LOCATION.MAP_NOTE') }}</p>
-
-          <button
-            type="button"
-            class="btn-secondary btn-block"
-            [attr.aria-pressed]="adjusting()"
-            (click)="toggleAdjust()"
-          >
-            {{
-              adjusting()
-                ? t('BUSINESS_REGISTRATION.LOCATION.ADJUST_DONE')
-                : t('BUSINESS_REGISTRATION.LOCATION.ADJUST_PIN')
-            }}
-          </button>
-
-          <div class="coords">
-            <p class="coords-value">
-              {{ (location().latitude ?? 0).toFixed(3) }}° N ·
-              {{ (location().longitude ?? 0).toFixed(3) }}° E
-            </p>
-            <p class="msg hint">{{ t('BUSINESS_REGISTRATION.LOCATION.COORDS_NOTE') }}</p>
-          </div>
-
-          <div class="field">
-            <label for="timezone"
-              >{{ t('BUSINESS_REGISTRATION.FIELDS.TIMEZONE') }}
-              <span class="required-mark" aria-hidden="true">*</span></label
-            >
-            <div class="select-wrap">
-              <select
-                id="timezone"
-                formControlName="timezone"
-                required
-                (change)="onTimezoneChange()"
-              >
-                @for (z of timezones; track z) {
-                  <option [value]="z">
-                    {{ t('BUSINESS_REGISTRATION.TIMEZONES.' + tzKey(z)) }} · {{ tzOffset(z) }}
-                  </option>
-                }
-              </select>
-              <span class="ico ico-chevron" aria-hidden="true"></span>
-            </div>
-            <p class="msg tz-note">
-              {{
-                timezoneManual()
-                  ? t('BUSINESS_REGISTRATION.LOCATION.TIMEZONE_MANUAL', { zone: values().timezone })
-                  : t('BUSINESS_REGISTRATION.LOCATION.TIMEZONE_AUTO', { zone: values().timezone })
-              }}
-            </p>
-          </div>
-        </section>
-
-        <p class="demo-note">{{ t('BUSINESS_REGISTRATION.DEMO_NOTE') }}</p>
-      </div>
-
-      <!-- ============================ Sidebar: verification ============================ -->
-      <aside class="sidebar" id="section-verification" aria-labelledby="h-verify">
-        <h2 id="h-verify">{{ t('BUSINESS_REGISTRATION.SECTIONS.VERIFICATION') }}</h2>
-        <h3 class="preview-title">{{ t('BUSINESS_REGISTRATION.PREVIEW.TITLE') }}</h3>
-        <p class="muted">{{ t('BUSINESS_REGISTRATION.PREVIEW.SUBTITLE') }}</p>
-
-        <article class="preview-card" [attr.aria-label]="t('BUSINESS_REGISTRATION.PREVIEW.TITLE')">
-          <span class="badge">{{ t('BUSINESS_REGISTRATION.PREVIEW.DRAFT') }}</span>
-
-          @if (coverPhoto(); as cover) {
-            <img class="preview-cover" [src]="cover.src" alt="" />
-          } @else {
-            <div class="preview-cover placeholder">
-              <span class="ico ico-image" aria-hidden="true"></span>
-              <span>{{ t('BUSINESS_REGISTRATION.PREVIEW.NO_PHOTO') }}</span>
-            </div>
-          }
-
-          <h4 class="preview-name">
-            {{ values().name.trim() || t('BUSINESS_REGISTRATION.PREVIEW.NAME_FALLBACK') }}
-          </h4>
-
-          @if (selectedCategory() || tags().length) {
-            <ul class="preview-chips">
-              @if (selectedCategory(); as cat) {
-                <li>{{ t('BUSINESS_REGISTRATION.CATEGORY_OPTIONS.' + cat.name) }}</li>
-              }
-              @for (tag of tags(); track tag) {
-                <li>{{ tagLabel(tag) }}</li>
-              }
-            </ul>
-          }
-
-          @if (values().description.trim()) {
-            <p class="preview-desc">{{ values().description }}</p>
-          }
-
-          @if (thumbnails().length) {
-            <div class="preview-thumbs">
-              @for (th of thumbnails(); track th.id) {
-                <img [src]="th.src" alt="" />
-              }
-              @for (i of [0, 1].slice(thumbnails().length); track i) {
-                <div class="thumb-placeholder" aria-hidden="true"></div>
-              }
-            </div>
-          }
-
-          @if (values().address.trim()) {
-            <p class="preview-address">
-              <span class="ico ico-pin" aria-hidden="true"></span>
-              <span>{{
-                previewAddress(
-                  t('BUSINESS_REGISTRATION.CITIES.' + values().city),
-                  t('BUSINESS_REGISTRATION.COUNTRIES.' + values().country)
-                )
-              }}</span>
-            </p>
-          }
-
-          <h5 class="preview-contact-title">
-            {{ t('BUSINESS_REGISTRATION.PREVIEW.PUBLIC_CONTACT') }}
-          </h5>
-          @if (values().email.trim()) {
-            <p class="preview-line">{{ values().email }}</p>
-          }
-          @if (phoneDisplay()) {
-            <p class="preview-line">{{ phoneDisplay() }}</p>
-          }
-          <p class="preview-line muted">
-            {{ t('BUSINESS_REGISTRATION.PREVIEW.TIMEZONE', { zone: values().timezone }) }}
-          </p>
-          <p class="preview-line muted">setora.com/business/{{ values().slug }}</p>
-          @if (slugInvalid()) {
-            <p class="preview-line danger">{{ t('BUSINESS_REGISTRATION.PREVIEW.URL_FIX') }}</p>
-          }
-        </article>
-
-        <h3 class="edit-title">{{ t('BUSINESS_REGISTRATION.PREVIEW.EDIT_SECTION') }}</h3>
-        <div class="edit-grid">
-          <button type="button" class="btn-secondary" (click)="scrollTo('section-profile')">
-            {{ t('BUSINESS_REGISTRATION.TABS.PROFILE') }}
-          </button>
-          <button type="button" class="btn-secondary" (click)="scrollTo('section-photos')">
-            {{ t('BUSINESS_REGISTRATION.TABS.PHOTOS') }}
-          </button>
-          <button type="button" class="btn-secondary" (click)="scrollTo('section-contact')">
-            {{ t('BUSINESS_REGISTRATION.TABS.CONTACT') }}
-          </button>
-          <button type="button" class="btn-secondary" (click)="scrollTo('section-location')">
-            {{ t('BUSINESS_REGISTRATION.TABS.LOCATION') }}
-          </button>
+          <p class="demo-note">{{ t('BUSINESS_REGISTRATION.DEMO_NOTE') }}</p>
         </div>
 
-        @if (slugInvalid()) {
-          <p class="msg error summary" role="alert">
-            <span class="ico ico-error" aria-hidden="true"></span
-            >{{ t('BUSINESS_REGISTRATION.SUBMIT.ERROR_URL') }}
-          </p>
-        } @else if (submitted() && form.invalid) {
-          <p class="msg error summary" role="alert">
-            <span class="ico ico-error" aria-hidden="true"></span
-            >{{ t('BUSINESS_REGISTRATION.SUBMIT.ERROR_FIELDS') }}
-          </p>
-        }
+        <!-- ============================ Sidebar: verification ============================ -->
+        <aside class="sidebar" id="section-verification" aria-labelledby="h-verify">
+          <h2 id="h-verify">{{ t('BUSINESS_REGISTRATION.SECTIONS.VERIFICATION') }}</h2>
+          <h3 class="preview-title">{{ t('BUSINESS_REGISTRATION.PREVIEW.TITLE') }}</h3>
+          <p class="muted">{{ t('BUSINESS_REGISTRATION.PREVIEW.SUBTITLE') }}</p>
 
-        @if (registered()) {
-          <p class="msg success summary" role="status">
-            <span class="ico ico-check" aria-hidden="true"></span
-            >{{ t('BUSINESS_REGISTRATION.SUBMIT.SUCCESS') }}
-          </p>
-        }
+          <article
+            class="preview-card"
+            [attr.aria-label]="t('BUSINESS_REGISTRATION.PREVIEW.TITLE')"
+          >
+            <span class="badge">{{ t('BUSINESS_REGISTRATION.PREVIEW.DRAFT') }}</span>
 
-        <button type="submit" class="btn-primary">
-          {{ t('BUSINESS_REGISTRATION.SUBMIT.BUTTON') }}
-        </button>
-        <p class="muted submit-hint">{{ t('BUSINESS_REGISTRATION.SUBMIT.HINT') }}</p>
-      </aside>
-    </form>
-  </div>
+            @if (coverPhoto(); as cover) {
+              <img class="preview-cover" [src]="cover.src" alt="" />
+            } @else {
+              <div class="preview-cover placeholder">
+                <span class="ico ico-image" aria-hidden="true"></span>
+                <span>{{ t('BUSINESS_REGISTRATION.PREVIEW.NO_PHOTO') }}</span>
+              </div>
+            }
+
+            <h4 class="preview-name">
+              {{ values().name.trim() || t('BUSINESS_REGISTRATION.PREVIEW.NAME_FALLBACK') }}
+            </h4>
+
+            @if (selectedCategory() || tags().length) {
+              <ul class="preview-chips">
+                @if (selectedCategory(); as cat) {
+                  <li>{{ t('BUSINESS_REGISTRATION.CATEGORY_OPTIONS.' + cat.name) }}</li>
+                }
+                @for (tag of tags(); track tag) {
+                  <li>{{ tagLabel(tag) }}</li>
+                }
+              </ul>
+            }
+
+            @if (values().description.trim()) {
+              <p class="preview-desc">{{ values().description }}</p>
+            }
+
+            @if (thumbnails().length) {
+              <div class="preview-thumbs">
+                @for (th of thumbnails(); track th.id) {
+                  <img [src]="th.src" alt="" />
+                }
+                @for (i of [0, 1].slice(thumbnails().length); track i) {
+                  <div class="thumb-placeholder" aria-hidden="true"></div>
+                }
+              </div>
+            }
+
+            @if (values().address.trim()) {
+              <p class="preview-address">
+                <span class="ico ico-pin" aria-hidden="true"></span>
+                <span>{{
+                  previewAddress(
+                    t('BUSINESS_REGISTRATION.CITIES.' + values().city),
+                    t('BUSINESS_REGISTRATION.COUNTRIES.' + values().country)
+                  )
+                }}</span>
+              </p>
+            }
+
+            <h5 class="preview-contact-title">
+              {{ t('BUSINESS_REGISTRATION.PREVIEW.PUBLIC_CONTACT') }}
+            </h5>
+            @if (values().email.trim()) {
+              <p class="preview-line">{{ values().email }}</p>
+            }
+            @if (phoneDisplay()) {
+              <p class="preview-line">{{ phoneDisplay() }}</p>
+            }
+            <p class="preview-line muted">
+              {{ t('BUSINESS_REGISTRATION.PREVIEW.TIMEZONE', { zone: values().timezone }) }}
+            </p>
+            <p class="preview-line muted">setora.com/business/{{ values().slug }}</p>
+            @if (slugInvalid()) {
+              <p class="preview-line danger">{{ t('BUSINESS_REGISTRATION.PREVIEW.URL_FIX') }}</p>
+            }
+          </article>
+
+          <h3 class="edit-title">{{ t('BUSINESS_REGISTRATION.PREVIEW.EDIT_SECTION') }}</h3>
+          <div class="edit-grid">
+            <button type="button" class="btn-secondary" (click)="scrollTo('section-profile')">
+              {{ t('BUSINESS_REGISTRATION.TABS.PROFILE') }}
+            </button>
+            <button type="button" class="btn-secondary" (click)="scrollTo('section-photos')">
+              {{ t('BUSINESS_REGISTRATION.TABS.PHOTOS') }}
+            </button>
+            <button type="button" class="btn-secondary" (click)="scrollTo('section-contact')">
+              {{ t('BUSINESS_REGISTRATION.TABS.CONTACT') }}
+            </button>
+            <button type="button" class="btn-secondary" (click)="scrollTo('section-location')">
+              {{ t('BUSINESS_REGISTRATION.TABS.LOCATION') }}
+            </button>
+          </div>
+
+          @if (slugInvalid()) {
+            <p class="msg error summary" role="alert">
+              <span class="ico ico-error" aria-hidden="true"></span
+              >{{ t('BUSINESS_REGISTRATION.SUBMIT.ERROR_URL') }}
+            </p>
+          } @else if (submitted() && form.invalid) {
+            <p class="msg error summary" role="alert">
+              <span class="ico ico-error" aria-hidden="true"></span
+              >{{ t('BUSINESS_REGISTRATION.SUBMIT.ERROR_FIELDS') }}
+            </p>
+          }
+
+          @if (registered()) {
+            <p class="msg success summary" role="status">
+              <span class="ico ico-check" aria-hidden="true"></span
+              >{{ t('BUSINESS_REGISTRATION.SUBMIT.SUCCESS') }}
+            </p>
+          }
+
+          <button type="submit" class="btn-primary">
+            {{ t('BUSINESS_REGISTRATION.SUBMIT.BUTTON') }}
+          </button>
+          <p class="muted submit-hint">{{ t('BUSINESS_REGISTRATION.SUBMIT.HINT') }}</p>
+        </aside>
+      </form>
+    </div>
+  } @else if (summary(); as s) {
+    <app-business-registration-status
+      [status]="registrationStatus() === 'pending' ? 'pending' : 'success'"
+      [business]="s"
+    />
+  }
 </div>
