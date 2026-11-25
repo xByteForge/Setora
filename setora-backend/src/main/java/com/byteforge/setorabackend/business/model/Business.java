@@ -71,6 +71,9 @@ public class Business {
     @Column(name = "tags", columnDefinition = "text[]")
     private String[] tags;
 
+    @Column(name = "time_slice")
+    private int timeSlice = 30; // default time slice
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
