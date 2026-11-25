@@ -23,8 +23,6 @@
 package com.byteforge.setorabackend.config;
 
 import com.byteforge.setorabackend.appointment.*;
-import com.byteforge.setorabackend.auth.User;
-import com.byteforge.setorabackend.auth.UserRepository;
 import com.byteforge.setorabackend.business.model.Business;
 import com.byteforge.setorabackend.business.model.Category;
 import com.byteforge.setorabackend.business.model.Location;
@@ -43,6 +41,8 @@ import com.byteforge.setorabackend.serviceItem.ServiceItem;
 import com.byteforge.setorabackend.serviceItem.ServiceItemRepository;
 import com.byteforge.setorabackend.serviceItem.ServiceType;
 import com.byteforge.setorabackend.serviceItem.ServiceTypeRepository;
+import com.byteforge.setorabackend.user.User;
+import com.byteforge.setorabackend.user.UserRepository;
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.Duration;

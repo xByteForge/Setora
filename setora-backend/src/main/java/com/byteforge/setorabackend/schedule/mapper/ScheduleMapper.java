@@ -1,7 +1,6 @@
 package com.byteforge.setorabackend.schedule.mapper;
 
 import com.byteforge.setorabackend.appointment.Appointment;
-import com.byteforge.setorabackend.auth.User;
 import com.byteforge.setorabackend.employees.model.Employee;
 import com.byteforge.setorabackend.employees.model.UnavailableSlot;
 import com.byteforge.setorabackend.employees.model.WorkSchedule;
@@ -9,6 +8,7 @@ import com.byteforge.setorabackend.schedule.dtos.EmployeeScheduleDto;
 import com.byteforge.setorabackend.schedule.dtos.ScheduledAppointmentDto;
 import com.byteforge.setorabackend.schedule.dtos.UnavailableSlotDto;
 import com.byteforge.setorabackend.schedule.dtos.WorkingHoursDto;
+import com.byteforge.setorabackend.user.User;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;

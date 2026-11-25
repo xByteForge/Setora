@@ -1,6 +1,6 @@
-package com.byteforge.setorabackend.auth.dtos;
+package com.byteforge.setorabackend.user.dtos;
 
-import com.byteforge.setorabackend.auth.UserRole;
+import com.byteforge.setorabackend.user.UserRole;
 
 // what backend returns when a user is fetched, created or updated
 public record UserResponseDto(

@@ -1,4 +1,4 @@
-package com.byteforge.setorabackend.auth.dtos;
+package com.byteforge.setorabackend.user.dtos;
 
 import jakarta.validation.constraints.*;
 
