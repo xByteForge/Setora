@@ -19,18 +19,15 @@ import java.util.UUID;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 class AvatarService {
 
-    private static final Path UPLOAD_DIR =
-            Paths.get("uploads", "user-avatars").toAbsolutePath().normalize();
     private static final long MAX_BYTES = 2L * 1024 * 1024;
     private static final long MAX_PIXELS = 4_000_000;
     private static final int OUTPUT_SIZE = 512;
@@ -41,6 +38,13 @@ class AvatarService {
     }
 
     private final UserService userService;
+    private final Path uploadDir;
+
+    AvatarService(
+            UserService userService, @Value("${setora.avatar.upload-dir:uploads/user-avatars}") String uploadDir) {
+        this.userService = userService;
+        this.uploadDir = Paths.get(uploadDir).toAbsolutePath().normalize();
+    }
 
     public void storeAvatar(MultipartFile file, int userId) {
         BufferedImage image = readAndValidate(file);
@@ -76,11 +80,16 @@ class AvatarService {
         return userService.getAvatarPathByUser(userId);
     }
 
+    // full path of a stored avatar, or null if the filename points outside the upload folder
+    public Path resolveAvatarFile(String filename) {
+        return tryResolve(filename);
+    }
+
     // ---------- file helpers ----------
 
     private Path resolveSafely(String filename) {
-        Path p = UPLOAD_DIR.resolve(filename).normalize();
-        if (!UPLOAD_DIR.equals(p.getParent())) {
+        Path p = uploadDir.resolve(filename).normalize();
+        if (!uploadDir.equals(p.getParent())) {
             throw new InvalidAvatarException("Invalid avatar path");
         }
         return p;
@@ -98,7 +107,7 @@ class AvatarService {
     private void writeAtomically(byte[] data, Path target) {
         Path tmp = target.resolveSibling(target.getFileName() + ".tmp");
         try {
-            Files.createDirectories(UPLOAD_DIR);
+            Files.createDirectories(uploadDir);
             Files.write(tmp, data, StandardOpenOption.CREATE_NEW);
             Files.move(tmp, target, StandardCopyOption.ATOMIC_MOVE);
         } catch (IOException ex) {

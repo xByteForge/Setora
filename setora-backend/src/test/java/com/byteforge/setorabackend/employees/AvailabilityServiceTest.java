@@ -25,6 +25,8 @@ import com.byteforge.setorabackend.employees.repository.EmployeeRepository;
 import com.byteforge.setorabackend.employees.repository.UnavailableSlotRepository;
 import com.byteforge.setorabackend.employees.repository.WorkScheduleRepository;
 import com.byteforge.setorabackend.employees.service.EmployeeService;
+import com.byteforge.setorabackend.error.exceptions.InvalidInputException;
+import com.byteforge.setorabackend.error.exceptions.InvalidStateException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -37,7 +39,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.server.ResponseStatusException;
 
 @ExtendWith(MockitoExtension.class)
 class EmployeeServiceTest {
@@ -115,29 +116,25 @@ class EmployeeServiceTest {
 
     @Test
     void rejectsEndBeforeStart() {
-        ResponseStatusException e = assertThrows(
-                ResponseStatusException.class,
+        assertThrows(
+                InvalidInputException.class,
                 () -> service.createUnavailableSlot(employeeId, oneOffRequest(nextWeek, 13, 12)));
-        assertEquals(400, e.getStatusCode().value());
     }
 
     @Test
     void rejectsDateAndDayOfWeekTogether() {
         UnavailableSlotRequest request = new UnavailableSlotRequest(
                 UnavailableType.BREAK, null, nextWeek, DayOfWeek.MONDAY, LocalTime.of(12, 0), LocalTime.of(13, 0));
-        ResponseStatusException e =
-                assertThrows(ResponseStatusException.class, () -> service.createUnavailableSlot(employeeId, request));
-        assertEquals(400, e.getStatusCode().value());
+        assertThrows(InvalidInputException.class, () -> service.createUnavailableSlot(employeeId, request));
     }
 
     @Test
     void rejectsPastDate() {
         stubEmployee();
-        ResponseStatusException e = assertThrows(
-                ResponseStatusException.class,
+        assertThrows(
+                InvalidInputException.class,
                 () -> service.createUnavailableSlot(
                         employeeId, oneOffRequest(LocalDate.now(ZoneOffset.UTC).minusDays(1), 12, 13)));
-        assertEquals(400, e.getStatusCode().value());
     }
 
     @Test
@@ -147,9 +144,7 @@ class EmployeeServiceTest {
 
         UnavailableSlotRequest overlapping = new UnavailableSlotRequest(
                 UnavailableType.BLOCKED, null, nextWeek, null, LocalTime.of(12, 30), LocalTime.of(13, 30));
-        ResponseStatusException e = assertThrows(
-                ResponseStatusException.class, () -> service.createUnavailableSlot(employeeId, overlapping));
-        assertEquals(409, e.getStatusCode().value());
+        assertThrows(InvalidStateException.class, () -> service.createUnavailableSlot(employeeId, overlapping));
     }
 
     @Test
@@ -178,9 +173,7 @@ class EmployeeServiceTest {
                 nextWeek.getDayOfWeek(),
                 LocalTime.of(12, 30),
                 LocalTime.of(13, 30));
-        ResponseStatusException e =
-                assertThrows(ResponseStatusException.class, () -> service.createUnavailableSlot(employeeId, recurring));
-        assertEquals(409, e.getStatusCode().value());
+        assertThrows(InvalidStateException.class, () -> service.createUnavailableSlot(employeeId, recurring));
     }
 
     @Test
@@ -206,10 +199,9 @@ class EmployeeServiceTest {
     @Test
     void rejectsRangeWhereFromIsAfterTo() {
         stubEmployee();
-        ResponseStatusException e = assertThrows(
-                ResponseStatusException.class,
+        assertThrows(
+                InvalidInputException.class,
                 () -> service.getUnavailableSlots(employeeId, null, nextWeek.plusDays(1), nextWeek));
-        assertEquals(400, e.getStatusCode().value());
     }
 
     @Test

@@ -8,6 +8,9 @@ public record CreateUserRequestDto(
 
         @NotBlank @Size(max = 100) String lastName,
 
+        // optional, the first name is used when missing
+        @Size(max = 100) String username,
+
         @NotBlank @Email @Size(max = 255) String email,
 
         @Size(max = 30) String phoneNumber,
