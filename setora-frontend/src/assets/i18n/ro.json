@@ -6,10 +6,12 @@
     "CLIENTS": "Clienți",
     "LOCATIONS": "Locații",
     "WORKING_HOURS": "Program de lucru",
-    "SETTINGS": "Setări"
+    "SETTINGS": "Setări",
+    "DISCOVER": "Descoperă",
+    "BOOKINGS": "Rezervările mele"
   },
   "HEADER": {
-    "SEARCH": "Caută un client sau un serviciu...",
+    "SEARCH": "Caută businessuri, servicii...",
     "BREADCRUMB": "Navigare",
     "THEME_TO_DARK": "Comută la tema întunecată",
     "THEME_TO_LIGHT": "Comută la tema luminoasă",
@@ -127,14 +129,82 @@
     "CANCEL": {
       "TITLE": "Anulezi programarea?",
       "QUESTION": "Sigur vrei să anulezi această programare?",
-      "NOTIFY": "Clienta va fi notificată prin e-mail, iar intervalul va deveni disponibil.",
+      "NOTIFY": "Clientul va fi notificat prin e-mail, iar intervalul va deveni disponibil.",
       "REFUND": "Orice rambursare se aplică potrivit politicii businessului.",
       "KEEP": "Păstrează programarea",
       "CONFIRM": "Da, anulează",
       "CANCELLING": "Se anulează…",
       "SUCCESS": "Programarea a fost anulată."
     }
-    
+  },
+  "DISCOVER": {
+    "TITLE": "Timp pentru ce contează.",
+    "SUBTITLE": "Găsește serviciul potrivit și alege unde te programezi.",
+    "RESULTS_SUBTITLE": "Alege locul potrivit pentru următoarea programare.",
+    "DISCLAIMER": "Exemple demonstrative • Businessuri fictive și imagini ilustrative.",
+    "CHIPS": {
+      "ACTIVE": "Filtre active",
+      "TEXT": "„{{value}}”",
+      "PRICE_RANGE": "{{min}}–{{max}} RON",
+      "PRICE_MIN": "minim {{min}} RON",
+      "PRICE_MAX": "maxim {{max}} RON",
+      "REMOVE": "Elimină filtrul {{label}}",
+      "CLEAR_ALL": "Șterge filtrele"
+    },
+    "RESULTS_COUNT": "{{count}} businessuri în {{city}}",
+    "RESULTS_COUNT_ALL": "{{ count }} businessuri din toate locațiile",
+    "FROM_PRICE": "de la {{price}} RON",
+    "VIEW_BUSINESS": "Vezi businessul",
+    "EMPTY": "Nu am găsit businessuri pentru filtrele alese.",
+    "RANGE": "{{start}}–{{end}} din {{total}} businessuri",
+    "PER_PAGE": "{{count}} / pagină",
+    "PAGE_SIZE_LABEL": "Rezultate pe pagină",
+    "PAGINATION": "Paginare",
+    "PREV": "Pagina anterioară",
+    "NEXT": "Pagina următoare",
+    "PAGE_OF": "Pagina {{page}} din {{pages}}",
+    "SORT": {
+      "relevance": "Relevanță",
+      "priceAsc": "Preț crescător",
+      "priceDesc": "Preț descrescător",
+      "nameAsc": "Nume (A–Z)",
+      "nameDesc": "Nume (Z–A)"
+    },
+    "FILTERS": {
+      "TITLE": "Filtrează rezultatele",
+      "CITY": "Localitate",
+      "ALL_CITIES": "Toate locațiile",
+      "SORT": "Sortează după",
+      "CATEGORY": "Categorie",
+      "ALL_CATEGORIES": "Toate categoriile",
+      "SERVICE": "Serviciu",
+      "ALL_SERVICES": "Toate serviciile",
+      "SELECT_SERVICE_HINT": "Selectează un serviciu pentru a filtra după preț, dată și interval orar.",
+      "PRICE": "Preț pe serviciu (RON)",
+      "MIN": "Minim",
+      "MAX": "Maxim",
+      "DATE": "Data",
+      "TIME_LABEL": "Interval orar",
+      "TIME": {
+        "any": "Orice oră",
+        "morning": "Dimineața (06:00–12:00)",
+        "afternoon": "După-amiaza (12:00–18:00)",
+        "evening": "Seara (18:00–23:00)"
+      },
+      "APPLY": "Aplică filtrele",
+      "RESET": "Resetează",
+      "BUTTON": "Filtre",
+      "BUTTON_COUNT": "Filtre ({{count}})",
+      "SHOW_RESULTS": "Afișează rezultatele ({{count}})",
+      "CLOSE": "Închide filtrele"
+    }
+  },
+  "SEARCH": {
+    "PAGES": "Pagini",
+    "BUSINESSES": "Businessuri",
+    "SERVICES": "Servicii",
+    "NO_RESULTS": "Niciun rezultat",
+    "SEE_ALL": "Vezi toate rezultatele pentru"
   },
   "MENU": {
     "TITLE": "Meniu",
@@ -144,5 +214,255 @@
   },
   "ERRORS": {
     "GENERIC": "A apărut o eroare. Încearcă din nou."
+  },
+  "SETTINGS": {
+    "COMMON": {
+      "CANCEL": "Anulează"
+    },
+    "HEADER": {
+      "PROFILE_TITLE": "Detalii profil",
+      "PROFILE_SUBTITLE": "Actualizează datele tale personale și modul în care apari la rezervări.",
+      "SETTINGS_TITLE": "Setări",
+      "SETTINGS_SUBTITLE": "Gestionează contul, securitatea și aspectul aplicației."
+    },
+    "NAV": {
+      "TITLE": "Contul meu",
+      "PROFILE": "Detalii profil",
+      "SETTINGS": "Setări"
+    },
+    "PROFILE": {
+      "TITLE": "Informații personale",
+      "VIEW_HINT": "Datele tale folosite la rezervări.",
+      "EDIT_HINT": "Modifică datele de mai jos, apoi salvează.",
+      "EDIT": "Editează profilul",
+      "CHANGE_PHOTO": "Schimbă fotografia",
+      "PHOTO_SELECTED": "Fotografie nouă selectată",
+      "PHOTO_SIZE_ERROR": "Imaginea trebuie să aibă maximum 5 MB.",
+      "FIRST_NAME": "Prenume",
+      "LAST_NAME": "Nume",
+      "USERNAME": "Nume de utilizator",
+      "PHONE": "Număr de telefon",
+      "EMAIL": "Adresă de email",
+      "EMAIL_HINT": "Emailul de autentificare se schimbă din Setări.",
+      "SAVE": "Salvează modificările",
+      "PHOTO_HINT": "JPG sau PNG maximum 5 MB.",
+      "PHOTO_TYPE_ERROR": "Selectează o fotografie JPG sau PNG.",
+      "PHOTO_UPLOAD_ERROR": "Datele au fost salvate, dar fotografia nu a putut fi încărcată. Încearcă din nou."
+    },
+    "ACCOUNT": {
+      "TITLE": "Cont",
+      "SUBTITLE": "Datele de bază ale contului tău.",
+      "LOGIN_EMAIL": "Email de autentificare",
+      "CHANGE": "Schimbă",
+      "PERSONAL": "Date personale",
+      "PERSONAL_HINT": "Nume, fotografie, telefon și nume de utilizator",
+      "EDIT_PROFILE": "Editează profilul"
+    },
+    "PASSWORD": {
+      "TITLE": "Schimbă parola",
+      "HINT": "Folosește cel puțin 8 caractere, cu litere și cifre.",
+      "CURRENT": "Parola actuală",
+      "NEW": "Parolă nouă",
+      "CONFIRM": "Confirmă parola nouă",
+      "TOGGLE": "Arată sau ascunde parola",
+      "UPDATE": "Actualizează parola"
+    },
+    "NOTIFICATIONS": {
+      "TITLE": "Notificări",
+      "SUBTITLE": "Alege cum vrei să fii anunțat.",
+      "EMAIL": "Email",
+      "SMS": "SMS",
+      "PUSH": "Push",
+      "CONFIRMED": "Rezervare confirmată",
+      "CONFIRMED_HINT": "Imediat după ce business-ul confirmă",
+      "CHANGED": "Rezervare anulată sau mutată",
+      "CHANGED_HINT": "Când se schimbă ceva la programarea ta",
+      "REMINDER": "Reamintire",
+      "REMINDER_HINT": "Cu 1 oră înainte de începere"
+    },
+    "APPEARANCE": {
+      "TITLE": "Aspect",
+      "SUBTITLE": "Alege tema aplicației pe acest dispozitiv.",
+      "LIGHT": "Luminos",
+      "DARK": "Întunecat"
+    },
+    "DELETE": {
+      "TITLE": "Ștergere cont",
+      "DESCRIPTION": "Șterge definitiv contul tău. Acțiunea nu poate fi anulată.",
+      "ITEM_HISTORY": "Pierzi istoricul rezervărilor",
+      "ITEM_BOOKINGS": "Rezervările viitoare sunt anulate automat",
+      "BUTTON": "Șterge contul",
+      "CONFIRM": "Ești sigur? Contul și datele tale vor fi șterse definitiv.",
+      "CONFIRM_BUTTON": "Da, șterge contul"
+    }
+  },
+  "BUSINESS_REGISTRATION": {
+    "TITLE": "Înregistrează-ți businessul",
+    "SUBTITLE": "Completează datele și verifică profilul înainte de publicare.",
+    "REQUIRED_HINT": "Câmpurile marcate cu",
+    "REQUIRED_HINT_END": "sunt obligatorii.",
+    "BACK": "Înapoi",
+    "BACK_TO_AUTH": "Înapoi la autentificare",
+    "JUMP_TO": "Sari la secțiune",
+    "SECTIONS": {
+      "BUSINESS_PROFILE": "1. Profilul businessului",
+      "PHOTOS": "2. Fotografii",
+      "PUBLIC_CONTACT": "3. Contact public",
+      "LOCATION_AND_TIMEZONE": "4. Locație și fus orar",
+      "VERIFICATION": "5. Verificare"
+    },
+    "TABS": {
+      "PROFILE": "Profil",
+      "PHOTOS": "Fotografii",
+      "CONTACT": "Contact public",
+      "LOCATION": "Locație",
+      "VERIFICATION": "Verificare"
+    },
+    "FIELDS": {
+      "BUSINESS_NAME": "Nume business",
+      "URL_HANDLE": "URL / identificator public",
+      "DESCRIPTION": "Descriere (opțional)",
+      "CATEGORIES": "Categorii business",
+      "TAGS": "Etichete",
+      "SELECTED_TAGS": "Etichete selectate",
+      "NO_TAGS_SELECTED": "Nicio etichetă selectată.",
+      "ADD_TAG": "Adaugă etichete",
+      "ADD_CUSTOM_TAG": "Adaugă „{{tag}}”",
+      "NO_TAG_RESULTS": "Niciun tag găsit.",
+      "REMOVE_TAG": "Elimină tag-ul {{tag}}",
+      "SEARCH_TAGS": "Caută sau selectează etichete",
+      "EMAIL": "E-mail business",
+      "PHONE": "Telefon public (opțional)",
+      "PHONE_CODE": "Prefix telefonic",
+      "COUNTRY": "Țară",
+      "CITY": "Oraș",
+      "ADDRESS": "Adresă stradală",
+      "POSTAL_CODE": "Cod poștal (opțional)",
+      "TIMEZONE": "Fus orar"
+    },
+    "PLACEHOLDERS": {
+      "NAME": "Studio Verde",
+      "SLUG": "studio-verde",
+      "DESCRIPTION": "Descrie pe scurt businessul tău",
+      "EMAIL": "contact@studioverde.example",
+      "PHONE": "700 000 456",
+      "ADDRESS": "Bd. Dacia 34",
+      "POSTAL": "010403"
+    },
+    "URL_HELPER": "Generat din numele businessului. Îl poți edita.",
+    "URL_SUGGESTION": "Sugestie:",
+    "ERRORS": {
+      "NAME": "Introdu numele businessului (minim 2 caractere).",
+      "URL_REQUIRED": "Introdu un URL pentru business.",
+      "URL_FORMAT": "Folosește minim 3 caractere: litere mici, cifre și cratime.",
+      "URL_TAKEN": "Acest URL este deja folosit.",
+      "EMAIL": "Introdu o adresă de e-mail validă.",
+      "PHONE": "Introdu un număr valid, ex. 700 000 456.",
+      "ADDRESS": "Introdu adresa stradală.",
+      "POSTAL": "Introdu un cod poștal valid."
+    },
+    "CATEGORY_OPTIONS": {
+      "BEAUTY": "Beauty",
+      "HEALTH": "Sănătate",
+      "FITNESS": "Fitness",
+      "AUTO": "Auto"
+    },
+    "TAG_OPTIONS": {
+      "HAIRSTYLE": "Coafură",
+      "STYLING": "Styling",
+      "MANICURE": "Manichiură",
+      "PEDICURE": "Pedichiură",
+      "MASSAGE": "Masaj",
+      "BARBER": "Frizerie",
+      "MAKEUP": "Make-up",
+      "FACIAL": "Tratamente faciale",
+      "SPA": "Spa",
+      "PERSONAL_TRAINING": "Antrenor personal",
+      "YOGA": "Yoga",
+      "PHYSIOTHERAPY": "Kinetoterapie",
+      "DENTAL": "Stomatologie",
+      "CAR_WASH": "Spălătorie auto"
+    },
+    "PHOTOS": {
+      "HINT": "Încarcă mai multe imagini și alege una ca imagine principală a profilului.",
+      "UPLOAD": "Încarcă fotografii",
+      "DROP": "Trage imaginile aici sau selectează mai multe fotografii.",
+      "MAIN": "Principală",
+      "SET_MAIN": "Setează ca principală",
+      "GALLERY": "Afișează precum copertă",
+      "REMOVE": "Elimină fotografia",
+      "ALT": "Fotografie {{n}}",
+      "ERROR_TYPE": "Folosește fișiere JPG, PNG sau WebP.",
+      "ERROR_SIZE": "Fiecare fotografie trebuie să aibă maximum 5 MB.",
+      "ERROR_MAX": "Poți încărca maximum 10 fotografii."
+    },
+    "CONTACT": {
+      "INFO": "Aceste date sunt publice și vor apărea pe profilul businessului. Nu sunt datele private de autentificare."
+    },
+    "LOCATION": {
+      "HINT": "Adresa exactă ajută clienții să găsească businessul.",
+      "AUTO_DETECTED": "Locație identificată automat",
+      "MAP_LABEL": "Hartă ilustrativă cu poziția businessului",
+      "MAP_NOTE": "Hartă ilustrativă. Trage pinul sau ajustează-l pentru poziția exactă.",
+      "PIN_LABEL": "Poziția businessului pe hartă",
+      "ADJUST_PIN": "Ajustează pinul",
+      "ADJUST_DONE": "Gata",
+      "ZOOM_IN": "Mărește harta",
+      "ZOOM_OUT": "Micșorează harta",
+      "COORDS_NOTE": "Latitudinea și longitudinea se calculează automat din adresă și pin. Nu trebuie introduse manual.",
+      "TIMEZONE_AUTO": "{{zone}} · detectat automat din locație. Poți selecta alt fus orar.",
+      "TIMEZONE_MANUAL": "{{zone}} · selectat manual."
+    },
+    "COUNTRIES": {
+      "RO": "România",
+      "MD": "Moldova",
+      "HU": "Ungaria",
+      "BG": "Bulgaria"
+    },
+    "CITIES": {
+      "BUCHAREST": "București",
+      "CLUJ_NAPOCA": "Cluj-Napoca",
+      "TIMISOARA": "Timișoara",
+      "IASI": "Iași",
+      "BRASOV": "Brașov",
+      "CONSTANTA": "Constanța",
+      "CHISINAU": "Chișinău",
+      "BALTI": "Bălți",
+      "BUDAPEST": "Budapesta",
+      "DEBRECEN": "Debrecen",
+      "SOFIA": "Sofia",
+      "PLOVDIV": "Plovdiv"
+    },
+    "TIMEZONES": {
+      "EUROPE_BUCHAREST": "București",
+      "EUROPE_CHISINAU": "Chișinău",
+      "EUROPE_BUDAPEST": "Budapesta",
+      "EUROPE_SOFIA": "Sofia",
+      "EUROPE_ATHENS": "Atena",
+      "EUROPE_BERLIN": "Berlin",
+      "EUROPE_ROME": "Roma",
+      "EUROPE_PARIS": "Paris",
+      "EUROPE_MADRID": "Madrid",
+      "EUROPE_LONDON": "Londra"
+    },
+    "PREVIEW": {
+      "TITLE": "Previzualizare în timp real",
+      "SUBTITLE": "Așa va apărea profilul pentru clienți.",
+      "DRAFT": "Draft · nepublicat",
+      "NO_PHOTO": "Fără fotografie",
+      "NAME_FALLBACK": "Numele businessului",
+      "PUBLIC_CONTACT": "Contact public",
+      "TIMEZONE": "Fus orar: {{zone}}",
+      "URL_FIX": "Corectează URL-ul înainte de publicare.",
+      "EDIT_SECTION": "Revino la o secțiune pentru ajustări"
+    },
+    "SUBMIT": {
+      "ERROR_URL": "Corectează URL-ul businessului înainte de înregistrare.",
+      "ERROR_FIELDS": "Completează câmpurile obligatorii înainte de înregistrare.",
+      "BUTTON": "Înregistrează businessul",
+      "HINT": "Profilul devine public doar după finalizarea înregistrării.",
+      "SUCCESS": "Datele sunt valide. Businessul a fost înregistrat (demo)."
+    },
+    "DEMO_NOTE": "Date, fotografii și hartă demonstrative. Exemplu de validare: URL indisponibil."
   }
 }

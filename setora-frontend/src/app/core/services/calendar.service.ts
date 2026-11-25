@@ -1,223 +1,297 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { Observable, map, timer } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
 import { Appointment } from '../models/appointment.model';
-
 import { Employee } from '../models/employee.model';
-import { Service } from '../models/service.model';
 import { CreateAppointmentPayload } from '../ui-models/create-appointment-payload.model';
+import { AppointmentSummary } from '../ui-models/appointment-summary.model';
 import { addMinutes, businessLocalToInstant } from '../utils/date.util';
 import { CatalogService } from './catalog.service';
+import { PaymentMethod } from '../models/enums/payment-method.model';
 import { AppointmentStatus } from '../models/enums/appointment-status.model';
 
-const WORK_START = 9 * 60;
-const WORK_END = 18 * 60;
-const SLOT_STEP = 30;
-const DAY = '2026-11-07';
-
-/** Pauza de masa: backendul cere un serviciu pentru fiecare programare, deci folosim unul placeholder. */
-const BREAK_SERVICE: Service = {
-    id: 0,
-    businessId: 1,
-    name: 'Pauză de masă',
-    description: null,
-    price: 0,
-    durationMinutes: 60,
-    active: false,
-    paymentMethod: 'PHYSICAL',
-};
-
-/** Date mock. serviceId 0 = pauza. */
-interface SeedRow {
-    id: number;
-    employeeId: number;
-    serviceId: number;
-    clientName: string;
-    date: string;
-    time: string;
-    status: AppointmentStatus;
-    phone?: string;
-    email?: string;
-    note?: string;
-}
-
-const SEED_ROWS: SeedRow[] = [
-    // Ana
-    { id: 1, employeeId: 1, serviceId: 1, clientName: 'Irina Popescu', date: DAY, time: '09:30', status: 'CONFIRMED', phone: '0700 000 123', email: 'irina@example.com', note: 'Aș dori să păstrez lungimea.' },
-    { id: 2, employeeId: 1, serviceId: 1, clientName: 'Elena Dobre', date: DAY, time: '11:00', status: 'CONFIRMED' },
-    { id: 3, employeeId: 1, serviceId: 2, clientName: 'Maria Șerban', date: DAY, time: '13:00', status: 'CONFIRMED' },
-    // Mihai
-    { id: 4, employeeId: 2, serviceId: 3, clientName: 'Andrei Pavel', date: DAY, time: '09:00', status: 'CONFIRMED' },
-    { id: 6, employeeId: 2, serviceId: 0, clientName: 'Pauză de masă', date: DAY, time: '12:00', status: 'UNAVAILABLE' },
-    { id: 7, employeeId: 2, serviceId: 3, clientName: 'Vlad Marinescu', date: DAY, time: '14:00', status: 'CONFIRMED' },
-    // Ioana
-    { id: 8, employeeId: 3, serviceId: 4, clientName: 'Diana Enache', date: DAY, time: '10:00', status: 'CONFIRMED' },
-    { id: 9, employeeId: 3, serviceId: 4, clientName: 'Alina Tudor', date: DAY, time: '11:30', status: 'CANCELLED' },
-    { id: 10, employeeId: 3, serviceId: 4, clientName: 'Oana Dumitru', date: DAY, time: '14:30', status: 'CONFIRMED' },
-    // Alte zile
-    { id: 11, employeeId: 1, serviceId: 1, clientName: 'Laura Matei', date: '2026-11-02', time: '10:00', status: 'CONFIRMED' },
-    { id: 13, employeeId: 3, serviceId: 4, clientName: 'Sara Popa', date: '2026-11-05', time: '13:30', status: 'CANCELLED' },
-];
-
-interface AppointmentInit {
-    id: number;
-    employee: Employee;
-    service: Service;
-    startsAt: string;
-    clientName: string;
-    clientPhone: string | null;
-    clientEmail: string | null;
-    clientNote: string | null;
-    status: AppointmentStatus;
-}
-
-/** Construieste un Appointment (forma DTO) din datele unei programari si ale serviciului. */
-const buildAppointment = (i: AppointmentInit): Appointment => ({
-    id: i.id,
-    clientId: null, // ghost client: datele sunt in campurile de client
-    clientName: i.clientName,
-    clientPhone: i.clientPhone,
-    clientEmail: i.clientEmail,
-    clientNote: i.clientNote,
-    employeeId: i.employee.id,
-    employeeName: i.employee.name,
-    serviceId: i.service.id,
-    serviceName: i.service.name,
-    start: i.startsAt,
-    end: addMinutes(i.startsAt, i.service.durationMinutes),
-    status: i.status,
-    priceAtAppointment: i.service.price,
-    paymentMethod: i.service.paymentMethod,
-    createdAt: new Date().toISOString(),
-});
+const WORK_START = 9 * 60; // 09:00
+const WORK_END = 18 * 60; // 18:00
+const SLOT_STEP = 30; // din 30 în 30 de minute
 
 const toHHmm = (min: number): string =>
-    `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
+  `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
+
+const INITIAL_EMPLOYEES: Employee[] = [
+  {
+    id: 1,
+    businessId: 1,
+    userId: 1,
+    active: true,
+    serviceIds: [1, 2],
+    name: 'Popescu Maria',
+    employmentRole: 'Specialist',
+  },
+  {
+    id: 2,
+    businessId: 1,
+    userId: 2,
+    active: true,
+    serviceIds: [2, 3],
+    name: 'Ionescu Andrei',
+    employmentRole: 'Specialist',
+  },
+];
+
+export interface BackendAppointmentDto {
+  id: number;
+  businessId: number;
+  serviceId: number;
+  serviceName: string;
+  durationMinutes: number;
+  clientId: number;
+  clientName: string;
+  clientPhone: string | null;
+  clientEmail: string | null;
+  employeeId: number;
+  employeeName: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  status: AppointmentStatus;
+  price: number;
+  paymentMethod: PaymentMethod;
+  clientNote: string | null;
+}
+
+export interface BackendSummaryDto {
+  number: number;
+  confirmed: number;
+  pending?: number;
+  cancelled: number;
+}
 
 @Injectable({ providedIn: 'root' })
 export class CalendarService {
-    private readonly catalog = inject(CatalogService);
+  private readonly http = inject(HttpClient);
+  private readonly catalog = inject(CatalogService);
+  private readonly apiUrl = '/api/appointments';
 
-    private readonly employees: Employee[] = [
-        { id: 1, businessId: 1, userId: 11, active: true, serviceIds: [1, 2], name: 'Ana Ionescu', employmentRole: 'Coafură' },
-        { id: 2, businessId: 1, userId: 12, active: true, serviceIds: [3], name: 'Mihai Radu', employmentRole: 'Frizerie' },
-        { id: 3, businessId: 1, userId: 13, active: true, serviceIds: [4], name: 'Ioana Matei', employmentRole: 'Îngrijire' },
-    ];
+  private readonly appointmentsSignal = signal<Appointment[]>([]);
+  private readonly employeesSignal = signal<Employee[]>(INITIAL_EMPLOYEES);
 
-    private nextId = 1000;
+  constructor() {
+    this.loadAppointments();
+  }
 
-    private readonly appointments = signal<Appointment[]>(this.seed());
+  /** Încarcă programările din backend pentru business-ul dat */
+  loadAppointments(businessId = 1): void {
+    const params = new HttpParams().set('businessId', businessId);
+    const tz = this.timezone();
 
-    getEmployees(): Employee[] {
-        return this.employees;
-    }
+    this.http.get<BackendAppointmentDto[]>(this.apiUrl, { params }).subscribe({
+      next: (data) => {
+        const mapped: Appointment[] = data.map((item) => {
+          const dateStr = item.date;
+          const startTimeStr =
+            item.startTime?.length >= 5 ? item.startTime.substring(0, 5) : '00:00';
+          const endTimeStr = item.endTime?.length >= 5 ? item.endTime.substring(0, 5) : '00:00';
 
-    getAppointments(): Appointment[] {
-        return this.appointments();
-    }
+          const start = businessLocalToInstant(dateStr, startTimeStr, tz);
+          const end = businessLocalToInstant(dateStr, endTimeStr, tz);
 
-    /** Orele libere (HH:mm, in fusul businessului) pentru un serviciu, intr-o zi. */
-    getAvailableSlots(employeeId: number | null, date: string, durationMinutes: number): string[] {
-        const tz = this.timezone();
-        const candidates = this.employees.filter(
-            (e) => e.active && (employeeId === null || e.id === employeeId),
-        );
-
-        const slots: string[] = [];
-        for (let m = WORK_START; m + durationMinutes <= WORK_END; m += SLOT_STEP) {
-            const time = toHHmm(m);
-            const startsAt = businessLocalToInstant(date, time, tz);
-            const endsAt = addMinutes(startsAt, durationMinutes);
-            if (candidates.some((e) => this.isEmployeeFree(e.id, startsAt, endsAt))) {
-                slots.push(time);
-            }
-        }
-        return slots;
-    }
-
-    create(payload: CreateAppointmentPayload): Observable<Appointment> {
-        return timer(500).pipe( // simuleaza intarzierea unui API
-            map(() => {
-                const service = this.catalog.getServices().find((s) => s.id === payload.serviceId);
-                if (!service) throw new Error('NOT_FOUND');
-
-                const startsAt = businessLocalToInstant(payload.date, payload.startTime, this.timezone());
-                const endsAt = addMinutes(startsAt, service.durationMinutes);
-
-                // primul angajat liber (sau cel ales)
-                const employee = this.employees
-                    .filter((e) => e.active && (payload.employeeId === null || e.id === payload.employeeId))
-                    .find((e) => this.isEmployeeFree(e.id, startsAt, endsAt));
-                if (!employee) throw new Error('SLOT_TAKEN');
-
-                const created = buildAppointment({
-                    id: this.nextId++,
-                    employee,
-                    service,
-                    startsAt,
-                    clientName: payload.clientName,
-                    clientPhone: payload.clientPhone,
-                    clientEmail: payload.clientEmail || null,
-                    clientNote: payload.clientNote ?? null,
-                    status: 'CONFIRMED',
-                });
-
-                this.appointments.update((list) => [...list, created]);
-                return created;
-            }),
-        );
-    }
-
-    /** Marcheaza programarea ca anulata. Intervalul devine liber (isEmployeeFree ignora anulatele). */
-    cancel(id: number): Observable<Appointment> {
-        return timer(500).pipe(
-            map(() => {
-                const current = this.findOrThrow(id);
-                const cancelled: Appointment = { ...current, status: 'CANCELLED' };
-                this.appointments.update((list) => list.map((a) => (a.id === id ? cancelled : a)));
-                return cancelled;
-            }),
-        );
-    }
-
-    private seed(): Appointment[] {
-        const tz = this.timezone();
-        return SEED_ROWS.map((r) => {
-            const employee = this.employees.find((e) => e.id === r.employeeId)!;
-            const service = this.catalog.getServices().find((s) => s.id === r.serviceId) ?? BREAK_SERVICE;
-            return buildAppointment({
-                id: r.id,
-                employee,
-                service,
-                startsAt: businessLocalToInstant(r.date, r.time, tz),
-                clientName: r.clientName,
-                clientPhone: r.phone ?? null,
-                clientEmail: r.email ?? null,
-                clientNote: r.note ?? null,
-                status: r.status,
-            });
+          return {
+            id: item.id,
+            clientId: item.clientId ?? null,
+            clientName: item.clientName ?? '',
+            clientPhone: item.clientPhone ?? null,
+            clientEmail: item.clientEmail ?? null,
+            clientNote: item.clientNote ?? null,
+            employeeId: item.employeeId,
+            employeeName: item.employeeName ?? '',
+            serviceId: item.serviceId,
+            serviceName: item.serviceName ?? '',
+            start,
+            end,
+            status: item.status,
+            priceAtAppointment: Number(item.price ?? 0),
+            paymentMethod: item.paymentMethod ?? 'PHYSICAL',
+            createdAt: new Date().toISOString(),
+          };
         });
+
+        this.appointmentsSignal.set(mapped);
+
+        // Extragem dinamic angajații unici din programări și îi îmbinăm cu lista inițială
+        const employeeMap = new Map<number, Employee>();
+        INITIAL_EMPLOYEES.forEach((emp) => employeeMap.set(emp.id, { ...emp }));
+
+        data.forEach((item) => {
+          if (item.employeeId && item.employeeName) {
+            const existing = employeeMap.get(item.employeeId);
+            if (existing) {
+              if (item.serviceId && !existing.serviceIds.includes(item.serviceId)) {
+                existing.serviceIds.push(item.serviceId);
+              }
+            } else {
+              employeeMap.set(item.employeeId, {
+                id: item.employeeId,
+                businessId: item.businessId || businessId,
+                userId: item.employeeId,
+                active: true,
+                serviceIds: item.serviceId ? [item.serviceId] : [],
+                name: item.employeeName,
+                employmentRole: 'Specialist',
+              });
+            }
+          }
+        });
+
+        this.employeesSignal.set(Array.from(employeeMap.values()));
+      },
+      error: (err) => console.error('Eroare la încărcarea programărilor:', err),
+    });
+  }
+
+  getAppointments(): Appointment[] {
+    return this.appointmentsSignal();
+  }
+
+  getEmployees(): Employee[] {
+    return this.employeesSignal();
+  }
+
+  /** Obține sumarul zilnic corespunzător rutei GET /api/appointments/summary */
+  getSummary(businessId: number, date: string): Observable<AppointmentSummary> {
+    const params = new HttpParams().set('businessId', businessId).set('date', date);
+
+    return this.http.get<BackendSummaryDto>(`${this.apiUrl}/summary`, { params }).pipe(
+      map((res) => ({
+        total: res.number ?? 0,
+        confirmed: res.confirmed ?? 0,
+        cancelled: res.cancelled ?? 0,
+      })),
+    );
+  }
+
+  /** Calculează sloturile libere pe baza programărilor existente */
+  getAvailableSlots(employeeId: number | null, date: string, durationMinutes: number): string[] {
+    const slots: string[] = [];
+    const currentAppointments = this.appointmentsSignal();
+    const tz = this.timezone();
+
+    const dayAppointments = currentAppointments.filter((app) => {
+      if (!app.start) return false;
+      const matchesEmployee = employeeId === null || app.employeeId === employeeId;
+      return matchesEmployee && app.status !== 'CANCELLED';
+    });
+
+    for (let m = WORK_START; m + durationMinutes <= WORK_END; m += SLOT_STEP) {
+      const time = toHHmm(m);
+      const slotStart = businessLocalToInstant(date, time, tz);
+      const slotEnd = addMinutes(slotStart, durationMinutes);
+      const startMs = Date.parse(slotStart);
+      const endMs = Date.parse(slotEnd);
+
+      const isOverlap = dayAppointments.some((app) => {
+        const aStartMs = Date.parse(app.start);
+        const aEndMs = Date.parse(app.end);
+        return startMs < aEndMs && endMs > aStartMs;
+      });
+
+      if (!isOverlap) {
+        slots.push(time);
+      }
     }
 
-    /** Un angajat e liber daca nu are o programare non-anulata care se suprapune. */
-    private isEmployeeFree(employeeId: number, start: string, end: string): boolean {
-        const from = Date.parse(start);
-        const to = Date.parse(end);
-        return !this.appointments().some(
-            (a) =>
-                a.employeeId === employeeId &&
-                a.status !== 'CANCELLED' &&
-                Date.parse(a.start) < to &&
-                Date.parse(a.end) > from,
-        );
-    }
+    return slots;
+  }
 
-    private findOrThrow(id: number): Appointment {
-        const found = this.appointments().find((a) => a.id === id);
-        if (!found) throw new Error('NOT_FOUND');
-        return found;
-    }
+  /** Creează o programare prin POST /api/appointments/ghost */
+  create(payload: CreateAppointmentPayload): Observable<Appointment> {
+    const chosenEmployeeId = payload.employeeId ? Number(payload.employeeId) : 1;
+    const timeStr = payload.startTime?.length === 5 ? `${payload.startTime}:00` : payload.startTime;
 
-    private timezone(): string {
-        return this.catalog.getBusiness().timezone;
-    }
+    const backendPayload = {
+      businessId: 1,
+      serviceId: payload.serviceId,
+      employeeId: chosenEmployeeId,
+      clientName: payload.clientName,
+      clientPhone: payload.clientPhone,
+      clientEmail: payload.clientEmail || 'client1@setora.test',
+      date: payload.date,
+      startTime: timeStr,
+      paymentMethod: 'PHYSICAL',
+      clientNote: payload.clientNote || null,
+    };
+
+    const tz = this.timezone();
+
+    return this.http.post<BackendAppointmentDto>(`${this.apiUrl}/ghost`, backendPayload).pipe(
+      map((created) => {
+        const dateStr = created.date || payload.date;
+        const sTime =
+          created.startTime?.length >= 5 ? created.startTime.substring(0, 5) : payload.startTime;
+        const eTime = created.endTime?.length >= 5 ? created.endTime.substring(0, 5) : sTime;
+
+        const normalized: Appointment = {
+          id: created.id,
+          clientId: created.clientId ?? null,
+          clientName: created.clientName ?? payload.clientName,
+          clientPhone: created.clientPhone ?? payload.clientPhone,
+          clientEmail: created.clientEmail ?? payload.clientEmail,
+          clientNote: created.clientNote ?? payload.clientNote ?? null,
+          employeeId: created.employeeId ?? chosenEmployeeId,
+          employeeName: created.employeeName ?? '',
+          serviceId: created.serviceId ?? payload.serviceId,
+          serviceName: created.serviceName ?? '',
+          start: businessLocalToInstant(dateStr, sTime, tz),
+          end: businessLocalToInstant(dateStr, eTime, tz),
+          status: created.status ?? 'CONFIRMED',
+          priceAtAppointment: Number(created.price ?? 0),
+          paymentMethod: created.paymentMethod ?? 'PHYSICAL',
+          createdAt: new Date().toISOString(),
+        };
+
+        this.appointmentsSignal.update((list) => [...list, normalized]);
+        return normalized;
+      }),
+    );
+  }
+
+  /** Anulează o programare prin PATCH /api/appointments/{id}/cancel */
+  cancel(id: number): Observable<Appointment> {
+    const tz = this.timezone();
+
+    return this.http.patch<BackendAppointmentDto>(`${this.apiUrl}/${id}/cancel`, {}).pipe(
+      map((cancelled) => {
+        const current = this.appointmentsSignal().find((a) => a.id === id);
+        const dateStr = cancelled.date || '2026-11-23';
+        const sTime =
+          cancelled.startTime?.length >= 5 ? cancelled.startTime.substring(0, 5) : '00:00';
+        const eTime = cancelled.endTime?.length >= 5 ? cancelled.endTime.substring(0, 5) : '00:00';
+
+        const normalized: Appointment = {
+          id: cancelled.id,
+          clientId: cancelled.clientId ?? current?.clientId ?? null,
+          clientName: cancelled.clientName ?? current?.clientName ?? '',
+          clientPhone: cancelled.clientPhone ?? current?.clientPhone ?? null,
+          clientEmail: cancelled.clientEmail ?? current?.clientEmail ?? null,
+          clientNote: cancelled.clientNote ?? current?.clientNote ?? null,
+          employeeId: cancelled.employeeId ?? current?.employeeId ?? 1,
+          employeeName: cancelled.employeeName ?? current?.employeeName ?? '',
+          serviceId: cancelled.serviceId ?? current?.serviceId ?? 1,
+          serviceName: cancelled.serviceName ?? current?.serviceName ?? '',
+          start: businessLocalToInstant(dateStr, sTime, tz),
+          end: businessLocalToInstant(dateStr, eTime, tz),
+          status: cancelled.status ?? 'CANCELLED',
+          priceAtAppointment: Number(cancelled.price ?? current?.priceAtAppointment ?? 0),
+          paymentMethod: cancelled.paymentMethod ?? current?.paymentMethod ?? 'PHYSICAL',
+          createdAt: current?.createdAt || new Date().toISOString(),
+        };
+
+        this.appointmentsSignal.update((list) => list.map((a) => (a.id === id ? normalized : a)));
+        return normalized;
+      }),
+    );
+  }
+
+  private timezone(): string {
+    return this.catalog.getBusiness().timezone;
+  }
 }

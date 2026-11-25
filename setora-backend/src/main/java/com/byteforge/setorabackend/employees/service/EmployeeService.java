@@ -7,22 +7,17 @@ import com.byteforge.setorabackend.common.TimeInterval;
 import com.byteforge.setorabackend.employees.model.*;
 import com.byteforge.setorabackend.employees.model.AvailabilityDtos.*;
 import com.byteforge.setorabackend.employees.repository.*;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
 
 @Service
 @RequiredArgsConstructor
@@ -68,11 +63,9 @@ public class EmployeeService {
 
         List<UnavailableSlot> slots = unavailableSlotRepository.findForRange(employeeId, start, end);
         List<UnavailableOccurrence> occurrences = start.datesUntil(end.plusDays(1))
-                .flatMap(day -> slots.stream()
-                        .filter(slot -> slot.occursOn(day))
-                        .map(slot -> toOccurrence(slot, day)))
-                .sorted(Comparator.comparing(UnavailableOccurrence::date)
-                        .thenComparing(UnavailableOccurrence::start))
+                .flatMap(
+                        day -> slots.stream().filter(slot -> slot.occursOn(day)).map(slot -> toOccurrence(slot, day)))
+                .sorted(Comparator.comparing(UnavailableOccurrence::date).thenComparing(UnavailableOccurrence::start))
                 .toList();
         return new UnavailableSlots(employeeId, zoneOf(employee), start, end, occurrences);
     }
@@ -106,15 +99,15 @@ public class EmployeeService {
 
         for (UnavailableSlot existing : unavailableSlotRepository.findByEmployeeId(employeeId)) {
             if (conflicts(slot, existing, today)) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT,
-                        "The interval overlaps an existing unavailable interval");
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT, "The interval overlaps an existing unavailable interval");
             }
         }
 
         UnavailableSlot savedSlot = unavailableSlotRepository.save(slot);
 
-        List<Appointment> activeAppointments = appointmentRepository
-                .findByEmployeeIdAndStatusNot(employeeId, AppointmentStatus.CANCELLED);
+        List<Appointment> activeAppointments =
+                appointmentRepository.findByEmployeeIdAndStatusNot(employeeId, AppointmentStatus.CANCELLED);
 
         List<Appointment> affectedAppointments = activeAppointments.stream()
                 .filter(app -> isAppointmentAffected(app, savedSlot, zone, today))
@@ -135,9 +128,10 @@ public class EmployeeService {
 
     @Transactional
     public void deleteUnavailableSlot(int employeeId, int slotId) {
-        UnavailableSlot slot = unavailableSlotRepository.findById(slotId)
+        UnavailableSlot slot = unavailableSlotRepository
+                .findById(slotId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unavailable slot not found"));
-        if (!(slot.getEmployee().getId()==employeeId)) {
+        if (!(slot.getEmployee().getId() == employeeId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unavailable slot not found for this employee");
         }
         unavailableSlotRepository.delete(slot);
@@ -163,8 +157,8 @@ public class EmployeeService {
             return false;
         }
 
-        return appStartTime.isBefore(slot.getInterval().getEnd()) &&
-                slot.getInterval().getStart().isBefore(appEndTime);
+        return appStartTime.isBefore(slot.getInterval().getEnd())
+                && slot.getInterval().getStart().isBefore(appEndTime);
     }
 
     private boolean conflicts(UnavailableSlot candidate, UnavailableSlot existing, LocalDate today) {
@@ -192,7 +186,8 @@ public class EmployeeService {
     }
 
     private Employee findEmployee(int employeeId) {
-        return employeeRepository.findById(employeeId)
+        return employeeRepository
+                .findById(employeeId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found"));
     }
 
@@ -234,7 +229,27 @@ public class EmployeeService {
     }
 
     public Employee findById(int id) {
-        return employeeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+        return employeeRepository
+                .findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found"));
+    }
+
+    public List<Employee> findAllEmployeesByServiceId(int serviceId) {
+        return employeeRepository.findAllByActiveTrueAndServiceItems_Id(serviceId);
+    }
+
+    public Optional<WorkSchedule> findWorkScheduleByEmployeeId(int employeeId, DayOfWeek dayOfWeek) {
+        return workScheduleRepository.findByEmployee_IdAndDayOfWeek(employeeId, dayOfWeek);
+    }
+
+    public Optional<WorkSchedule> findWorkScheduleByEmployeeId(int employeeId) {
+        return workScheduleRepository.findById(employeeId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<EmployeeResponseDto> getEmployeesByBusinessId(int businessId) {
+        return employeeRepository.findByBusinessId(businessId).stream()
+                .map(EmployeeResponseDto::from)
+                .toList();
     }
 }

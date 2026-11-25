@@ -14,21 +14,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-
-
-//period when an employee cannot take appointments (lunch break, blocked time, time off)
-//either a one-off slot on a specific date or a recurring slot on a day of the week
-//times are in the timezone of the business
+// period when an employee cannot take appointments (lunch break, blocked time, time off)
+// either a one-off slot on a specific date or a recurring slot on a day of the week
+// times are in the timezone of the business
 @Entity
 @Table(
         name = "unavailable_slots",
-        check = @CheckConstraint(constraint = "(specific_date is null) <> (day_of_week is null) and end_time > start_time")
-)
+        check =
+                @CheckConstraint(
+                        constraint = "(specific_date is null) <> (day_of_week is null) and end_time > start_time"))
 @Getter
 @Setter
 public class UnavailableSlot {
@@ -47,11 +46,11 @@ public class UnavailableSlot {
     @Column(columnDefinition = "text")
     private String reason;
 
-    //set for a one-off slot, null for a recurring one
+    // set for a one-off slot, null for a recurring one
     @Column(name = "specific_date")
     private LocalDate specificDate;
 
-    //set for a recurring weekly slot, null for a one-off one
+    // set for a recurring weekly slot, null for a one-off one
     @Enumerated(EnumType.STRING)
     @Column(name = "day_of_week")
     private DayOfWeek dayOfWeek;

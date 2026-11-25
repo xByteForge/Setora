@@ -1,10 +1,17 @@
-<section class="filters" *transloco="let t" role="search" [attr.aria-label]="t('APPOINTMENTS.FILTERS.TITLE')">
+<section
+  class="filters"
+  *transloco="let t"
+  role="search"
+  [attr.aria-label]="t('APPOINTMENTS.FILTERS.TITLE')"
+>
   <div class="row">
     <label class="field">
       <span class="sr-only">{{ t('APPOINTMENTS.FILTERS.EMPLOYEE') }}</span>
       <svg lucideUsers [size]="16" class="icon" aria-hidden="true"></svg>
       <select (change)="onEmployee($event)">
-        <option value="" [selected]="filters().employeeId === null">{{ t('APPOINTMENTS.FILTERS.ALL_EMPLOYEES') }}</option>
+        <option value="" [selected]="filters().employeeId === null">
+          {{ t('APPOINTMENTS.FILTERS.ALL_EMPLOYEES') }}
+        </option>
         @for (e of employees(); track e.id) {
           <option [value]="e.id" [selected]="e.id === filters().employeeId">{{ e.name }}</option>
         }
@@ -16,7 +23,9 @@
       <span class="sr-only">{{ t('APPOINTMENTS.FILTERS.STATUS') }}</span>
       <svg lucideListFilter [size]="16" class="icon" aria-hidden="true"></svg>
       <select (change)="onStatus($event)">
-        <option value="" [selected]="!filters().status">{{ t('APPOINTMENTS.FILTERS.ALL_STATUSES') }}</option>
+        <option value="" [selected]="!filters().status">
+          {{ t('APPOINTMENTS.FILTERS.ALL_STATUSES') }}
+        </option>
         @for (s of statuses; track s) {
           <option [value]="s" [selected]="s === filters().status">{{ t(statusKeys[s]) }}</option>
         }
@@ -29,9 +38,13 @@
       <svg lucideClock [size]="16" class="icon" aria-hidden="true"></svg>
       <select (change)="onPreset($event)">
         @for (p of presets; track $index) {
-          <option [value]="$index" [selected]="presetValue() === '' + $index">{{ rangeLabel(p) }}</option>
+          <option [value]="$index" [selected]="presetValue() === '' + $index">
+            {{ rangeLabel(p) }}
+          </option>
         }
-        <option value="custom" [selected]="presetValue() === 'custom'">{{ t('APPOINTMENTS.FILTERS.CUSTOM') }}</option>
+        <option value="custom" [selected]="presetValue() === 'custom'">
+          {{ t('APPOINTMENTS.FILTERS.CUSTOM') }}
+        </option>
       </select>
       <svg lucideChevronDown [size]="16" class="chevron" aria-hidden="true"></svg>
     </label>

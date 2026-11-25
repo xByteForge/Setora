@@ -1,6 +1,16 @@
 @baseUrl = http://localhost:8080/api/employees
-@employeeId = 26916c2b-0265-4585-b23d-33d212a44ebb
-@slotId = 72b68891-a188-47d5-82dd-9b2117dfe9d2
+@host = http://localhost:8080
+@employeeId = 1
+@businessId = 1
+@slotId = 1
+
+### 0. Obține toți angajații unui business (path variable)
+GET {{host}}/api/businesses/{{businessId}}/employees
+Accept: application/json
+
+### 0b. Obține toți angajații unui business (query param)
+GET {{baseUrl}}?businessId={{businessId}}
+Accept: application/json
 
 ### 1. Obține orele de lucru pentru un angajat
 GET {{baseUrl}}/{{employeeId}}/working-hours

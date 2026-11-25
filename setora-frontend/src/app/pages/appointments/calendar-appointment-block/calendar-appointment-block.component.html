@@ -1,11 +1,11 @@
 @if (compact()) {
-    <p class="block__client">{{ appointment().clientName }}</p>
-    <p class="block__time">{{ timeRange() }}</p>
+  <p class="block__client">{{ appointment().clientName }}</p>
+  <p class="block__time">{{ timeRange() }}</p>
 } @else {
-    <p class="block__time">{{ timeRange() }}</p>
-    <p class="block__client">{{ appointment().clientName }}</p>
-    <p class="block__meta">
-        {{ appointment().serviceName }} ·
-        {{ ('APPOINTMENTS.CALENDAR.STATUS.' + appointment().status) | transloco }}
-    </p>
+  <p class="block__time">{{ timeRange() }}</p>
+  <p class="block__client">{{ appointment().clientName }}</p>
+  <p class="block__meta">
+    {{ appointment().serviceName }} ·
+    {{ 'APPOINTMENTS.CALENDAR.STATUS.' + appointment().status | transloco }}
+  </p>
 }

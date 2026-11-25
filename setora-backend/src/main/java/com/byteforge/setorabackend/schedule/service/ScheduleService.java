@@ -2,25 +2,24 @@ package com.byteforge.setorabackend.schedule.service;
 
 import com.byteforge.setorabackend.appointment.Appointment;
 import com.byteforge.setorabackend.appointment.AppointmentService;
-import com.byteforge.setorabackend.business.Business;
-import com.byteforge.setorabackend.business.BusinessService;
+import com.byteforge.setorabackend.business.model.Business;
+import com.byteforge.setorabackend.business.service.BusinessService;
+import com.byteforge.setorabackend.employees.model.Employee;
 import com.byteforge.setorabackend.employees.model.UnavailableSlot;
+import com.byteforge.setorabackend.employees.model.WorkSchedule;
 import com.byteforge.setorabackend.employees.repository.UnavailableSlotRepository;
+import com.byteforge.setorabackend.employees.repository.WorkScheduleRepository;
 import com.byteforge.setorabackend.schedule.dtos.EmployeeScheduleDto;
 import com.byteforge.setorabackend.schedule.mapper.ScheduleMapper;
-import com.byteforge.setorabackend.employees.model.Employee;
-import com.byteforge.setorabackend.employees.model.WorkSchedule;
-import com.byteforge.setorabackend.employees.repository.WorkScheduleRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -41,12 +40,10 @@ public class ScheduleService {
         LocalDate startDate = LocalDate.ofInstant(start, zoneId);
         LocalDate endDate = LocalDate.ofInstant(end, zoneId);
 
-        List<WorkSchedule> workSchedules = workScheduleRepository
-                .findByBusinessId(businessId);
-        List<Appointment> appointments = appointmentService
-                .findByBusinessIdAndDateRange(businessId, start, end);
-        List<UnavailableSlot> unavailableSlots = unavailableSlotRepository
-                .findByBusinessIdAndDateRangeOrDayNotNull(businessId, startDate, endDate);
+        List<WorkSchedule> workSchedules = workScheduleRepository.findByBusinessId(businessId);
+        List<Appointment> appointments = appointmentService.findByBusinessIdAndDateRange(businessId, start, end);
+        List<UnavailableSlot> unavailableSlots =
+                unavailableSlotRepository.findByBusinessIdAndDateRangeOrDayNotNull(businessId, startDate, endDate);
 
         Map<Integer, List<WorkSchedule>> schedulesByEmp = workSchedules.stream()
                 .collect(Collectors.groupingBy(ws -> ws.getEmployee().getId()));
@@ -57,19 +54,20 @@ public class ScheduleService {
         Map<Integer, List<UnavailableSlot>> slotsByEmp = unavailableSlots.stream()
                 .collect(Collectors.groupingBy(slot -> slot.getEmployee().getId()));
 
-        return schedulesByEmp.entrySet().stream().map(entry -> {
-            Integer empId = entry.getKey();
-            Employee employee = entry.getValue().getFirst().getEmployee();
+        return schedulesByEmp.entrySet().stream()
+                .map(entry -> {
+                    Integer empId = entry.getKey();
+                    Employee employee = entry.getValue().getFirst().getEmployee();
 
-            return scheduleMapper.toEmployeeScheduleDto(
-                    employee,
-                    entry.getValue(),
-                    appointmentsByEmp.getOrDefault(empId, List.of()),
-                    slotsByEmp.getOrDefault(empId, List.of()),
-                    startDate,
-                    endDate,
-                    zoneId
-            );
-        }).toList();
+                    return scheduleMapper.toEmployeeScheduleDto(
+                            employee,
+                            entry.getValue(),
+                            appointmentsByEmp.getOrDefault(empId, List.of()),
+                            slotsByEmp.getOrDefault(empId, List.of()),
+                            startDate,
+                            endDate,
+                            zoneId);
+                })
+                .toList();
     }
 }

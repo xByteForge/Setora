@@ -1,9 +1,19 @@
 package com.byteforge.setorabackend.employees;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.byteforge.setorabackend.appointment.Appointment;
 import com.byteforge.setorabackend.appointment.AppointmentRepository;
 import com.byteforge.setorabackend.appointment.AppointmentStatus;
-import com.byteforge.setorabackend.business.Business;
+import com.byteforge.setorabackend.business.model.Business;
 import com.byteforge.setorabackend.common.DateTimeInterval;
 import com.byteforge.setorabackend.common.TimeInterval;
 import com.byteforge.setorabackend.employees.model.AvailabilityDtos.*;
@@ -15,13 +25,6 @@ import com.byteforge.setorabackend.employees.repository.EmployeeRepository;
 import com.byteforge.setorabackend.employees.repository.UnavailableSlotRepository;
 import com.byteforge.setorabackend.employees.repository.WorkScheduleRepository;
 import com.byteforge.setorabackend.employees.service.EmployeeService;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -29,27 +32,24 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.UUID;
-
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.ResponseStatusException;
 
 @ExtendWith(MockitoExtension.class)
 class EmployeeServiceTest {
     @Mock
     private EmployeeRepository employeeRepository;
+
     @Mock
     private WorkScheduleRepository workScheduleRepository;
+
     @Mock
     private UnavailableSlotRepository unavailableSlotRepository;
+
     @Mock
     private AppointmentRepository appointmentRepository; // <--- Adăugat mock-ul nou
 
@@ -115,46 +115,47 @@ class EmployeeServiceTest {
 
     @Test
     void rejectsEndBeforeStart() {
-        ResponseStatusException e = assertThrows(ResponseStatusException.class,
+        ResponseStatusException e = assertThrows(
+                ResponseStatusException.class,
                 () -> service.createUnavailableSlot(employeeId, oneOffRequest(nextWeek, 13, 12)));
         assertEquals(400, e.getStatusCode().value());
     }
 
     @Test
     void rejectsDateAndDayOfWeekTogether() {
-        UnavailableSlotRequest request = new UnavailableSlotRequest(UnavailableType.BREAK, null,
-                nextWeek, DayOfWeek.MONDAY, LocalTime.of(12, 0), LocalTime.of(13, 0));
-        ResponseStatusException e = assertThrows(ResponseStatusException.class,
-                () -> service.createUnavailableSlot(employeeId, request));
+        UnavailableSlotRequest request = new UnavailableSlotRequest(
+                UnavailableType.BREAK, null, nextWeek, DayOfWeek.MONDAY, LocalTime.of(12, 0), LocalTime.of(13, 0));
+        ResponseStatusException e =
+                assertThrows(ResponseStatusException.class, () -> service.createUnavailableSlot(employeeId, request));
         assertEquals(400, e.getStatusCode().value());
     }
 
     @Test
     void rejectsPastDate() {
         stubEmployee();
-        ResponseStatusException e = assertThrows(ResponseStatusException.class,
-                () -> service.createUnavailableSlot(employeeId, oneOffRequest(LocalDate.now(ZoneOffset.UTC).minusDays(1), 12, 13)));
+        ResponseStatusException e = assertThrows(
+                ResponseStatusException.class,
+                () -> service.createUnavailableSlot(
+                        employeeId, oneOffRequest(LocalDate.now(ZoneOffset.UTC).minusDays(1), 12, 13)));
         assertEquals(400, e.getStatusCode().value());
     }
 
     @Test
     void rejectsOverlappingOneOffSlot() {
         stubEmployee();
-        when(unavailableSlotRepository.findByEmployeeId(employeeId))
-                .thenReturn(List.of(oneOffSlot(nextWeek, 12, 13)));
+        when(unavailableSlotRepository.findByEmployeeId(employeeId)).thenReturn(List.of(oneOffSlot(nextWeek, 12, 13)));
 
-        UnavailableSlotRequest overlapping = new UnavailableSlotRequest(UnavailableType.BLOCKED, null,
-                nextWeek, null, LocalTime.of(12, 30), LocalTime.of(13, 30));
-        ResponseStatusException e = assertThrows(ResponseStatusException.class,
-                () -> service.createUnavailableSlot(employeeId, overlapping));
+        UnavailableSlotRequest overlapping = new UnavailableSlotRequest(
+                UnavailableType.BLOCKED, null, nextWeek, null, LocalTime.of(12, 30), LocalTime.of(13, 30));
+        ResponseStatusException e = assertThrows(
+                ResponseStatusException.class, () -> service.createUnavailableSlot(employeeId, overlapping));
         assertEquals(409, e.getStatusCode().value());
     }
 
     @Test
     void allowsTouchingIntervals() {
         stubEmployee();
-        when(unavailableSlotRepository.findByEmployeeId(employeeId))
-                .thenReturn(List.of(oneOffSlot(nextWeek, 12, 13)));
+        when(unavailableSlotRepository.findByEmployeeId(employeeId)).thenReturn(List.of(oneOffSlot(nextWeek, 12, 13)));
         when(unavailableSlotRepository.save(any(UnavailableSlot.class))).thenAnswer(call -> call.getArgument(0));
 
         when(appointmentRepository.findByEmployeeIdAndStatusNot(eq(employeeId), eq(AppointmentStatus.CANCELLED)))
@@ -168,13 +169,17 @@ class EmployeeServiceTest {
     @Test
     void rejectsRecurringSlotOverlappingFutureOneOffSlot() {
         stubEmployee();
-        when(unavailableSlotRepository.findByEmployeeId(employeeId))
-                .thenReturn(List.of(oneOffSlot(nextWeek, 12, 13)));
+        when(unavailableSlotRepository.findByEmployeeId(employeeId)).thenReturn(List.of(oneOffSlot(nextWeek, 12, 13)));
 
-        UnavailableSlotRequest recurring = new UnavailableSlotRequest(UnavailableType.BREAK, "Lunch",
-                null, nextWeek.getDayOfWeek(), LocalTime.of(12, 30), LocalTime.of(13, 30));
-        ResponseStatusException e = assertThrows(ResponseStatusException.class,
-                () -> service.createUnavailableSlot(employeeId, recurring));
+        UnavailableSlotRequest recurring = new UnavailableSlotRequest(
+                UnavailableType.BREAK,
+                "Lunch",
+                null,
+                nextWeek.getDayOfWeek(),
+                LocalTime.of(12, 30),
+                LocalTime.of(13, 30));
+        ResponseStatusException e =
+                assertThrows(ResponseStatusException.class, () -> service.createUnavailableSlot(employeeId, recurring));
         assertEquals(409, e.getStatusCode().value());
     }
 
@@ -201,7 +206,8 @@ class EmployeeServiceTest {
     @Test
     void rejectsRangeWhereFromIsAfterTo() {
         stubEmployee();
-        ResponseStatusException e = assertThrows(ResponseStatusException.class,
+        ResponseStatusException e = assertThrows(
+                ResponseStatusException.class,
                 () -> service.getUnavailableSlots(employeeId, null, nextWeek.plusDays(1), nextWeek));
         assertEquals(400, e.getStatusCode().value());
     }
@@ -226,8 +232,8 @@ class EmployeeServiceTest {
     }
 
     private UnavailableSlotRequest oneOffRequest(LocalDate date, int fromHour, int toHour) {
-        return new UnavailableSlotRequest(UnavailableType.BREAK, "Lunch", date, null,
-                LocalTime.of(fromHour, 0), LocalTime.of(toHour, 0));
+        return new UnavailableSlotRequest(
+                UnavailableType.BREAK, "Lunch", date, null, LocalTime.of(fromHour, 0), LocalTime.of(toHour, 0));
     }
 
     private UnavailableSlot oneOffSlot(LocalDate date, int fromHour, int toHour) {

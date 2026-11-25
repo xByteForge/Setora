@@ -1,19 +1,15 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TranslocoDirective } from '@ngneat/transloco';
-import {
-    LucideCalendar,
-    LucideCircleCheck,
-    LucideCircleX,
-} from '@lucide/angular';
+import { LucideCalendar, LucideCircleCheck, LucideCircleX } from '@lucide/angular';
 import { AppointmentSummary } from '../../../core/ui-models/appointment-summary.model';
 
 @Component({
-    selector: 'app-appointment-summary',
-    standalone: true,
-    imports: [TranslocoDirective, LucideCalendar, LucideCircleCheck, LucideCircleX],
-    styleUrl: './appointment-summary.component.css',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    template: `
+  selector: 'app-appointment-summary',
+  standalone: true,
+  imports: [TranslocoDirective, LucideCalendar, LucideCircleCheck, LucideCircleX],
+  styleUrl: './appointment-summary.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
     <section
       class="summary"
       *transloco="let t"
@@ -42,5 +38,5 @@ import { AppointmentSummary } from '../../../core/ui-models/appointment-summary.
   `,
 })
 export class AppointmentSummaryComponent {
-    readonly summary = input.required<AppointmentSummary>();
+  readonly summary = input.required<AppointmentSummary>();
 }

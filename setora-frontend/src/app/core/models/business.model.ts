@@ -1,9 +1,10 @@
 import { BusinessLocation } from './business-location.model';
-
+import { BusinessCategory } from './business-category.model';
 
 export interface Business {
   id: number;
   ownerId: number;
+  category: BusinessCategory;
   name: string;
   slug: string;
   description: string | null;

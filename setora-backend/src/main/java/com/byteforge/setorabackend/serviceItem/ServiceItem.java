@@ -1,15 +1,13 @@
 package com.byteforge.setorabackend.serviceItem;
 
 import com.byteforge.setorabackend.appointment.PaymentMethod;
-import com.byteforge.setorabackend.business.Business;
+import com.byteforge.setorabackend.business.model.Business;
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
-
-//a service offered by a business
+// a service offered by a business
 @Entity
 @Table(name = "services", check = @CheckConstraint(constraint = "price >= 0 and duration_minutes > 0"))
 @Getter
@@ -27,9 +25,9 @@ public class ServiceItem {
     private String name;
 
     @Column(columnDefinition = "text")
-    private String description;//more than name is needed
+    private String description; // more than name is needed
 
-    @Column(nullable = false, precision = 10, scale = 2)//better precision than double
+    @Column(nullable = false, precision = 10, scale = 2) // better precision than double
     private BigDecimal price;
 
     @Column(name = "duration_minutes", nullable = false)
@@ -40,8 +38,10 @@ public class ServiceItem {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    //for services where payment depends and needs to be decided on site
+    // for services where payment depends and needs to be decided on site
     private PaymentMethod paymentMethod = PaymentMethod.PHYSICAL;
 
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_type_id")
+    private ServiceType serviceType;
 }

@@ -2,7 +2,6 @@ package com.byteforge.setorabackend.appointment.dtos;
 
 import com.byteforge.setorabackend.appointment.AppointmentStatus;
 import com.byteforge.setorabackend.appointment.PaymentMethod;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -15,7 +14,7 @@ public record AppointmentResponseDto(
         String serviceName,
         int durationMinutes,
 
-        int clientId,
+        Integer clientId,
         String clientName,
         String clientPhone,
         String clientEmail,
@@ -33,5 +32,4 @@ public record AppointmentResponseDto(
 
         PaymentMethod paymentMethod,
 
-        String clientNote
-) {}
+        String clientNote) {}

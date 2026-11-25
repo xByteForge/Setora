@@ -1,0 +1,98 @@
+### Get all businesses (default sort: NEWEST, default page: 0, size: 20)
+GET http://localhost:8080/api/businesses
+
+
+### Get businesses with pagination
+GET http://localhost:8080/api/businesses?page=0&size=5
+
+
+### Get businesses by owner
+GET http://localhost:8080/api/businesses?ownerId=1
+
+
+### Get businesses by category
+GET http://localhost:8080/api/businesses?categoryId=1
+
+
+### Get businesses by free-text search (matches name, description, category, location, or service)
+GET http://localhost:8080/api/businesses?text=tuns
+
+
+### Get businesses by location (matches locationName or address)
+GET http://localhost:8080/api/businesses?location=Piezisa
+
+
+### Get businesses by tags (must match all provided tags)
+GET http://localhost:8080/api/businesses?tags=barber&tags=men
+
+
+### Get businesses offering a specific service type
+GET http://localhost:8080/api/businesses?serviceTypeId=1
+
+
+### Get businesses by service type and price range
+GET http://localhost:8080/api/businesses?serviceTypeId=1&minPrice=30&maxPrice=100
+
+
+### Get businesses by service type and availability date
+GET http://localhost:8080/api/businesses?serviceTypeId=1&date=2026-11-23
+
+
+### Get businesses by service type, date, and time window (Afternoon: 12:00 - 18:00)
+GET http://localhost:8080/api/businesses?serviceTypeId=1&date=2026-11-23&timeFrom=12:00&timeTo=18:00
+
+
+### Get businesses by standalone price range, date, and time window (without serviceTypeId)
+GET http://localhost:8080/api/businesses?minPrice=30&maxPrice=100&date=2026-11-23&timeFrom=12:00&timeTo=18:00
+
+
+### Sort by name ascending
+GET http://localhost:8080/api/businesses?sortBy=NAME_ASC
+
+
+### Sort by name descending
+GET http://localhost:8080/api/businesses?sortBy=NAME_DESC
+
+
+### Sort by oldest first
+GET http://localhost:8080/api/businesses?sortBy=OLDEST
+
+
+### Sort by price ascending (with service type filter)
+GET http://localhost:8080/api/businesses?serviceTypeId=1&sortBy=PRICE_ASC
+
+
+### Sort by price descending (with service type filter)
+GET http://localhost:8080/api/businesses?serviceTypeId=1&sortBy=PRICE_DESC
+
+
+### Combined filters + sorting + pagination
+GET http://localhost:8080/api/businesses?location=Cluj&categoryId=1&serviceTypeId=1&minPrice=30&maxPrice=150&date=2026-11-23&timeFrom=06:00&timeTo=12:00&sortBy=PRICE_ASC&page=0&size=10
+
+
+### Validation test: minPrice > maxPrice (expect 400 Bad Request)
+GET http://localhost:8080/api/businesses?minPrice=200&maxPrice=50
+
+
+### Validation test: timeFrom > timeTo (expect 400 Bad Request)
+GET http://localhost:8080/api/businesses?timeFrom=18:00&timeTo=12:00
+
+
+### Validation test: past date (expect 400 Bad Request)
+GET http://localhost:8080/api/businesses?date=2020-01-01
+
+
+### Get business by ID
+GET http://localhost:8080/api/businesses/1
+
+
+### Get business by ID (expect 404 Not Found)
+GET http://localhost:8080/api/businesses/999999
+
+
+### Get all businesses (no filters, default pagination: page 0, size 20)
+GET http://localhost:8080/api/businesses/all
+
+
+### Get all businesses (custom pagination)
+GET http://localhost:8080/api/businesses/all?page=0&size=5

@@ -1,0 +1,116 @@
+.pagination {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.pagination__range,
+.pagination__info {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.pagination__range {
+  align-self: flex-start;
+}
+
+.pagination__size {
+  height: 40px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--control-border);
+  border-radius: 8px;
+  padding: 0 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.pagination__size:focus {
+  border-color: var(--brand-mint);
+  box-shadow: 0 0 0 3px rgba(67, 205, 182, 0.15);
+}
+
+.pagination__nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pagination__btn {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 12px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--control-border);
+  border-radius: 8px;
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    transform 200ms ease,
+    background-color 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.pagination__btn:hover:not(:disabled) {
+  background: var(--mint-wash);
+  border-color: var(--brand-mint);
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pagination__btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.96);
+  box-shadow: none;
+}
+
+.pagination__btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.pagination__btn.is-active {
+  background: var(--brand-mint);
+  color: #064e43;
+  border-color: transparent;
+  font-weight: 700;
+}
+
+.pagination__btn:focus-visible,
+.pagination__size:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.pagination__dots {
+  padding: 0 4px;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 640px) {
+  .pagination__btn {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 8px;
+  }
+
+  .pagination__size {
+    height: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pagination__btn,
+  .pagination__size {
+    transition: none;
+  }
+}
