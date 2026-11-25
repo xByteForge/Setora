@@ -55,9 +55,20 @@
 
         <label class="field">
           <span class="field__label">{{ 'AUTH.REGISTER.PHONE' | transloco }}</span>
-          <input class="input" formControlName="phoneNumber" inputmode="tel" autocomplete="tel"
-                 placeholder="+40 700 000 123"
-                 [class.input--invalid]="isInvalid('phoneNumber')" />
+          <div class="phone" [class.input--invalid]="isInvalid('phoneNumber')">
+            <select class="phone__prefix-select" formControlName="countryCode" aria-label="+">
+              @for (c of countries; track c.code) {
+                <option [value]="c.code">{{ c.flag }} {{ c.code }}</option>
+              }
+            </select>
+            <input
+              class="input"
+              formControlName="phoneNumber"
+              inputmode="tel"
+              autocomplete="tel-national"
+              placeholder="700 000 123"
+            />
+          </div>
           @if (isInvalid('phoneNumber')) {
             <span class="field__error">{{ 'AUTH.REGISTER.PHONE_TOO_LONG' | transloco }}</span>
           }

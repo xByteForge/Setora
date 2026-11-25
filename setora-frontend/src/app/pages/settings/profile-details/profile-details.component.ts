@@ -13,6 +13,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { Observable, of } from 'rxjs';
 import { User } from '../../../core/models/user.model';
 import { ProfileUpdate, UserService } from '../../../core/services/user.service';
+import { COUNTRY_OPTIONS } from '../../../core/constants/countries';
 
 export interface CountryOption {
   code: string;
@@ -20,16 +21,6 @@ export interface CountryOption {
   name: string;
 }
 
-const COUNTRY_OPTIONS: CountryOption[] = [
-  { code: '+40', flag: '🇷🇴', name: 'Romania' },
-  { code: '+373', flag: '🇲🇩', name: 'Moldova' },
-  { code: '+44', flag: '🇬🇧', name: 'UK' },
-  { code: '+1', flag: '🇺🇸', name: 'USA / Canada' },
-  { code: '+33', flag: '🇫🇷', name: 'France' },
-  { code: '+49', flag: '🇩🇪', name: 'Germany' },
-  { code: '+39', flag: '🇮🇹', name: 'Italy' },
-  { code: '+34', flag: '🇪🇸', name: 'Spain' },
-];
 
 const ALLOWED_PHOTO_TYPES = ['image/jpeg', 'image/png'];
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024;

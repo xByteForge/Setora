@@ -12,6 +12,7 @@ import { ApiError } from '../../../core/api/api-error.interceptor';
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { LucideSun, LucideMoon } from '@lucide/angular';
+import { COUNTRY_OPTIONS } from '../../../core/constants/countries';
 
 type RegisterField =
   | 'firstName'
@@ -65,18 +66,20 @@ export class RegisterComponent {
   readonly theme = inject(ThemeService);
 
   readonly loading = signal(false);
-  /** Cheie de traducere pentru eroarea generică, sau null. */
   readonly error = signal<string | null>(null);
-  /** Emailul există deja în backend; afișat sub câmpul de email. */
+  
   readonly emailTaken = signal(false);
   readonly showPassword = signal(false);
   readonly showConfirm = signal(false);
+
+  readonly countries = COUNTRY_OPTIONS;
 
   readonly form = this.fb.nonNullable.group(
     {
       firstName: ['', [Validators.required, Validators.maxLength(100)]],
       lastName: ['', [Validators.required, Validators.maxLength(100)]],
       username: ['', [Validators.required, Validators.maxLength(100)]],
+      countryCode: ['+40'],
       phoneNumber: ['', [Validators.maxLength(30)]],
       email: ['', [Validators.required, Validators.email, Validators.maxLength(255)]],
       confirmEmail: ['', [Validators.required]],
@@ -112,15 +115,13 @@ export class RegisterComponent {
     const v = this.form.getRawValue();
     const phone = v.phoneNumber.trim();
 
-    this.loading.set(true);
-
     this.auth
       .register({
         firstName: v.firstName.trim(),
         lastName: v.lastName.trim(),
         username: v.username.trim(),
         email: v.email.trim(),
-        phoneNumber: phone || null,
+        phoneNumber: phone ? `${v.countryCode} ${phone}` : null,
         password: v.password,
       })
       .subscribe({

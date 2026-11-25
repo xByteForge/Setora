@@ -56,9 +56,9 @@
 }
 
 .auth-card {
-  width: min(440px, 100%);
+  width: min(720px, 100%);
   margin-top: 40px;
-  padding: 32px;
+  padding: 40px;
   box-sizing: border-box;
   border: 1px solid var(--border-color);
   border-radius: 16px;
@@ -146,4 +146,51 @@
 @media (max-width: 600px) {
   .auth-card { padding: 24px 20px; }
   .form-grid { grid-template-columns: 1fr; }
+}
+
+.phone {
+  display: flex;
+  align-items: stretch;
+  height: 44px;
+  box-sizing: border-box;
+  border: 1px solid var(--control-border);
+  border-radius: 8px;
+  background: var(--paper);
+  overflow: hidden;
+  min-width: 0;
+}
+.phone:focus-within {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.phone.input--invalid {
+  border-color: var(--status-cancelled);
+}
+.phone .input {
+  flex: 1;
+  min-width: 0;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.phone .input:focus-visible {
+  outline: none;
+}
+.phone__prefix-select {
+  padding: 0 8px 0 12px;
+  border: 0;
+  border-right: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+.phone__prefix-select:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+.phone__prefix-select option {
+  background: var(--paper);
+  color: var(--ink);
 }
