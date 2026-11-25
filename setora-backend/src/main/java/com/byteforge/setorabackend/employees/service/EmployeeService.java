@@ -7,6 +7,9 @@ import com.byteforge.setorabackend.common.TimeInterval;
 import com.byteforge.setorabackend.employees.model.*;
 import com.byteforge.setorabackend.employees.model.AvailabilityDtos.*;
 import com.byteforge.setorabackend.employees.repository.*;
+import com.byteforge.setorabackend.error.exceptions.InvalidInputException;
+import com.byteforge.setorabackend.error.exceptions.InvalidStateException;
+import jakarta.persistence.EntityNotFoundException;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -14,10 +17,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -99,8 +100,7 @@ public class EmployeeService {
 
         for (UnavailableSlot existing : unavailableSlotRepository.findByEmployeeId(employeeId)) {
             if (conflicts(slot, existing, today)) {
-                throw new ResponseStatusException(
-                        HttpStatus.CONFLICT, "The interval overlaps an existing unavailable interval");
+                throw new InvalidStateException("The interval overlaps an existing unavailable interval");
             }
         }
 
@@ -130,9 +130,9 @@ public class EmployeeService {
     public void deleteUnavailableSlot(int employeeId, int slotId) {
         UnavailableSlot slot = unavailableSlotRepository
                 .findById(slotId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unavailable slot not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Unavailable slot not found"));
         if (!(slot.getEmployee().getId() == employeeId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unavailable slot not found for this employee");
+            throw new EntityNotFoundException("Unavailable slot not found for this employee");
         }
         unavailableSlotRepository.delete(slot);
     }
@@ -188,7 +188,7 @@ public class EmployeeService {
     private Employee findEmployee(int employeeId) {
         return employeeRepository
                 .findById(employeeId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
     }
 
     private ZoneId zoneOf(Employee employee) {
@@ -224,14 +224,12 @@ public class EmployeeService {
         return text == null || text.isBlank() ? null : text.trim();
     }
 
-    private ResponseStatusException badRequest(String message) {
-        return new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
+    private InvalidInputException badRequest(String message) {
+        return new InvalidInputException(message);
     }
 
     public Employee findById(int id) {
-        return employeeRepository
-                .findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found"));
+        return employeeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Employee not found"));
     }
 
     public List<Employee> findAllEmployeesByServiceId(int serviceId) {

@@ -3,6 +3,8 @@ package com.byteforge.setorabackend.auth;
 import com.byteforge.setorabackend.auth.dtos.*;
 import com.byteforge.setorabackend.auth.refresh_tokens.RefreshToken;
 import com.byteforge.setorabackend.auth.refresh_tokens.RefreshTokenRepository;
+import com.byteforge.setorabackend.error.exceptions.AccountConflictException;
+import com.byteforge.setorabackend.error.exceptions.InvalidCredentialsException;
 import com.byteforge.setorabackend.user.User;
 import com.byteforge.setorabackend.user.UserRepository;
 import com.byteforge.setorabackend.user.UserRole;
@@ -10,9 +12,7 @@ import com.byteforge.setorabackend.user.UserService;
 import com.byteforge.setorabackend.user.dtos.CreateUserRequestDto;
 import com.byteforge.setorabackend.user.dtos.UserResponseDto;
 import java.time.Instant;
-import java.util.Locale;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -67,19 +67,6 @@ public class AuthService {
         return user;
     }
 
-    private String normalizeEmail(String email) {
-        return email.trim().toLowerCase(Locale.ROOT);
-    }
-
-    private void validatePassword(String password) {
-        if (password == null || password.isBlank() || password.length() < 8)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password must contain at least 8 characters");
-        if (!(password.matches(".*[a-z].*") && password.matches(".*[A-Z].*") && password.matches(".*[^a-zA-Z0-9].*")))
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Password must contain at least a small letter, a capital one and a special symbol.");
-    }
-
     @Transactional
     public AuthResponseDto refresh(RefreshTokenRequestDto request) {
         Jwt jwt = decodeRefreshToken(request.refreshToken());
@@ -110,21 +97,19 @@ public class AuthService {
 
     @Transactional
     public UserResponseDto register(CreateUserRequestDto request) {
-        validatePassword(request.password());
-        String email = normalizeEmail(request.email());
+        UserService.validatePassword(request.password());
+        String email = UserService.normalizeEmail(request.email());
         User user = userRepository.findByEmail(email).orElse(null);
 
         if (user != null) {
-            if (!user.isDeleted()) throw new ResponseStatusException(HttpStatus.CONFLICT, "Account already exists");
+            if (!user.isDeleted()) throw new AccountConflictException("Account already exists");
 
-            if (user.getRole() != UserRole.CLIENT || "ghost@gmail.com".equals(email)) {
-                throw new ResponseStatusException(
-                        HttpStatus.CONFLICT, "This account cannot be restored through registration");
+            if (user.getRole() != UserRole.CLIENT) {
+                throw new AccountConflictException("This account cannot be restored through registration");
             }
 
             if (!passwordEncoder.matches(request.password(), user.getPasswordHash()))
-                throw new ResponseStatusException(
-                        HttpStatus.CONFLICT, "Account restoration requires the previous password");
+                throw new AccountConflictException("Account restoration requires the previous password");
 
             refreshTokenRepository.revokeAllActiveByUserId(user.getId(), Instant.now());
             user.setTokenVersion(user.getTokenVersion() + 1);
@@ -133,42 +118,28 @@ public class AuthService {
         } else {
             user = new User();
             user.setRole(UserRole.CLIENT);
-            user.setDeleted(false);
         }
 
-        user.setFirstName(request.firstName().trim());
-        user.setLastName(request.lastName().trim());
-        user.setUsername(request.firstName().trim());
-        user.setEmail(email);
+        userService.applyCreateData(user, request);
 
-        user.setPhoneNumber(
-                request.phoneNumber() == null ? null : request.phoneNumber().trim());
-        user.setPasswordHash(passwordEncoder.encode(request.password()));
-
-        try {
-            User savedUser = userRepository.saveAndFlush(user);
-            return userService.toResponseDto(savedUser);
-
-        } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "Account information conflicts with database constraints", e);
-        }
+        return userService.toResponseDto(
+                userService.saveOrConflict(user, "Account information conflicts with database constraints"));
     }
 
     @Transactional
     public AuthResponseDto login(LoginRequestDto request) {
-        String email = normalizeEmail(request.email());
+        String email = UserService.normalizeEmail(request.email());
 
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, request.password()));
         } catch (AuthenticationException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+            throw new InvalidCredentialsException("Invalid email or password");
         }
 
         // we're here if the account exists
         User user = userService.findByEmail(email);
 
-        if (user.isDeleted()) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+        if (user.isDeleted()) throw new InvalidCredentialsException("Invalid email or password");
 
         String accessToken = jwtService.generateAccessToken(user);
         JwtService.IssuedRefreshToken refresh = jwtService.generateRefreshToken(user);
