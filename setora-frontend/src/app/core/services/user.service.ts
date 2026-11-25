@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { UserApi } from '../api/user.api';
 import { User } from '../models/user.model';
@@ -38,6 +38,8 @@ export class UserService {
 
   readonly currentUser = this.userSignal.asReadonly();
   readonly avatarUrl = this.avatarSignal.asReadonly();
+
+  readonly isOwner = computed(() => this.userSignal()?.role === 'ADMIN');
 
   setCurrentUser(user: User): void {
     this.userSignal.set(user);

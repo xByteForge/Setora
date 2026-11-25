@@ -21,6 +21,7 @@ interface NavItem {
   labelKey: string;
   iconClass: string;
   badge?: number;
+  ownerOnly?: boolean;
 }
 
 @Component({
@@ -105,6 +106,8 @@ export class SidebarComponent {
 
   readonly userAvatarUrl = this.userService.avatarUrl;
 
+  readonly isOwner = this.userService.isOwner;
+
   navItems: NavItem[] = [
     { path: '/discover', labelKey: 'NAV.DISCOVER', iconClass: 'fa-regular fa-compass' },
     {
@@ -112,13 +115,18 @@ export class SidebarComponent {
       labelKey: 'NAV.APPOINTMENTS',
       iconClass: 'fa-regular fa-calendar',
       badge: 9,
+      ownerOnly: true,
     },
-    { path: '/services', labelKey: 'NAV.SERVICES', iconClass: 'fa-solid fa-briefcase' },
-    { path: '/employees', labelKey: 'NAV.EMPLOYEES', iconClass: 'fa-solid fa-users' },
-    { path: '/clients', labelKey: 'NAV.CLIENTS', iconClass: 'fa-regular fa-id-card' },
-    { path: '/locations', labelKey: 'NAV.LOCATIONS', iconClass: 'fa-solid fa-location-dot' },
-    { path: '/working-hours', labelKey: 'NAV.WORKING_HOURS', iconClass: 'fa-regular fa-clock' },
+    { path: '/services', labelKey: 'NAV.SERVICES', iconClass: 'fa-solid fa-briefcase', ownerOnly: true },
+    { path: '/employees', labelKey: 'NAV.EMPLOYEES', iconClass: 'fa-solid fa-users', ownerOnly: true },
+    { path: '/clients', labelKey: 'NAV.CLIENTS', iconClass: 'fa-regular fa-id-card', ownerOnly: true },
+    { path: '/locations', labelKey: 'NAV.LOCATIONS', iconClass: 'fa-solid fa-location-dot', ownerOnly: true },
+    { path: '/working-hours', labelKey: 'NAV.WORKING_HOURS', iconClass: 'fa-regular fa-clock', ownerOnly: true },
   ];
+
+  readonly visibleNavItems = computed(() =>
+    this.navItems.filter((item) => !item.ownerOnly || this.isOwner()),
+  );
 
   @HostListener('document:keydown.escape')
   onEsc(): void {

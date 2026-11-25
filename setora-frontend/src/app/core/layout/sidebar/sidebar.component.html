@@ -37,7 +37,7 @@
   </div>
 
   <nav class="sidebar-nav">
-    @for (item of navItems; track item.path) {
+    @for (item of visibleNavItems(); track item.path) {
       <a [routerLink]="item.path" routerLinkActive="active" class="nav-link" (click)="menu.close()">
         <i [class]="item.iconClass" aria-hidden="true"></i>
         <span class="nav-label">{{ item.labelKey | transloco }}</span>
@@ -48,10 +48,12 @@
     }
   </nav>
 
-  <div class="sidebar-hint">
-    <p>{{ 'HINT.PHONE_BOOKINGS' | transloco }}</p>
-    <a routerLink="/working-hours">{{ 'HINT.MANAGE_AVAILABILITY' | transloco }}</a>
-  </div>
+  @if (isOwner()) {
+    <div class="sidebar-hint">
+      <p>{{ 'HINT.PHONE_BOOKINGS' | transloco }}</p>
+      <a routerLink="/working-hours">{{ 'HINT.MANAGE_AVAILABILITY' | transloco }}</a>
+    </div>
+  }
 
   <div class="sidebar-footer">
     <a
