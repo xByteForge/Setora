@@ -8,7 +8,8 @@
     "WORKING_HOURS": "Working hours",
     "SETTINGS": "Settings",
     "DISCOVER": "Discover",
-    "BOOKINGS": "My bookings"
+    "BOOKINGS": "My bookings",
+    "MY_BUSINESSES": "My Businesses"
   },
   "HINT": {
     "PHONE_BOOKINGS": "Phone bookings can be added directly to the calendar.",
@@ -474,5 +475,10 @@
       "VIEW_PROFILE": "View business profile",
       "BACK_TO_DISCOVER": "Back to businesses list"
     }
+  },
+  "MY_BUSINESSES": {
+    "REGISTER_TITLE": "Register a new business",
+    "REGISTER_TEXT": "Add your business to Setora and start accepting bookings.",
+    "REGISTER_BUTTON": "Register business"
   }
 }

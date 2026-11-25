@@ -8,7 +8,8 @@
     "WORKING_HOURS": "Program de lucru",
     "SETTINGS": "Setări",
     "DISCOVER": "Descoperă",
-    "BOOKINGS": "Rezervările mele"
+    "BOOKINGS": "Rezervările mele",
+    "MY_BUSINESSES": "Afacerile mele"
   },
   "HEADER": {
     "SEARCH": "Caută businessuri, servicii...",
@@ -474,5 +475,10 @@
       "VIEW_PROFILE": "Vezi profilul businessului",
       "BACK_TO_DISCOVER": "Înapoi la lista de businessuri"
     }
+  },
+  "MY_BUSINESSES": {
+    "REGISTER_TITLE": "Înregistrează o afacere nouă",
+    "REGISTER_TEXT": "Adaugă afacerea ta în Setora și începe să primești programări.",
+    "REGISTER_BUTTON": "Înregistrează afacerea"
   }
 }

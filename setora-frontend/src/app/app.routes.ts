@@ -63,6 +63,14 @@ export const routes: Routes = [
         (m) => m.BusinessRegistrationComponent,
       ),
   },
+  {
+    path: 'my-businesses',
+    data: { breadcrumb: 'NAV.MY_BUSINESSES' },
+    loadComponent: () =>
+        import('./pages/my-businesses/my-businesses.component').then(
+            (m) => m.MyBusinessesComponent,
+        ),
+  },
 
   { path: '**', redirectTo: 'discover' },
 ];
