@@ -1,68 +1,68 @@
 .my-businesses {
-    padding: 24px;
-    font-family: Arimo, Arial, Helvetica, sans-serif;
-    color: var(--ink, #000000);
+  padding: 24px;
+  font-family: Arimo, Arial, Helvetica, sans-serif;
+  color: var(--ink, #000000);
 }
 
 .my-businesses h1 {
-    margin: 0 0 16px;
-    font-size: 24px;
-    font-weight: 700;
+  margin: 0 0 16px;
+  font-size: 24px;
+  font-weight: 700;
 }
 
 .register-cta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 16px 20px;
-    background-color: var(--mint-wash, #e8f8f3);
-    border: 1px solid var(--border-color, #dce5e1);
-    border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  background-color: var(--mint-wash, #e8f8f3);
+  border: 1px solid var(--border-color, #dce5e1);
+  border-radius: 12px;
 }
 
 .register-cta h2 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 700;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
 }
 
 .register-cta p {
-    margin: 4px 0 0;
-    font-size: 14px;
-    color: var(--text-secondary, #5b6b67);
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--text-secondary, #5b6b67);
 }
 
 .btn-primary {
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    min-height: 40px;
-    padding: 10px 16px;
-    border-radius: 8px;
-    background-color: var(--accessible-green, #064e43);
-    color: #ffffff;
-    font-size: 15px;
-    font-weight: 700;
-    text-decoration: none;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background-color: var(--accessible-green, #064e43);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
 }
 
 .btn-primary:hover {
-    filter: brightness(1.1);
+  filter: brightness(1.1);
 }
 
 .btn-primary:focus-visible {
-    outline: 2px solid var(--focus, #087f6d);
-    outline-offset: 2px;
+  outline: 2px solid var(--focus, #087f6d);
+  outline-offset: 2px;
 }
 
 @media (max-width: 600px) {
-    .register-cta {
-        flex-direction: column;
-        align-items: stretch;
-    }
+  .register-cta {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
-    .btn-primary {
-        justify-content: center;
-    }
+  .btn-primary {
+    justify-content: center;
+  }
 }
