@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, guestGuard, ownerGuard } from './core/guards/auth.guard';
+import { authGuard, guestGuard, roleGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'discover', pathMatch: 'full' },
@@ -17,7 +17,6 @@ export const routes: Routes = [
       import('./pages/auth/register/register.component').then((m) => m.RegisterComponent),
   },
 
-  
   {
     path: 'register-business',
     data: {
@@ -31,6 +30,7 @@ export const routes: Routes = [
         (m) => m.BusinessRegistrationComponent,
       ),
   },
+
 
   {
     path: '',
@@ -51,7 +51,8 @@ export const routes: Routes = [
 
       {
         path: '',
-        canActivate: [ownerGuard],
+        canActivate: [roleGuard],
+        data: { roles: ['ADMIN'] },
         children: [
           {
             path: 'appointments',

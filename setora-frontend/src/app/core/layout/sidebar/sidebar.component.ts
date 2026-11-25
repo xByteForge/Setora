@@ -15,13 +15,14 @@ import {
   signal,
 } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
+import { UserRole } from '../../models/enums/user-role.model';
 
 interface NavItem {
   path: string;
   labelKey: string;
   iconClass: string;
   badge?: number;
-  ownerOnly?: boolean;
+  roles?: UserRole[];
 }
 
 @Component({
@@ -106,8 +107,6 @@ export class SidebarComponent {
 
   readonly userAvatarUrl = this.userService.avatarUrl;
 
-  readonly isOwner = this.userService.isOwner;
-
   navItems: NavItem[] = [
     { path: '/discover', labelKey: 'NAV.DISCOVER', iconClass: 'fa-regular fa-compass' },
     {
@@ -115,18 +114,21 @@ export class SidebarComponent {
       labelKey: 'NAV.APPOINTMENTS',
       iconClass: 'fa-regular fa-calendar',
       badge: 9,
-      ownerOnly: true,
+      roles: ['ADMIN'],
     },
-    { path: '/services', labelKey: 'NAV.SERVICES', iconClass: 'fa-solid fa-briefcase', ownerOnly: true },
-    { path: '/employees', labelKey: 'NAV.EMPLOYEES', iconClass: 'fa-solid fa-users', ownerOnly: true },
-    { path: '/clients', labelKey: 'NAV.CLIENTS', iconClass: 'fa-regular fa-id-card', ownerOnly: true },
-    { path: '/locations', labelKey: 'NAV.LOCATIONS', iconClass: 'fa-solid fa-location-dot', ownerOnly: true },
-    { path: '/working-hours', labelKey: 'NAV.WORKING_HOURS', iconClass: 'fa-regular fa-clock', ownerOnly: true },
+    { path: '/services', labelKey: 'NAV.SERVICES', iconClass: 'fa-solid fa-briefcase', roles: ['ADMIN'] },
+    { path: '/employees', labelKey: 'NAV.EMPLOYEES', iconClass: 'fa-solid fa-users', roles: ['ADMIN'] },
+    { path: '/clients', labelKey: 'NAV.CLIENTS', iconClass: 'fa-regular fa-id-card', roles: ['ADMIN'] },
+    { path: '/locations', labelKey: 'NAV.LOCATIONS', iconClass: 'fa-solid fa-location-dot', roles: ['ADMIN'] },
+    { path: '/working-hours', labelKey: 'NAV.WORKING_HOURS', iconClass: 'fa-regular fa-clock', roles: ['ADMIN'] },
   ];
 
-  readonly visibleNavItems = computed(() =>
-    this.navItems.filter((item) => !item.ownerOnly || this.isOwner()),
-  );
+  readonly visibleNavItems = computed(() => {
+    const role = this.userService.role();
+    return this.navItems.filter((item) => !item.roles || (role !== null && item.roles.includes(role)));
+  });
+
+  readonly isOwner = computed(() => this.userService.role() === 'ADMIN');
 
   @HostListener('document:keydown.escape')
   onEsc(): void {

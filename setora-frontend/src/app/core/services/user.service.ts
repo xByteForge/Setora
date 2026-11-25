@@ -5,6 +5,7 @@ import { User } from '../models/user.model';
 import { UserNotificationPreference } from '../models/enums/notification-type.model';
 import { EmailChange } from '../ui-models/email-change.model';
 import { ApiError } from '../api/api-error.interceptor';
+import { UserRole } from '../models/enums/user-role.model';
 
 export interface ProfileUpdate {
   firstName: string;
@@ -39,7 +40,7 @@ export class UserService {
   readonly currentUser = this.userSignal.asReadonly();
   readonly avatarUrl = this.avatarSignal.asReadonly();
 
-  readonly isOwner = computed(() => this.userSignal()?.role === 'ADMIN');
+  readonly role = computed<UserRole | null>(() => this.userSignal()?.role ?? null);
 
   setCurrentUser(user: User): void {
     this.userSignal.set(user);
