@@ -1,7 +1,7 @@
 package com.byteforge.setorabackend.employees.model;
 
-import com.byteforge.setorabackend.auth.User;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
+import com.byteforge.setorabackend.user.User;
 import java.util.List;
 
 public record EmployeeResponseDto(

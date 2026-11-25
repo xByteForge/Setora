@@ -1,4 +1,4 @@
-package com.byteforge.setorabackend.auth;
+package com.byteforge.setorabackend.user;
 
 public enum UserRole {
     ADMIN,

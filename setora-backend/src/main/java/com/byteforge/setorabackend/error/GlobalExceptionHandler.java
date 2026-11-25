@@ -1,8 +1,6 @@
 package com.byteforge.setorabackend.error;
 
-import com.byteforge.setorabackend.error.exceptions.InvalidStateException;
-import com.byteforge.setorabackend.error.exceptions.PriceChangedException;
-import com.byteforge.setorabackend.error.exceptions.SlotTakenException;
+import com.byteforge.setorabackend.error.exceptions.*;
 import jakarta.persistence.EntityNotFoundException;
 import java.nio.file.AccessDeniedException;
 import java.util.Map;
@@ -14,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -42,6 +41,16 @@ public class GlobalExceptionHandler {
         return error(HttpStatus.CONFLICT, "INVALID_STATE", ex.getMessage(), "");
     }
 
+    @ExceptionHandler(InvalidAvatarException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidAvatarException(InvalidAvatarException ex) {
+        return error(HttpStatus.BAD_REQUEST, "INVALID_AVATAR", ex.getMessage(), "");
+    }
+
+    @ExceptionHandler(AvatarStorageException.class)
+    public ResponseEntity<ApiErrorResponse> handleAvatarStorage(AvatarStorageException ex) {
+        return error(HttpStatus.INTERNAL_SERVER_ERROR, "AVATAR_STORAGE_PROBLEM", ex.getMessage(), "");
+    }
+
     // ==========================================
     // STANDARD EXCEPTIONS
     // ==========================================
@@ -54,6 +63,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ApiErrorResponse> handleNotFound(EntityNotFoundException ex) {
         return error(HttpStatus.NOT_FOUND, "NOT_FOUND", ex.getMessage(), "");
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    ResponseEntity<ApiErrorResponse> tooLarge(MaxUploadSizeExceededException e) {
+        return error(HttpStatus.CONTENT_TOO_LARGE, "UPLOAD_SIZE_ERROR", "Image is too large, max size is 2MB", "");
     }
 
     @ExceptionHandler(AccessDeniedException.class)

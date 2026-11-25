@@ -1,8 +1,6 @@
 package com.byteforge.setorabackend.appointment;
 
 import com.byteforge.setorabackend.appointment.dtos.*;
-import com.byteforge.setorabackend.auth.User;
-import com.byteforge.setorabackend.auth.UserService;
 import com.byteforge.setorabackend.business.model.Business;
 import com.byteforge.setorabackend.business.service.BusinessService;
 import com.byteforge.setorabackend.common.DateTimeInterval;
@@ -10,6 +8,8 @@ import com.byteforge.setorabackend.employees.model.Employee;
 import com.byteforge.setorabackend.employees.service.EmployeeService;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
 import com.byteforge.setorabackend.serviceItem.ServiceItemService;
+import com.byteforge.setorabackend.user.User;
+import com.byteforge.setorabackend.user.UserService;
 import jakarta.validation.Valid;
 import java.time.*;
 import java.time.Instant;

@@ -1,6 +1,7 @@
 package com.byteforge.setorabackend.auth;
 
 import com.byteforge.setorabackend.security.JwtConfig;
+import com.byteforge.setorabackend.user.User;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
