@@ -14,7 +14,13 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 import { TranslocoDirective, TranslocoService } from '@ngneat/transloco';
-import { LucideSun, LucideMoon, LucideBell, LucideChevronRight } from '@lucide/angular';
+import {
+  LucideArrowLeft,
+  LucideSun,
+  LucideMoon,
+  LucideBell,
+  LucideChevronRight,
+} from '@lucide/angular';
 import { ThemeService } from '../../services/theme.service';
 import { BusinessService } from '../../services/business.service';
 import { MobileMenuService } from '../../services/mobile-menu.service';
@@ -32,6 +38,7 @@ export interface Breadcrumb {
   imports: [
     RouterLink,
     TranslocoDirective,
+    LucideArrowLeft,
     LucideSun,
     LucideMoon,
     LucideBell,
@@ -42,27 +49,50 @@ export interface Breadcrumb {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header class="topbar" *transloco="let t">
-      <nav class="breadcrumb" [attr.aria-label]="t('HEADER.BREADCRUMB')">
-        <ol>
-          @for (item of items(); track $index; let last = $last) {
-            <li>
-              @if (item.url && !last) {
-                <a [routerLink]="item.url">{{ item.labelKey ? t(item.labelKey) : item.label }}</a>
-              } @else {
-                <span [attr.aria-current]="last ? 'page' : null" [class.current]="last">
-                  {{ item.labelKey ? t(item.labelKey) : item.label }}
-                </span>
-              }
-              @if (!last) {
-                <svg lucideChevronRight [size]="16" aria-hidden="true"></svg>
-              }
-            </li>
-          }
-        </ol>
-      </nav>
+      @if (hideSidebar()) {
+        <a routerLink="/discover" class="brand" aria-label="SETORA">
+          <span class="brand-plaque">
+            <img src="assets/logo.jpg" alt="" class="brand-logo" />
+          </span>
+          <span class="brand-name">SETORA</span>
+        </a>
+      } @else {
+        <nav class="breadcrumb" [attr.aria-label]="t('HEADER.BREADCRUMB')">
+          <ol>
+            @for (item of items(); track $index; let last = $last) {
+              <li>
+                @if (item.url && !last) {
+                  <a [routerLink]="item.url">{{ item.labelKey ? t(item.labelKey) : item.label }}</a>
+                } @else {
+                  <span [attr.aria-current]="last ? 'page' : null" [class.current]="last">
+                    {{ item.labelKey ? t(item.labelKey) : item.label }}
+                  </span>
+                }
+                @if (!last) {
+                  <svg lucideChevronRight [size]="16" aria-hidden="true"></svg>
+                }
+              </li>
+            }
+          </ol>
+        </nav>
+      }
 
       <div class="actions">
-        <app-universal-search class="hide-mobile" />
+        @if (backUrl() !== null) {
+          @if (backUrl()) {
+            <a [routerLink]="backUrl()" class="back-btn">
+              <svg lucideArrowLeft [size]="16" aria-hidden="true"></svg>
+              <span>{{ t(backLabelKey() ?? 'BUSINESS_REGISTRATION.BACK') }}</span>
+            </a>
+          } @else {
+            <button type="button" class="back-btn">
+              <svg lucideArrowLeft [size]="16" aria-hidden="true"></svg>
+              <span>{{ t(backLabelKey() ?? 'BUSINESS_REGISTRATION.BACK') }}</span>
+            </button>
+          }
+        } @else {
+          <app-universal-search class="hide-mobile" />
+        }
 
         <button
           type="button"
@@ -81,17 +111,19 @@ export interface Breadcrumb {
           }
         </button>
 
-        <button
-          type="button"
-          class="icon-btn hide-mobile"
-          (click)="notificationsClicked.emit()"
-          [attr.aria-label]="t('HEADER.NOTIFICATIONS')"
-        >
-          <svg lucideBell [size]="20" aria-hidden="true"></svg>
-          @if (unreadCount() > 0) {
-            <span class="dot" aria-hidden="true"></span>
-          }
-        </button>
+        @if (backUrl() === null) {
+          <button
+            type="button"
+            class="icon-btn hide-mobile"
+            (click)="notificationsClicked.emit()"
+            [attr.aria-label]="t('HEADER.NOTIFICATIONS')"
+          >
+            <svg lucideBell [size]="20" aria-hidden="true"></svg>
+            @if (unreadCount() > 0) {
+              <span class="dot" aria-hidden="true"></span>
+            }
+          </button>
+        }
 
         <div class="lang">
           <button
@@ -115,15 +147,17 @@ export interface Breadcrumb {
           }
         </div>
 
-        <button
-          type="button"
-          class="menu-btn"
-          (click)="menu.toggle()"
-          aria-haspopup="dialog"
-          [attr.aria-expanded]="menu.open()"
-        >
-          {{ t('MENU.TITLE') }}
-        </button>
+        @if (!hideSidebar()) {
+          <button
+            type="button"
+            class="menu-btn"
+            (click)="menu.toggle()"
+            aria-haspopup="dialog"
+            [attr.aria-expanded]="menu.open()"
+          >
+            {{ t('MENU.TITLE') }}
+          </button>
+        }
       </div>
     </header>
   `,
@@ -136,6 +170,9 @@ export class TopbarComponent {
   private readonly router = inject(Router);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
+  readonly hideSidebar = input(false);
+  readonly backUrl = input<string | null>(null);
+  readonly backLabelKey = input<string | null>(null);
   readonly unreadCount = input(0);
   readonly notificationsClicked = output<void>();
 

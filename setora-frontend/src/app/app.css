@@ -9,6 +9,14 @@
   background-color: var(--canvas);
 }
 
+.app-layout.no-sidebar .main-content {
+  margin-left: 0;
+}
+
+.app-layout.no-sidebar .page-content {
+  padding: 0;
+}
+
 app-topbar {
   position: sticky;
   top: 0;
