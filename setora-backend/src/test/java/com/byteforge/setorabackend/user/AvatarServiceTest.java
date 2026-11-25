@@ -173,8 +173,7 @@ class AvatarServiceTest {
         Files.writeString(undeletableOldAvatar.resolve("blocker.txt"), "not empty");
         when(userService.updateAvatarPathByUserId(eq(USER_ID), anyString())).thenReturn("old-avatar.png");
 
-        assertDoesNotThrow(
-                () -> avatarService.storeAvatar(upload(imageBytes(64, 64, "png"), "image/png"), USER_ID));
+        assertDoesNotThrow(() -> avatarService.storeAvatar(upload(imageBytes(64, 64, "png"), "image/png"), USER_ID));
 
         Path newAvatar = uploadDir.resolve(storedFilename());
         assertTrue(Files.exists(newAvatar));
