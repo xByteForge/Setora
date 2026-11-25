@@ -4,7 +4,6 @@ import { authGuard, guestGuard } from './core/guards/auth.guard';
 export const routes: Routes = [
   { path: '', redirectTo: 'discover', pathMatch: 'full' },
 
-  
   {
     path: 'login',
     canActivate: [guestGuard],
@@ -18,7 +17,22 @@ export const routes: Routes = [
       import('./pages/auth/register/register.component').then((m) => m.RegisterComponent),
   },
 
-  
+  // Public: accesibil și pentru utilizatorii nelogați, venind de pe paginile de auth
+  {
+    path: 'register-business',
+    data: {
+      breadcrumb: 'BUSINESS_REGISTRATION.TITLE',
+      hideSidebar: true,
+      topbarBackUrl: '/register',
+      topbarBackLabelKey: 'BUSINESS_REGISTRATION.BACK_TO_AUTH',
+    },
+    loadComponent: () =>
+      import('./pages/business-registration/business-registration.component').then(
+        (m) => m.BusinessRegistrationComponent,
+      ),
+  },
+
+  // Protejate: necesită sesiune
   {
     path: '',
     canActivate: [authGuard],
@@ -72,19 +86,6 @@ export const routes: Routes = [
           import('./pages/clients/clients.component').then((m) => m.ClientsComponent),
       },
     ],
-  },
-  {
-    path: 'register-business',
-    data: {
-      breadcrumb: 'BUSINESS_REGISTRATION.TITLE',
-      hideSidebar: true,
-      topbarBackUrl: '',
-      topbarBackLabelKey: 'BUSINESS_REGISTRATION.BACK_TO_AUTH',
-    },
-    loadComponent: () =>
-      import('./pages/business-registration/business-registration.component').then(
-        (m) => m.BusinessRegistrationComponent,
-      ),
   },
 
   { path: '**', redirectTo: 'discover' },
