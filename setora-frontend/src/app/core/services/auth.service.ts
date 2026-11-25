@@ -1,21 +1,35 @@
 import { isPlatformBrowser } from '@angular/common';
 import { computed, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, Observable, of, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  finalize,
+  firstValueFrom,
+  map,
+  Observable,
+  of,
+  shareReplay,
+  switchMap,
+  tap,
+  throwError,
+} from 'rxjs';
 import { AuthApi } from '../api/auth.api';
-import { User } from '../models/user.model';
 import { AuthResponse, LoginRequest, RegisterRequest } from '../ui-models/auth.model';
 import { UserService } from './user.service';
 
 interface Session {
   accessToken: string;
   refreshToken: string;
-  /** Momentul expirării, în milisecunde de la epoch. */
+  /** Momentul expirării access token-ului, în milisecunde de la epoch. */
   expiresAt: number;
-  user: User;
+  /** Dacă e true, refresh token-ul e păstrat în localStorage. */
+  rememberMe: boolean;
 }
 
-const STORAGE_KEY = 'setora_session';
+const STORAGE_KEY = 'setora_refresh_token';
+/** Reîmprospătăm access token-ul cu 60 de secunde înainte de expirare. */
+const REFRESH_BEFORE_EXPIRY_MS = 60_000;
+const MIN_REFRESH_DELAY_MS = 5_000;
 const PUBLIC_PREFIXES = ['/login', '/register'];
 
 @Injectable({ providedIn: 'root' })
@@ -26,28 +40,28 @@ export class AuthService {
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   private readonly session = signal<Session | null>(null);
-  private expiryTimer: ReturnType<typeof setTimeout> | null = null;
+  private timer: ReturnType<typeof setTimeout> | null = null;
+
+  
+  private refresh$: Observable<string> | null = null;
 
   
   readonly accessToken = computed(() => this.session()?.accessToken ?? null);
 
+  readonly isAuthenticated = computed(() => this.session() !== null);
+
   
-  readonly isAuthenticated = computed(() => {
-    const s = this.session();
-    return s !== null && Date.now() < s.expiresAt;
-  });
+  readonly ready: Promise<void>;
 
   constructor() {
     
-    const stored = this.readStored();
-    if (stored) this.activate(stored, true);
+    this.ready = this.isBrowser
+      ? Promise.resolve().then(() => this.restore())
+      : Promise.resolve();
   }
 
-  
   login(request: LoginRequest, rememberMe = false): Observable<AuthResponse> {
-    return this.authApi.login(request).pipe(
-      tap((res) => this.activate(this.toSession(res), rememberMe)),
-    );
+    return this.authApi.login(request).pipe(tap((res) => this.activate(res, rememberMe)));
   }
 
   
@@ -71,14 +85,24 @@ export class AuthService {
     void this.router.navigate(['/login']);
   }
 
-  
-  handleUnauthorized(): void {
-    const session = this.session();
-    if (!session) return;
+  refreshAccessToken(): Observable<string> {
+    if (this.refresh$) return this.refresh$;
 
-    if (Date.now() < session.expiresAt) return;
+    const current = this.session();
+    if (!current) return throwError(() => new Error('No active session.'));
 
-    this.expireSession();
+    this.refresh$ = this.authApi.refresh({ refreshToken: current.refreshToken }).pipe(
+      tap((res) => this.activate(res, current.rememberMe)),
+      map((res) => res.accessToken),
+      catchError((error: unknown) => {
+        this.expireSession();
+        return throwError(() => error);
+      }),
+      finalize(() => (this.refresh$ = null)),
+      shareReplay(1),
+    );
+
+    return this.refresh$;
   }
 
   
@@ -94,29 +118,56 @@ export class AuthService {
     });
   }
 
-  private toSession(res: AuthResponse): Session {
-    return {
-      accessToken: res.accessToken,
-      refreshToken: res.refreshToken,
-      expiresAt: Date.now() + res.expiresInSeconds * 1000,
-      user: res.user,
-    };
+  
+  private async restore(): Promise<void> {
+    const stored = this.storage?.getItem(STORAGE_KEY);
+    if (!stored) return;
+
+    try {
+      await firstValueFrom(
+        this.authApi
+          .refresh({ refreshToken: stored })
+          .pipe(tap((res) => this.activate(res, true))),
+      );
+    } catch {
+      this.removeStored();
+    }
   }
 
-  private activate(session: Session, remember: boolean): void {
+  private activate(res: AuthResponse, rememberMe: boolean): void {
     this.clearTimer();
-    this.session.set(session);
 
-    this.users.setCurrentUser(session.user);
-    this.users.loadAvatar(session.user.id).subscribe({ error: () => undefined });
+    const expiresAt = Date.now() + res.expiresInSeconds * 1000;
 
-    if (remember) this.writeStored(session);
+    this.session.set({
+      accessToken: res.accessToken,
+      refreshToken: res.refreshToken,
+      expiresAt,
+      rememberMe,
+    });
+
+    if (rememberMe) this.storage?.setItem(STORAGE_KEY, res.refreshToken);
     else this.removeStored();
 
-    this.expiryTimer = setTimeout(
-      () => this.expireSession(),
-      Math.max(session.expiresAt - Date.now(), 0),
+    // Avatarul se încarcă doar când se schimbă utilizatorul, nu la fiecare refresh.
+    const previousId = this.users.currentUser()?.id;
+    this.users.setCurrentUser(res.user);
+    if (previousId !== res.user.id) {
+      this.users.loadAvatar(res.user.id).subscribe({ error: () => undefined });
+    }
+
+    this.scheduleRefresh(expiresAt);
+  }
+
+  private scheduleRefresh(expiresAt: number): void {
+    const delay = Math.max(
+      expiresAt - Date.now() - REFRESH_BEFORE_EXPIRY_MS,
+      MIN_REFRESH_DELAY_MS,
     );
+
+    this.timer = setTimeout(() => {
+      this.refreshAccessToken().subscribe({ error: () => undefined });
+    }, delay);
   }
 
   private endSession(): void {
@@ -127,35 +178,15 @@ export class AuthService {
   }
 
   private clearTimer(): void {
-    if (this.expiryTimer !== null) {
-      clearTimeout(this.expiryTimer);
-      this.expiryTimer = null;
+    if (this.timer !== null) {
+      clearTimeout(this.timer);
+      this.timer = null;
     }
   }
 
-  
 
   private get storage(): Storage | null {
     return this.isBrowser ? window.localStorage : null;
-  }
-
-  private readStored(): Session | null {
-    const raw = this.storage?.getItem(STORAGE_KEY);
-    if (!raw) return null;
-
-    try {
-      const session = JSON.parse(raw) as Session;
-      if (session.accessToken && session.expiresAt > Date.now()) return session;
-    } catch {
-      // 
-    }
-
-    this.removeStored();
-    return null;
-  }
-
-  private writeStored(session: Session): void {
-    this.storage?.setItem(STORAGE_KEY, JSON.stringify(session));
   }
 
   private removeStored(): void {

@@ -1,13 +1,11 @@
-import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpInterceptorFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, throwError } from 'rxjs';
+import { catchError, switchMap, throwError } from 'rxjs';
 import { API_BASE_URL } from './api.config';
 import { ApiError, toApiError } from './api-error.interceptor';
 import { AuthService } from '../services/auth.service';
 
-
-const PUBLIC_PATHS = new Set(['/auth/login', '/auth/register']);
-
+const PUBLIC_PATHS = new Set(['/auth/login', '/auth/register', '/auth/refresh']);
 
 function relativeApiPath(requestUrl: string, apiBaseUrl: string): string | null {
   let api: URL;
@@ -30,22 +28,31 @@ function relativeApiPath(requestUrl: string, apiBaseUrl: string): string | null 
   return pathname.slice(basePath.length) || '/';
 }
 
+function withToken(req: HttpRequest<unknown>, token: string): HttpRequest<unknown> {
+  return req.clone({ setHeaders: { Authorization: `Bearer ${token}` } });
+}
+
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const relativePath = relativeApiPath(req.url, inject(API_BASE_URL));
-  if (relativePath === null) return next(req);
 
-  
-  if (req.headers.has('Authorization') || PUBLIC_PATHS.has(relativePath)) return next(req);
+  if (relativePath === null || PUBLIC_PATHS.has(relativePath) || req.headers.has('Authorization')) {
+    return next(req);
+  }
 
   const auth = inject(AuthService);
   const token = auth.accessToken();
   if (!token) return next(req);
 
-  return next(req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })).pipe(
+  return next(withToken(req, token)).pipe(
     catchError((error: unknown) => {
-      if (error instanceof ApiError && error.isUnauthorized) auth.handleUnauthorized();
-      return throwError(() => error);
+      if (!(error instanceof ApiError) || !error.isUnauthorized) {
+        return throwError(() => error);
+      }
+
+      return auth.refreshAccessToken().pipe(
+        switchMap((newToken) => next(withToken(req, newToken))),
+      );
     }),
   );
 };

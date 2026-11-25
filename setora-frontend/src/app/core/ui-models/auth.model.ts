@@ -29,3 +29,7 @@ export interface AuthResponse {
 export interface LogoutRequest {
   refreshToken: string;
 }
+
+export interface RefreshTokenRequest {
+  refreshToken: string;
+}
