@@ -1,7 +1,7 @@
 package com.byteforge.setorabackend.business.model;
 
-import com.byteforge.setorabackend.auth.User;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
+import com.byteforge.setorabackend.user.User;
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.time.ZoneId;

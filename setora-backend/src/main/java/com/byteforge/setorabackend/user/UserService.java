@@ -1,9 +1,9 @@
-package com.byteforge.setorabackend.auth;
+package com.byteforge.setorabackend.user;
 
-import com.byteforge.setorabackend.auth.dtos.CreateUserRequestDto;
-import com.byteforge.setorabackend.auth.dtos.UpdateUserRequestDto;
-import com.byteforge.setorabackend.auth.dtos.UserResponseDto;
 import com.byteforge.setorabackend.auth.refresh_tokens.RefreshTokenRepository;
+import com.byteforge.setorabackend.user.dtos.CreateUserRequestDto;
+import com.byteforge.setorabackend.user.dtos.UpdateUserRequestDto;
+import com.byteforge.setorabackend.user.dtos.UserResponseDto;
 import java.time.Instant;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

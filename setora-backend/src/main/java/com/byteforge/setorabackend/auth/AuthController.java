@@ -1,6 +1,10 @@
 package com.byteforge.setorabackend.auth;
 
 import com.byteforge.setorabackend.auth.dtos.*;
+import com.byteforge.setorabackend.user.UserService;
+import com.byteforge.setorabackend.user.dtos.CreateUserRequestDto;
+import com.byteforge.setorabackend.user.dtos.UpdateUserRequestDto;
+import com.byteforge.setorabackend.user.dtos.UserResponseDto;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;

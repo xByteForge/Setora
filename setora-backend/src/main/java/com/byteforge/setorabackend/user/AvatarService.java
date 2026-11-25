@@ -1,4 +1,4 @@
-package com.byteforge.setorabackend.auth;
+package com.byteforge.setorabackend.user;
 
 import com.byteforge.setorabackend.error.exceptions.AvatarStorageException;
 import com.byteforge.setorabackend.error.exceptions.InvalidAvatarException;

@@ -1,8 +1,8 @@
 package com.byteforge.setorabackend.employees.model;
 
-import com.byteforge.setorabackend.auth.User;
 import com.byteforge.setorabackend.business.model.Business;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
+import com.byteforge.setorabackend.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

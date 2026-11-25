@@ -1,6 +1,6 @@
 package com.byteforge.setorabackend.security;
 
-import com.byteforge.setorabackend.auth.UserRepository;
+import com.byteforge.setorabackend.user.UserRepository;
 import java.util.Base64;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
