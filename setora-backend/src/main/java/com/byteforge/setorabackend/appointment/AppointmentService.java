@@ -1,8 +1,6 @@
 package com.byteforge.setorabackend.appointment;
 
 import com.byteforge.setorabackend.appointment.dtos.*;
-import com.byteforge.setorabackend.auth.User;
-import com.byteforge.setorabackend.auth.UserService;
 import com.byteforge.setorabackend.business.model.Business;
 import com.byteforge.setorabackend.business.service.BusinessService;
 import com.byteforge.setorabackend.common.DateTimeInterval;
@@ -10,7 +8,10 @@ import com.byteforge.setorabackend.employees.model.Employee;
 import com.byteforge.setorabackend.employees.service.EmployeeService;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
 import com.byteforge.setorabackend.serviceItem.ServiceItemService;
+import com.byteforge.setorabackend.user.User;
+import com.byteforge.setorabackend.user.UserService;
 import jakarta.validation.Valid;
+import java.time.*;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -305,5 +306,23 @@ public class AppointmentService {
 
     public List<Appointment> findByBusinessIdAndDateRange(Integer businessId, Instant start, Instant end) {
         return appointmentRepository.findByBusinessIdAndDateRange(businessId, start, end);
+    }
+
+    public List<Appointment> findByEmployeeIdInInterval(int employeeId, Instant start, Instant end) {
+        if (start == null || end == null || !start.isBefore(end)) {
+            throw new IllegalArgumentException("Invalid date interval");
+        }
+        return appointmentRepository.findByEmployee_IdOnDate(employeeId, start, end);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Appointment> findByEmployeeIdOnDate(int employeeId, LocalDate date) {
+        Employee employee = employeeService.findById(employeeId);
+        ZoneId zone = employee.getBusiness().getTimezone();
+
+        Instant start = date.atStartOfDay(zone).toInstant();
+        Instant end = date.plusDays(1).atStartOfDay(zone).toInstant();
+
+        return appointmentRepository.findByEmployee_IdOnDate(employeeId, start, end);
     }
 }

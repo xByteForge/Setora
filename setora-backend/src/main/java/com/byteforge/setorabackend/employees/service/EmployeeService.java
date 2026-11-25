@@ -7,15 +7,12 @@ import com.byteforge.setorabackend.common.TimeInterval;
 import com.byteforge.setorabackend.employees.model.*;
 import com.byteforge.setorabackend.employees.model.AvailabilityDtos.*;
 import com.byteforge.setorabackend.employees.repository.*;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -235,6 +232,18 @@ public class EmployeeService {
         return employeeRepository
                 .findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found"));
+    }
+
+    public List<Employee> findAllEmployeesByServiceId(int serviceId) {
+        return employeeRepository.findAllByActiveTrueAndServiceItems_Id(serviceId);
+    }
+
+    public Optional<WorkSchedule> findWorkScheduleByEmployeeId(int employeeId, DayOfWeek dayOfWeek) {
+        return workScheduleRepository.findByEmployee_IdAndDayOfWeek(employeeId, dayOfWeek);
+    }
+
+    public Optional<WorkSchedule> findWorkScheduleByEmployeeId(int employeeId) {
+        return workScheduleRepository.findById(employeeId);
     }
 
     @Transactional(readOnly = true)

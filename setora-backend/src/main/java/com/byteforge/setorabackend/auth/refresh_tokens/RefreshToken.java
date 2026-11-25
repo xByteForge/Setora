@@ -1,6 +1,6 @@
 package com.byteforge.setorabackend.auth.refresh_tokens;
 
-import com.byteforge.setorabackend.auth.User;
+import com.byteforge.setorabackend.user.User;
 import jakarta.persistence.*;
 import java.time.Instant;
 import lombok.Getter;

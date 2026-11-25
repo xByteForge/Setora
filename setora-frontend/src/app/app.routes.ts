@@ -73,6 +73,19 @@ export const routes: Routes = [
       },
     ],
   },
+  {
+    path: 'register-business',
+    data: {
+      breadcrumb: 'BUSINESS_REGISTRATION.TITLE',
+      hideSidebar: true,
+      topbarBackUrl: '',
+      topbarBackLabelKey: 'BUSINESS_REGISTRATION.BACK_TO_AUTH',
+    },
+    loadComponent: () =>
+      import('./pages/business-registration/business-registration.component').then(
+        (m) => m.BusinessRegistrationComponent,
+      ),
+  },
 
   { path: '**', redirectTo: 'discover' },
 ];

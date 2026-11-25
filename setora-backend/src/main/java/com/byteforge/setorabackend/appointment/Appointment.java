@@ -1,9 +1,9 @@
 package com.byteforge.setorabackend.appointment;
 
-import com.byteforge.setorabackend.auth.User;
 import com.byteforge.setorabackend.common.DateTimeInterval;
 import com.byteforge.setorabackend.employees.model.Employee;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
+import com.byteforge.setorabackend.user.User;
 import jakarta.persistence.CheckConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;

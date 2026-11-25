@@ -1,9 +1,9 @@
 package com.byteforge.setorabackend.appointment.dtos;
 
 import com.byteforge.setorabackend.appointment.Appointment;
-import com.byteforge.setorabackend.auth.User;
 import com.byteforge.setorabackend.employees.model.Employee;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
+import com.byteforge.setorabackend.user.User;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Locale;

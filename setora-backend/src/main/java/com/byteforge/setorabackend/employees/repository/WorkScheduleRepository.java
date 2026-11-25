@@ -1,7 +1,9 @@
 package com.byteforge.setorabackend.employees.repository;
 
 import com.byteforge.setorabackend.employees.model.WorkSchedule;
+import java.time.DayOfWeek;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,4 +20,6 @@ public interface WorkScheduleRepository extends JpaRepository<WorkSchedule, Inte
         AND e.active = true
     """)
     List<WorkSchedule> findByBusinessId(@Param("businessId") Integer businessId);
+
+    Optional<WorkSchedule> findByEmployee_IdAndDayOfWeek(int employeeId, DayOfWeek dayOfWeek);
 }

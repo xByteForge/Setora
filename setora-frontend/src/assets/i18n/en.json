@@ -216,9 +216,10 @@
   "ERRORS": {
     "GENERIC": "Something went wrong. Please try again."
   },
-
   "SETTINGS": {
-    "COMMON": { "CANCEL": "Cancel" },
+    "COMMON": {
+      "CANCEL": "Cancel"
+    },
     "HEADER": {
       "PROFILE_TITLE": "Profile details",
       "PROFILE_SUBTITLE": "Update your personal details and how you appear in bookings.",
@@ -344,5 +345,174 @@
         "PASSWORD_SPECIAL": "The password must contain at least one special character.",
         "PASSWORD_HINT": "Minimum 8 characters, with uppercase, lowercase and a special character."
       }
-    }
+    },
+  "BUSINESS_REGISTRATION": {
+    "TITLE": "Register your business",
+    "SUBTITLE": "Complete the details and verify the profile before publishing.",
+    "REQUIRED_HINT": "Fields marked with",
+    "REQUIRED_HINT_END": "are required.",
+    "BACK": "Back",
+    "BACK_TO_AUTH": "Back to login",
+    "JUMP_TO": "Jump to section",
+    "SECTIONS": {
+      "BUSINESS_PROFILE": "1. Business profile",
+      "PHOTOS": "2. Photos",
+      "PUBLIC_CONTACT": "3. Public contact",
+      "LOCATION_AND_TIMEZONE": "4. Location and timezone",
+      "VERIFICATION": "5. Verification"
+    },
+    "TABS": {
+      "PROFILE": "Profile",
+      "PHOTOS": "Photos",
+      "CONTACT": "Public contact",
+      "LOCATION": "Location",
+      "VERIFICATION": "Verification"
+    },
+    "FIELDS": {
+      "BUSINESS_NAME": "Business name",
+      "URL_HANDLE": "URL / public handle",
+      "DESCRIPTION": "Description (optional)",
+      "CATEGORIES": "Business categories",
+      "TAGS": "Tags",
+      "SELECTED_TAGS": "Selected tags",
+      "NO_TAGS_SELECTED": "No tags selected.",
+      "ADD_TAG": "Add tag",
+      "ADD_CUSTOM_TAG": "Add “{{tag}}”",
+      "NO_TAG_RESULTS": "No tags found.",
+      "REMOVE_TAG": "Remove tag {{tag}}",
+      "SEARCH_TAGS": "Search or select tags",
+      "EMAIL": "Business e-mail",
+      "PHONE": "Public phone (optional)",
+      "PHONE_CODE": "Country calling code",
+      "COUNTRY": "Country",
+      "CITY": "City",
+      "ADDRESS": "Street address",
+      "POSTAL_CODE": "Postal code (optional)",
+      "TIMEZONE": "Timezone"
+    },
+    "PLACEHOLDERS": {
+      "NAME": "Studio Verde",
+      "SLUG": "studio-verde",
+      "DESCRIPTION": "Briefly describe your business",
+      "EMAIL": "contact@studioverde.example",
+      "PHONE": "700 000 456",
+      "ADDRESS": "34 Dacia Blvd.",
+      "POSTAL": "010403"
+    },
+    "URL_HELPER": "Generated from the business name. You can edit it.",
+    "URL_SUGGESTION": "Suggestion:",
+    "ERRORS": {
+      "NAME": "Enter the business name (at least 2 characters).",
+      "URL_REQUIRED": "Enter a URL for your business.",
+      "URL_FORMAT": "Use at least 3 characters: lowercase letters, numbers and hyphens.",
+      "URL_TAKEN": "This URL is already in use.",
+      "EMAIL": "Enter a valid email address.",
+      "PHONE": "Enter a valid number, e.g. 700 000 456.",
+      "ADDRESS": "Enter the street address.",
+      "POSTAL": "Enter a valid postal code."
+    },
+    "CATEGORY_OPTIONS": {
+      "BEAUTY": "Beauty",
+      "HEALTH": "Health",
+      "FITNESS": "Fitness",
+      "AUTO": "Auto"
+    },
+    "TAG_OPTIONS": {
+      "HAIRSTYLE": "Hairstyling",
+      "STYLING": "Styling",
+      "MANICURE": "Manicure",
+      "PEDICURE": "Pedicure",
+      "MASSAGE": "Massage",
+      "BARBER": "Barbershop",
+      "MAKEUP": "Makeup",
+      "FACIAL": "Facials",
+      "SPA": "Spa",
+      "PERSONAL_TRAINING": "Personal training",
+      "YOGA": "Yoga",
+      "PHYSIOTHERAPY": "Physiotherapy",
+      "DENTAL": "Dental care",
+      "CAR_WASH": "Car wash"
+    },
+    "PHOTOS": {
+      "HINT": "Upload several images, choose one as main and up to 2 as cover.",
+      "UPLOAD": "Upload photos",
+      "DROP": "Drag images here or select multiple photos.",
+      "MAIN": "Main photo",
+      "SET_MAIN": "Set as main",
+      "GALLERY": "Show as cover",
+      "REMOVE": "Remove photo",
+      "ALT": "Photo {{n}}",
+      "ERROR_TYPE": "Use JPG, PNG or WebP files.",
+      "ERROR_SIZE": "Each photo must be 5 MB or smaller.",
+      "ERROR_MAX": "You can upload up to 10 photos."
+    },
+    "CONTACT": {
+      "INFO": "This information is public and will appear on the business profile. It is not your private login data."
+    },
+    "LOCATION": {
+      "HINT": "The exact address helps customers find your business.",
+      "AUTO_DETECTED": "Location detected automatically",
+      "MAP_LABEL": "Illustrative map with the business location",
+      "MAP_NOTE": "Illustrative map. Drag the pin or adjust it for the exact position.",
+      "PIN_LABEL": "Business position on the map",
+      "ADJUST_PIN": "Adjust pin",
+      "ADJUST_DONE": "Done",
+      "ZOOM_IN": "Zoom in",
+      "ZOOM_OUT": "Zoom out",
+      "COORDS_NOTE": "Latitude and longitude are calculated automatically from the address and pin. You don't need to enter them.",
+      "TIMEZONE_AUTO": "{{zone}} · detected automatically from the location. You can choose another timezone.",
+      "TIMEZONE_MANUAL": "{{zone}} · selected manually."
+    },
+    "COUNTRIES": {
+      "RO": "Romania",
+      "MD": "Moldova",
+      "HU": "Hungary",
+      "BG": "Bulgaria"
+    },
+    "CITIES": {
+      "BUCHAREST": "Bucharest",
+      "CLUJ_NAPOCA": "Cluj-Napoca",
+      "TIMISOARA": "Timișoara",
+      "IASI": "Iași",
+      "BRASOV": "Brașov",
+      "CONSTANTA": "Constanța",
+      "CHISINAU": "Chișinău",
+      "BALTI": "Bălți",
+      "BUDAPEST": "Budapest",
+      "DEBRECEN": "Debrecen",
+      "SOFIA": "Sofia",
+      "PLOVDIV": "Plovdiv"
+    },
+    "TIMEZONES": {
+      "EUROPE_BUCHAREST": "Bucharest",
+      "EUROPE_CHISINAU": "Chișinău",
+      "EUROPE_BUDAPEST": "Budapest",
+      "EUROPE_SOFIA": "Sofia",
+      "EUROPE_ATHENS": "Athens",
+      "EUROPE_BERLIN": "Berlin",
+      "EUROPE_ROME": "Rome",
+      "EUROPE_PARIS": "Paris",
+      "EUROPE_MADRID": "Madrid",
+      "EUROPE_LONDON": "London"
+    },
+    "PREVIEW": {
+      "TITLE": "Real-time preview",
+      "SUBTITLE": "This is how the profile will appear to customers.",
+      "DRAFT": "Draft · unpublished",
+      "NO_PHOTO": "No photo",
+      "NAME_FALLBACK": "Business name",
+      "PUBLIC_CONTACT": "Public contact",
+      "TIMEZONE": "Timezone: {{zone}}",
+      "URL_FIX": "Fix the URL before publishing.",
+      "EDIT_SECTION": "Go back to a section to make changes"
+    },
+    "SUBMIT": {
+      "ERROR_URL": "Fix the business URL before registering.",
+      "ERROR_FIELDS": "Complete the required fields before registering.",
+      "BUTTON": "Register business",
+      "HINT": "The profile becomes public only after registration is complete.",
+      "SUCCESS": "Everything is valid. The business was registered (demo)."
+    },
+    "DEMO_NOTE": "Demo data, photos and map. Validation example: URL unavailable."
+  }
 }

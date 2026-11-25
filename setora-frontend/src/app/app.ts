@@ -1,5 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter, map, startWith } from 'rxjs';
 import { SidebarComponent } from './core/layout/sidebar/sidebar.component';
 import { ThemeService } from './core/services/theme.service';
 import { TopbarComponent } from './core/layout/topbar/topbar.component';
@@ -19,6 +21,28 @@ export class App {
   private readonly businessService = inject(BusinessService);
   private readonly catalog = inject(CatalogService);
   protected readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+
+  private readonly routeData = toSignal(
+    this.router.events.pipe(
+      filter((e) => e instanceof NavigationEnd),
+      startWith(null),
+      map(() => {
+        let snapshot = this.router.routerState.snapshot.root;
+        while (snapshot.firstChild) snapshot = snapshot.firstChild;
+        return snapshot.data;
+      }),
+    ),
+    { initialValue: {} as Record<string, unknown> },
+  );
+
+  protected readonly hideSidebar = computed(() => Boolean(this.routeData()['hideSidebar']));
+  protected readonly topbarBackUrl = computed(
+    () => (this.routeData()['topbarBackUrl'] as string | undefined) ?? null,
+  );
+  protected readonly topbarBackLabelKey = computed(
+    () => (this.routeData()['topbarBackLabelKey'] as string | undefined) ?? null,
+  );
 
   constructor() {
     

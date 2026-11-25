@@ -1,7 +1,7 @@
 package com.byteforge.setorabackend.business.model;
 
-import com.byteforge.setorabackend.auth.User;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
+import com.byteforge.setorabackend.user.User;
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -70,6 +70,9 @@ public class Business {
     @JdbcTypeCode(SqlTypes.ARRAY)
     @Column(name = "tags", columnDefinition = "text[]")
     private String[] tags;
+
+    @Column(name = "time_slice")
+    private int timeSlice = 30; // default time slice
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")

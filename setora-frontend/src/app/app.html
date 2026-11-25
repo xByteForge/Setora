@@ -1,8 +1,14 @@
-@if (auth.isAuthenticated()) {
-  <div class="app-layout">
-    <app-sidebar></app-sidebar>
+@if (auth.isAuthenticated() || hideSidebar()) {
+  <div class="app-layout" [class.no-sidebar]="hideSidebar()">
+    @if (auth.isAuthenticated() && !hideSidebar()) {
+      <app-sidebar></app-sidebar>
+    }
     <main class="main-content">
-      <app-topbar></app-topbar>
+      <app-topbar
+        [hideSidebar]="hideSidebar()"
+        [backUrl]="topbarBackUrl()"
+        [backLabelKey]="topbarBackLabelKey()"
+      ></app-topbar>
       <div class="page-content">
         <router-outlet></router-outlet>
       </div>

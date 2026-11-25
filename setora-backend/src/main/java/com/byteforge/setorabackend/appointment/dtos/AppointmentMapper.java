@@ -2,10 +2,10 @@ package com.byteforge.setorabackend.appointment.dtos;
 
 import com.byteforge.setorabackend.appointment.Appointment;
 import com.byteforge.setorabackend.appointment.AppointmentStatus;
-import com.byteforge.setorabackend.auth.User;
 import com.byteforge.setorabackend.common.DateTimeInterval;
 import com.byteforge.setorabackend.employees.model.Employee;
 import com.byteforge.setorabackend.serviceItem.ServiceItem;
+import com.byteforge.setorabackend.user.User;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
