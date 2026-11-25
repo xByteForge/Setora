@@ -2,11 +2,12 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { API_BASE_URL } from './api.config';
-
+import { ApiError, toApiError } from './api-error.interceptor';
 import { AuthService } from '../services/auth.service';
-import { toApiError } from './api-error.interceptor';
 
-const PUBLIC_PATHS = new Set(['/auth/login', '/auth/register', '/auth/refresh']);
+
+const PUBLIC_PATHS = new Set(['/auth/login', '/auth/register']);
+
 
 function relativeApiPath(requestUrl: string, apiBaseUrl: string): string | null {
   let api: URL;
@@ -29,17 +30,24 @@ function relativeApiPath(requestUrl: string, apiBaseUrl: string): string | null 
   return pathname.slice(basePath.length) || '/';
 }
 
+
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const relativePath = relativeApiPath(req.url, inject(API_BASE_URL));
-
   if (relativePath === null) return next(req);
 
-  if (PUBLIC_PATHS.has(relativePath)) return next(req);
+  
+  if (req.headers.has('Authorization') || PUBLIC_PATHS.has(relativePath)) return next(req);
 
-  const token = inject(AuthService).accessToken();
+  const auth = inject(AuthService);
+  const token = auth.accessToken();
   if (!token) return next(req);
 
-  return next(req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }));
+  return next(req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })).pipe(
+    catchError((error: unknown) => {
+      if (error instanceof ApiError && error.isUnauthorized) auth.handleUnauthorized();
+      return throwError(() => error);
+    }),
+  );
 };
 
 export const apiErrorInterceptor: HttpInterceptorFn = (req, next) =>

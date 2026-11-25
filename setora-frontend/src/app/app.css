@@ -34,3 +34,8 @@ app-topbar {
     box-sizing: border-box;
   }
 }
+
+.guest-shell {
+  min-height: 100vh;
+  box-sizing: border-box;
+}

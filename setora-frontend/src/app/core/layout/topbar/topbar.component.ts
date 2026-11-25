@@ -14,11 +14,12 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 import { TranslocoDirective, TranslocoService } from '@ngneat/transloco';
-import { LucideSun, LucideMoon, LucideBell, LucideChevronRight } from '@lucide/angular';
+import { LucideBell, LucideChevronRight, LucideLogOut, LucideMoon, LucideSun } from '@lucide/angular';
 import { ThemeService } from '../../services/theme.service';
 import { BusinessService } from '../../services/business.service';
 import { MobileMenuService } from '../../services/mobile-menu.service';
 import { UniversalSearchComponent } from '../universal-search/universal-search.component';
+import { AuthService } from '../../services/auth.service';
 
 export interface Breadcrumb {
   label?: string; // text brut (ex: numele business-ului)
@@ -37,6 +38,7 @@ export interface Breadcrumb {
     LucideBell,
     LucideChevronRight,
     UniversalSearchComponent,
+    LucideLogOut,
   ],
   styleUrl: './topbar.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -93,6 +95,16 @@ export interface Breadcrumb {
           }
         </button>
 
+        <button
+          type="button"
+          class="icon-btn hide-mobile"
+          (click)="auth.logout()"
+          [attr.aria-label]="t('HEADER.LOGOUT')"
+          [attr.title]="t('HEADER.LOGOUT')"
+        >
+          <svg lucideLogOut [size]="20" aria-hidden="true"></svg>
+        </button>
+
         <div class="lang">
           <button
             type="button"
@@ -135,6 +147,7 @@ export class TopbarComponent {
   private readonly businessService = inject(BusinessService);
   private readonly router = inject(Router);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  readonly auth = inject(AuthService);
 
   readonly unreadCount = input(0);
   readonly notificationsClicked = output<void>();

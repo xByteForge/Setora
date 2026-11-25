@@ -20,7 +20,8 @@
     "THEME_TO_DARK": "Switch to dark theme",
     "THEME_TO_LIGHT": "Switch to light theme",
     "NOTIFICATIONS": "Notifications",
-    "LANGUAGE": "Language"
+    "LANGUAGE": "Language",
+    "LOGOUT": "Log out"
   },
   "APPOINTMENTS": {
     "SUMMARY": {
@@ -294,5 +295,54 @@
       "CONFIRM": "Are you sure? Your account and data will be permanently deleted.",
       "CONFIRM_BUTTON": "Yes, delete account"
     }
-  }
+  },
+    "AUTH": {
+      "COMMON": {
+        "SHOW": "Show",
+        "HIDE": "Hide",
+        "TOGGLE_PASSWORD": "Show or hide password"
+      },
+      "LOGIN": {
+        "TITLE": "Welcome back!",
+        "SUBTITLE": "Log in to see your appointments.",
+        "EMAIL": "Email",
+        "PASSWORD": "Password",
+        "SUBMIT": "Log in",
+        "SUBMITTING": "Logging in...",
+        "EMAIL_INVALID": "Enter a valid email address.",
+        "PASSWORD_REQUIRED": "Enter your password.",
+        "INVALID_CREDENTIALS": "The email or password is incorrect.",
+        "SESSION_EXPIRED": "Your session has expired. Please log in again.",
+        "NO_ACCOUNT": "Don't have an account?",
+        "REGISTER_LINK": "Create an account",
+        "REMEMBER_ME": "Remember me"
+      },
+      "REGISTER": {
+        "TITLE": "Create your account",
+        "SUBTITLE": "Discover services and manage your appointments.",
+        "FIRST_NAME": "First name",
+        "LAST_NAME": "Last name",
+        "PHONE": "Phone number",
+        "EMAIL": "Email",
+        "PASSWORD": "Password",
+        "CONFIRM_PASSWORD": "Confirm password",
+        "REQUIRED": "Required field.",
+        "EMAIL_INVALID": "Enter a valid email address.",
+        "EMAIL_TAKEN": "This email is already in use.",
+        "PHONE_TOO_LONG": "The phone number can have at most 30 characters.",
+        "PASSWORD_LENGTH": "The password must be between 8 and 64 characters.",
+        "PASSWORD_MISMATCH": "Passwords do not match.",
+        "SUBMIT": "Create account",
+        "SUBMITTING": "Creating account...",
+        "HAS_ACCOUNT": "Already have an account?",
+        "LOGIN_LINK": "Log in",
+        "USERNAME": "Username",
+        "CONFIRM_EMAIL": "Confirm email",
+        "EMAIL_MISMATCH": "The email addresses do not match.",
+        "PASSWORD_UPPERCASE": "The password must contain at least one uppercase letter.",
+        "PASSWORD_LOWERCASE": "The password must contain at least one lowercase letter.",
+        "PASSWORD_SPECIAL": "The password must contain at least one special character.",
+        "PASSWORD_HINT": "Minimum 8 characters, with uppercase, lowercase and a special character."
+      }
+    }
 }

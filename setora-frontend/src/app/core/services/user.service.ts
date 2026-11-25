@@ -132,4 +132,10 @@ export class UserService {
     if (!user) throw new Error('Current user is not loaded yet.');
     return user;
   }
+
+  reset(): void {
+    this.userSignal.set(null);
+    this.clearAvatar();
+    this.preferencesSignal.set(DEFAULT_NOTIFICATION_PREFERENCES);
+  }
 }

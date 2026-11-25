@@ -1,0 +1,145 @@
+<main class="auth-page">
+  <button
+  type="button"
+  class="theme-toggle"
+  (click)="theme.toggleTheme()"
+  [attr.aria-label]="(theme.currentTheme() === 'light' ? 'HEADER.THEME_TO_DARK' : 'HEADER.THEME_TO_LIGHT') | transloco"
+>
+  @if (theme.currentTheme() === 'light') {
+    <svg lucideSun [size]="20" aria-hidden="true"></svg>
+  } @else {
+    <svg lucideMoon [size]="20" aria-hidden="true"></svg>
+  }
+</button>
+
+  <section class="auth-card">
+    <div class="brand">
+      <img src="assets/logo.jpg" alt="" class="brand__logo" width="48" height="48" />
+      <div>
+        <p class="brand__name">SETORA</p>
+        <p class="brand__tagline">your time. scheduled.</p>
+      </div>
+    </div>
+
+    <h1 class="auth-title">{{ 'AUTH.REGISTER.TITLE' | transloco }}</h1>
+    <p class="auth-subtitle">{{ 'AUTH.REGISTER.SUBTITLE' | transloco }}</p>
+
+    <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="form-grid">
+        <label class="field">
+          <span class="field__label">{{ 'AUTH.REGISTER.FIRST_NAME' | transloco }}</span>
+          <input class="input" formControlName="firstName" autocomplete="given-name"
+                 [class.input--invalid]="isInvalid('firstName')" />
+          @if (isInvalid('firstName')) {
+            <span class="field__error">{{ 'AUTH.REGISTER.REQUIRED' | transloco }}</span>
+          }
+        </label>
+
+        <label class="field">
+          <span class="field__label">{{ 'AUTH.REGISTER.LAST_NAME' | transloco }}</span>
+          <input class="input" formControlName="lastName" autocomplete="family-name"
+                 [class.input--invalid]="isInvalid('lastName')" />
+          @if (isInvalid('lastName')) {
+            <span class="field__error">{{ 'AUTH.REGISTER.REQUIRED' | transloco }}</span>
+          }
+        </label>
+
+        <label class="field">
+          <span class="field__label">{{ 'AUTH.REGISTER.USERNAME' | transloco }}</span>
+          <input class="input" formControlName="username" autocomplete="username"
+                 [class.input--invalid]="isInvalid('username')" />
+          @if (isInvalid('username')) {
+            <span class="field__error">{{ 'AUTH.REGISTER.REQUIRED' | transloco }}</span>
+          }
+        </label>
+
+        <label class="field">
+          <span class="field__label">{{ 'AUTH.REGISTER.PHONE' | transloco }}</span>
+          <input class="input" formControlName="phoneNumber" inputmode="tel" autocomplete="tel"
+                 placeholder="+40 700 000 123"
+                 [class.input--invalid]="isInvalid('phoneNumber')" />
+          @if (isInvalid('phoneNumber')) {
+            <span class="field__error">{{ 'AUTH.REGISTER.PHONE_TOO_LONG' | transloco }}</span>
+          }
+        </label>
+
+        <label class="field">
+          <span class="field__label">{{ 'AUTH.REGISTER.EMAIL' | transloco }}</span>
+          <input class="input" type="email" formControlName="email" autocomplete="email"
+                 [class.input--invalid]="isInvalid('email') || emailTaken()" />
+          @if (form.controls.email.touched && form.controls.email.hasError('required')) {
+            <span class="field__error">{{ 'AUTH.REGISTER.REQUIRED' | transloco }}</span>
+          } @else if (form.controls.email.touched && form.controls.email.hasError('email')) {
+            <span class="field__error">{{ 'AUTH.REGISTER.EMAIL_INVALID' | transloco }}</span>
+          } @else if (emailTaken()) {
+            <span class="field__error" role="alert">{{ 'AUTH.REGISTER.EMAIL_TAKEN' | transloco }}</span>
+          }
+        </label>
+
+        <label class="field">
+          <span class="field__label">{{ 'AUTH.REGISTER.CONFIRM_EMAIL' | transloco }}</span>
+          <input class="input" type="email" formControlName="confirmEmail" autocomplete="email"
+                 [class.input--invalid]="isInvalid('confirmEmail') || (form.controls.confirmEmail.touched && form.hasError('emailMismatch'))" />
+          @if (form.controls.confirmEmail.touched && form.hasError('emailMismatch')) {
+            <span class="field__error">{{ 'AUTH.REGISTER.EMAIL_MISMATCH' | transloco }}</span>
+          } @else if (isInvalid('confirmEmail')) {
+            <span class="field__error">{{ 'AUTH.REGISTER.REQUIRED' | transloco }}</span>
+          }
+        </label>
+
+        <label class="field">
+          <span class="field__label">{{ 'AUTH.REGISTER.PASSWORD' | transloco }}</span>
+          <div class="input-group">
+            <input class="input input--with-toggle"
+                   [type]="showPassword() ? 'text' : 'password'"
+                   formControlName="password" autocomplete="new-password"
+                   [class.input--invalid]="passwordError() !== null" />
+            <button type="button" class="input-toggle"
+                    (click)="showPassword.set(!showPassword())"
+                    [attr.aria-label]="'AUTH.COMMON.TOGGLE_PASSWORD' | transloco">
+              {{ (showPassword() ? 'AUTH.COMMON.HIDE' : 'AUTH.COMMON.SHOW') | transloco }}
+            </button>
+          </div>
+          @if (passwordError(); as key) {
+            <span class="field__error">{{ key | transloco }}</span>
+          }
+        </label>
+
+        <label class="field">
+          <span class="field__label">{{ 'AUTH.REGISTER.CONFIRM_PASSWORD' | transloco }}</span>
+          <div class="input-group">
+            <input class="input input--with-toggle"
+                   [type]="showConfirm() ? 'text' : 'password'"
+                   formControlName="confirmPassword" autocomplete="new-password"
+                   [class.input--invalid]="isInvalid('confirmPassword') || (form.controls.confirmPassword.touched && form.hasError('passwordMismatch'))" />
+            <button type="button" class="input-toggle"
+                    (click)="showConfirm.set(!showConfirm())"
+                    [attr.aria-label]="'AUTH.COMMON.TOGGLE_PASSWORD' | transloco">
+              {{ (showConfirm() ? 'AUTH.COMMON.HIDE' : 'AUTH.COMMON.SHOW') | transloco }}
+            </button>
+          </div>
+          @if (form.controls.confirmPassword.touched && form.hasError('passwordMismatch')) {
+            <span class="field__error">{{ 'AUTH.REGISTER.PASSWORD_MISMATCH' | transloco }}</span>
+          } @else if (isInvalid('confirmPassword')) {
+            <span class="field__error">{{ 'AUTH.REGISTER.REQUIRED' | transloco }}</span>
+          }
+        </label>
+      </div>
+
+      <p class="hint">{{ 'AUTH.REGISTER.PASSWORD_HINT' | transloco }}</p>
+
+      @if (error(); as key) {
+        <p class="form-error" role="alert">{{ key | transloco }}</p>
+      }
+
+      <button type="submit" class="btn-primary" [disabled]="loading()">
+        {{ (loading() ? 'AUTH.REGISTER.SUBMITTING' : 'AUTH.REGISTER.SUBMIT') | transloco }}
+      </button>
+    </form>
+
+    <p class="auth-footer">
+      {{ 'AUTH.REGISTER.HAS_ACCOUNT' | transloco }}
+      <a routerLink="/login">{{ 'AUTH.REGISTER.LOGIN_LINK' | transloco }}</a>
+    </p>
+  </section>
+</main>

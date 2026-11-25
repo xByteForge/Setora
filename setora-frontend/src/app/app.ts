@@ -5,6 +5,7 @@ import { ThemeService } from './core/services/theme.service';
 import { TopbarComponent } from './core/layout/topbar/topbar.component';
 import { BusinessService } from './core/services/business.service';
 import { CatalogService } from './core/services/catalog.service';
+import { AuthService } from './core/services/auth.service';
 
 @Component({
   imports: [RouterOutlet, SidebarComponent, TopbarComponent],
@@ -17,9 +18,10 @@ export class App {
   private readonly themeService = inject(ThemeService);
   private readonly businessService = inject(BusinessService);
   private readonly catalog = inject(CatalogService);
+  protected readonly auth = inject(AuthService);
 
   constructor() {
-    // Un singur loc pentru datele mock ale businessului: CatalogService.
+    
     this.businessService.setCurrent(this.catalog.getBusiness());
   }
 }

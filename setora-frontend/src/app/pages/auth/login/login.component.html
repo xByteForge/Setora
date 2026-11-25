@@ -1,0 +1,78 @@
+<main class="auth-page">
+  <button
+    type="button"
+    class="theme-toggle"
+    (click)="theme.toggleTheme()"
+    [attr.aria-label]="(theme.currentTheme() === 'light' ? 'HEADER.THEME_TO_DARK' : 'HEADER.THEME_TO_LIGHT') | transloco"
+  >
+    @if (theme.currentTheme() === 'light') {
+      <svg lucideSun [size]="20" aria-hidden="true"></svg>
+    } @else {
+      <svg lucideMoon [size]="20" aria-hidden="true"></svg>
+    }
+  </button>
+
+  <section class="auth-card">
+    <div class="brand">
+      <img src="assets/logo.jpg" alt="" class="brand__logo" width="48" height="48" />
+      <div>
+        <p class="brand__name">SETORA</p>
+        <p class="brand__tagline">your time. scheduled.</p>
+      </div>
+    </div>
+
+    <h1 class="auth-title">{{ 'AUTH.LOGIN.TITLE' | transloco }}</h1>
+    <p class="auth-subtitle">{{ 'AUTH.LOGIN.SUBTITLE' | transloco }}</p>
+
+    @if (sessionExpired) {
+      <p class="notice" role="status">{{ 'AUTH.LOGIN.SESSION_EXPIRED' | transloco }}</p>
+    }
+
+    <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <label class="field">
+        <span class="field__label">{{ 'AUTH.LOGIN.EMAIL' | transloco }}</span>
+        <input class="input" type="email" formControlName="email" autocomplete="email"
+               [class.input--invalid]="isInvalid('email')" />
+        @if (isInvalid('email')) {
+          <span class="field__error">{{ 'AUTH.LOGIN.EMAIL_INVALID' | transloco }}</span>
+        }
+      </label>
+
+      <label class="field">
+        <span class="field__label">{{ 'AUTH.LOGIN.PASSWORD' | transloco }}</span>
+        <div class="input-group">
+          <input class="input input--with-toggle"
+                 [type]="showPassword() ? 'text' : 'password'"
+                 formControlName="password" autocomplete="current-password"
+                 [class.input--invalid]="isInvalid('password')" />
+          <button type="button" class="input-toggle"
+                  (click)="showPassword.set(!showPassword())"
+                  [attr.aria-label]="'AUTH.COMMON.TOGGLE_PASSWORD' | transloco">
+            {{ (showPassword() ? 'AUTH.COMMON.HIDE' : 'AUTH.COMMON.SHOW') | transloco }}
+          </button>
+        </div>
+        @if (isInvalid('password')) {
+          <span class="field__error">{{ 'AUTH.LOGIN.PASSWORD_REQUIRED' | transloco }}</span>
+        }
+      </label>
+
+      <label class="remember">
+        <input type="checkbox" formControlName="rememberMe" />
+        <span>{{ 'AUTH.LOGIN.REMEMBER_ME' | transloco }}</span>
+      </label>
+
+      @if (error(); as key) {
+        <p class="form-error" role="alert">{{ key | transloco }}</p>
+      }
+
+      <button type="submit" class="btn-primary" [disabled]="loading()">
+        {{ (loading() ? 'AUTH.LOGIN.SUBMITTING' : 'AUTH.LOGIN.SUBMIT') | transloco }}
+      </button>
+    </form>
+
+    <p class="auth-footer">
+      {{ 'AUTH.LOGIN.NO_ACCOUNT' | transloco }}
+      <a routerLink="/register">{{ 'AUTH.LOGIN.REGISTER_LINK' | transloco }}</a>
+    </p>
+  </section>
+</main>

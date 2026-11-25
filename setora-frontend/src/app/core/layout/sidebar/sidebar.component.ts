@@ -14,6 +14,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { AuthService } from '../../services/auth.service';
 
 interface NavItem {
   path: string;
@@ -34,6 +35,7 @@ export class SidebarComponent {
   readonly menu = inject(MobileMenuService);
   readonly theme = inject(ThemeService);
   private readonly userService = inject(UserService);
+  readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
   private readonly currentUrl = toSignal(
@@ -95,6 +97,11 @@ export class SidebarComponent {
     if (!u) return '';
     return `${u.firstName?.charAt(0) ?? ''}${u.lastName?.charAt(0) ?? ''}`.toUpperCase();
   });
+
+  logout(): void {
+    this.menu.close();
+    this.auth.logout();
+  }
 
   readonly userAvatarUrl = this.userService.avatarUrl;
 

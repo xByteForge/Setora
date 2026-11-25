@@ -16,7 +16,8 @@
     "THEME_TO_DARK": "Comută la tema întunecată",
     "THEME_TO_LIGHT": "Comută la tema luminoasă",
     "NOTIFICATIONS": "Notificări",
-    "LANGUAGE": "Limba"
+    "LANGUAGE": "Limba",
+    "LOGOUT": "Deconectare"
   },
   "HINT": {
     "PHONE_BOOKINGS": "Programările telefonice pot fi adăugate direct în calendar.",
@@ -293,5 +294,54 @@
       "CONFIRM": "Ești sigur? Contul și datele tale vor fi șterse definitiv.",
       "CONFIRM_BUTTON": "Da, șterge contul"
     }
-  }
+  },
+    "AUTH": {
+      "COMMON": {
+        "SHOW": "Arată",
+        "HIDE": "Ascunde",
+        "TOGGLE_PASSWORD": "Arată sau ascunde parola"
+      },
+      "LOGIN": {
+        "TITLE": "Bine ai revenit!",
+        "SUBTITLE": "Intră în cont pentru a-ți vedea programările.",
+        "EMAIL": "E-mail",
+        "PASSWORD": "Parolă",
+        "SUBMIT": "Autentifică-te",
+        "SUBMITTING": "Se autentifică...",
+        "EMAIL_INVALID": "Introdu o adresă de e-mail validă.",
+        "PASSWORD_REQUIRED": "Introdu parola.",
+        "INVALID_CREDENTIALS": "E-mailul sau parola sunt incorecte.",
+        "SESSION_EXPIRED": "Sesiunea ta a expirat. Autentifică-te din nou.",
+        "NO_ACCOUNT": "Nu ai cont?",
+        "REGISTER_LINK": "Creează un cont",
+        "REMEMBER_ME": "Ține-mă minte"
+      },
+      "REGISTER": {
+        "TITLE": "Creează-ți contul",
+        "SUBTITLE": "Descoperă servicii și gestionează-ți programările.",
+        "FIRST_NAME": "Prenume",
+        "LAST_NAME": "Nume",
+        "PHONE": "Număr de telefon",
+        "EMAIL": "E-mail",
+        "PASSWORD": "Parolă",
+        "CONFIRM_PASSWORD": "Confirmă parola",
+        "REQUIRED": "Câmp obligatoriu.",
+        "EMAIL_INVALID": "Introdu o adresă de e-mail validă.",
+        "EMAIL_TAKEN": "Acest e-mail este deja folosit.",
+        "PHONE_TOO_LONG": "Numărul de telefon poate avea maximum 30 de caractere.",
+        "PASSWORD_LENGTH": "Parola trebuie să aibă între 8 și 64 de caractere.",
+        "PASSWORD_MISMATCH": "Parolele nu coincid.",
+        "SUBMIT": "Creează contul",
+        "SUBMITTING": "Se creează contul...",
+        "HAS_ACCOUNT": "Ai deja cont?",
+        "LOGIN_LINK": "Autentifică-te",
+        "USERNAME": "Nume de utilizator",
+        "CONFIRM_EMAIL": "Confirmă e-mailul",
+        "EMAIL_MISMATCH": "Adresele de e-mail nu coincid.",
+        "PASSWORD_UPPERCASE": "Parola trebuie să conțină cel puțin o literă mare.",
+        "PASSWORD_LOWERCASE": "Parola trebuie să conțină cel puțin o literă mică.",
+        "PASSWORD_SPECIAL": "Parola trebuie să conțină cel puțin un caracter special.",
+        "PASSWORD_HINT": "Minimum 8 caractere, cu majuscule, minuscule și un caracter special."
+      }
+    }
 }
