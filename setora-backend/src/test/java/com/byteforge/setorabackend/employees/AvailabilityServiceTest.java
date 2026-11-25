@@ -18,6 +18,7 @@ import com.byteforge.setorabackend.common.DateTimeInterval;
 import com.byteforge.setorabackend.common.TimeInterval;
 import com.byteforge.setorabackend.employees.model.AvailabilityDtos.*;
 import com.byteforge.setorabackend.employees.model.Employee;
+import com.byteforge.setorabackend.employees.model.EmployeeResponseDto;
 import com.byteforge.setorabackend.employees.model.UnavailableSlot;
 import com.byteforge.setorabackend.employees.model.UnavailableType;
 import com.byteforge.setorabackend.employees.model.WorkSchedule;
@@ -25,6 +26,7 @@ import com.byteforge.setorabackend.employees.repository.EmployeeRepository;
 import com.byteforge.setorabackend.employees.repository.UnavailableSlotRepository;
 import com.byteforge.setorabackend.employees.repository.WorkScheduleRepository;
 import com.byteforge.setorabackend.employees.service.EmployeeService;
+import com.byteforge.setorabackend.user.User;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -222,6 +224,79 @@ class EmployeeServiceTest {
 
         assertEquals(DayOfWeek.MONDAY, result.days().get(0).dayOfWeek());
         assertEquals(DayOfWeek.WEDNESDAY, result.days().get(1).dayOfWeek());
+    }
+
+    @Test
+    void returnsEmployeesForBusiness() {
+        int bId = 5;
+        Employee employee = createEmployee(10, bId, "John", "Doe", "Barber");
+
+        when(employeeRepository.findByBusinessId(bId)).thenReturn(List.of(employee));
+
+        List<EmployeeResponseDto> result = service.getEmployeesByBusinessId(bId);
+
+        assertEquals(1, result.size());
+        EmployeeResponseDto dto = result.get(0);
+        assertEquals(10, dto.id());
+        assertEquals(bId, dto.businessId());
+        assertEquals("John Doe", dto.name());
+        assertEquals("john.doe@example.com", dto.email());
+        assertEquals("+40712345678", dto.phoneNumber());
+        assertEquals("Barber", dto.employmentRole());
+        assertTrue(dto.active());
+        verify(employeeRepository).findByBusinessId(bId);
+    }
+
+    @Test
+    void returnsEmptyListWhenNoEmployeesForBusiness() {
+        int bId = 99;
+        when(employeeRepository.findByBusinessId(bId)).thenReturn(List.of());
+
+        List<EmployeeResponseDto> result = service.getEmployeesByBusinessId(bId);
+
+        assertTrue(result.isEmpty());
+        verify(employeeRepository).findByBusinessId(bId);
+    }
+
+    @Test
+    void returnsEmployeeWhenExists() {
+        stubEmployee();
+
+        Employee found = service.findById(employeeId);
+
+        assertEquals(employeeId, found.getId());
+        verify(employeeRepository).findById(employeeId);
+    }
+
+    @Test
+    void rejectsMissingEmployee() {
+        when(employeeRepository.findById(999)).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> service.findById(999));
+
+        assertEquals(404, ex.getStatusCode().value());
+        assertEquals("Employee not found", ex.getReason());
+        verify(employeeRepository).findById(999);
+    }
+
+    private Employee createEmployee(int id, int businessId, String firstName, String lastName, String role) {
+        Business business = new Business();
+        business.setId(businessId);
+
+        User user = new User();
+        user.setId(id * 10);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setEmail(firstName.toLowerCase() + "." + lastName.toLowerCase() + "@example.com");
+        user.setPhoneNumber("+40712345678");
+
+        Employee emp = new Employee();
+        emp.setId(id);
+        emp.setBusiness(business);
+        emp.setUser(user);
+        emp.setEmploymentRole(role);
+        emp.setActive(true);
+        return emp;
     }
 
     private void stubEmployee() {
