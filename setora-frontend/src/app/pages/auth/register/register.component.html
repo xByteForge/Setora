@@ -1,16 +1,16 @@
 <main class="auth-page">
   <button
-  type="button"
-  class="theme-toggle"
-  (click)="theme.toggleTheme()"
-  [attr.aria-label]="(theme.currentTheme() === 'light' ? 'HEADER.THEME_TO_DARK' : 'HEADER.THEME_TO_LIGHT') | transloco"
->
-  @if (theme.currentTheme() === 'light') {
-    <svg lucideSun [size]="20" aria-hidden="true"></svg>
-  } @else {
-    <svg lucideMoon [size]="20" aria-hidden="true"></svg>
-  }
-</button>
+    type="button"
+    class="theme-toggle"
+    (click)="theme.toggleTheme()"
+    [attr.aria-label]="(theme.currentTheme() === 'light' ? 'HEADER.THEME_TO_DARK' : 'HEADER.THEME_TO_LIGHT') | transloco"
+  >
+    @if (theme.currentTheme() === 'light') {
+      <svg lucideSun [size]="20" aria-hidden="true"></svg>
+    } @else {
+      <svg lucideMoon [size]="20" aria-hidden="true"></svg>
+    }
+  </button>
 
   <section class="auth-card">
     <div class="brand">
@@ -139,11 +139,27 @@
 
       <p class="hint">{{ 'AUTH.REGISTER.PASSWORD_HINT' | transloco }}</p>
 
+      <label class="terms">
+        <input type="checkbox" formControlName="acceptTerms" />
+        <span>
+          Accept
+          <a
+            href="https://www.youtube.com/watch?v=E4WlUXrJgy4"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Termenii și condițiile</a>.
+        </span>
+      </label>
+
       @if (error(); as key) {
         <p class="form-error" role="alert">{{ key | transloco }}</p>
       }
 
-      <button type="submit" class="btn-primary" [disabled]="loading()">
+      <button
+        type="submit"
+        class="btn-primary"
+        [disabled]="loading() || !form.controls.acceptTerms.value"
+      >
         {{ (loading() ? 'AUTH.REGISTER.SUBMITTING' : 'AUTH.REGISTER.SUBMIT') | transloco }}
       </button>
     </form>

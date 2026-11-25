@@ -22,9 +22,10 @@ type RegisterField =
   | 'email'
   | 'confirmEmail'
   | 'password'
-  | 'confirmPassword';
+  | 'confirmPassword'
+  | 'acceptTerms';
 
-/** Regulile de parolă din design. Minimul de 8 caractere se verifică și în backend. */
+
 function strongPassword(control: AbstractControl): ValidationErrors | null {
   const value: string = control.value ?? '';
   if (!value) return null; // lipsa valorii e tratată de Validators.required
@@ -37,7 +38,6 @@ function strongPassword(control: AbstractControl): ValidationErrors | null {
 
   return Object.keys(errors).length > 0 ? errors : null;
 }
-
 
 function fieldsMatch(group: AbstractControl): ValidationErrors | null {
   const errors: ValidationErrors = {};
@@ -67,7 +67,7 @@ export class RegisterComponent {
 
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
-  
+
   readonly emailTaken = signal(false);
   readonly showPassword = signal(false);
   readonly showConfirm = signal(false);
@@ -85,6 +85,7 @@ export class RegisterComponent {
       confirmEmail: ['', [Validators.required]],
       password: ['', [Validators.required, strongPassword]],
       confirmPassword: ['', [Validators.required]],
+      acceptTerms: [false, [Validators.requiredTrue]],
     },
     { validators: fieldsMatch },
   );
@@ -94,7 +95,6 @@ export class RegisterComponent {
     return control.invalid && control.touched;
   }
 
-  
   passwordError(): string | null {
     const control = this.form.controls.password;
     if (!control.touched) return null;
@@ -110,11 +110,12 @@ export class RegisterComponent {
     this.error.set(null);
     this.emailTaken.set(false);
     this.form.markAllAsTouched();
-    if (this.form.invalid || this.loading()) return;
+    if (this.form.invalid || !this.form.controls.acceptTerms.value || this.loading()) return;
 
     const v = this.form.getRawValue();
     const phone = v.phoneNumber.trim();
 
+    this.loading.set(true);
     this.auth
       .register({
         firstName: v.firstName.trim(),
