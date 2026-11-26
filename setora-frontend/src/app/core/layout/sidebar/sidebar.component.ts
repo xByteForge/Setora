@@ -106,11 +106,11 @@ export class SidebarComponent {
       iconClass: 'fa-regular fa-calendar',
       badge: 9,
     },
-    { path: '/services', labelKey: 'NAV.SERVICES', iconClass: 'fa-solid fa-briefcase' },
-    { path: '/employees', labelKey: 'NAV.EMPLOYEES', iconClass: 'fa-solid fa-users' },
-    { path: '/clients', labelKey: 'NAV.CLIENTS', iconClass: 'fa-regular fa-id-card' },
-    { path: '/locations', labelKey: 'NAV.LOCATIONS', iconClass: 'fa-solid fa-location-dot' },
-    { path: '/working-hours', labelKey: 'NAV.WORKING_HOURS', iconClass: 'fa-regular fa-clock' },
+    {
+      path: '/my-businesses',
+      labelKey: 'NAV.MY_BUSINESSES',
+      iconClass: 'fa-solid fa-store',
+    },
   ];
 
   @HostListener('document:keydown.escape')

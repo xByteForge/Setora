@@ -55,13 +55,19 @@ export const routes: Routes = [
     data: {
       breadcrumb: 'BUSINESS_REGISTRATION.TITLE',
       hideSidebar: true,
-      topbarBackUrl: '',
-      topbarBackLabelKey: 'BUSINESS_REGISTRATION.BACK_TO_AUTH',
+      topbarBackUrl: '/my-businesses',
+      topbarBackLabelKey: 'BUSINESS_REGISTRATION.BACK_TO_BUSINESSES',
     },
     loadComponent: () =>
       import('./pages/business-registration/business-registration.component').then(
         (m) => m.BusinessRegistrationComponent,
       ),
+  },
+  {
+    path: 'my-businesses',
+    data: { breadcrumb: 'NAV.MY_BUSINESSES' },
+    loadComponent: () =>
+      import('./pages/my-businesses/my-businesses.component').then((m) => m.MyBusinessesComponent),
   },
 
   { path: '**', redirectTo: 'discover' },

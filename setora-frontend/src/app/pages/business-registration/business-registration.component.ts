@@ -37,11 +37,15 @@ import {
   slugify,
   takenValidator,
 } from './business-registration.util';
+import {
+  BusinessRegistrationStatusComponent,
+  RegisteredBusinessSummary,
+} from './business-registration-status/business-registration-status.component';
 
 @Component({
   selector: 'app-business-registration',
   standalone: true,
-  imports: [TranslocoModule, ReactiveFormsModule],
+  imports: [TranslocoModule, ReactiveFormsModule, BusinessRegistrationStatusComponent],
   templateUrl: './business-registration.component.html',
   styleUrl: './business-registration.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -86,6 +90,10 @@ export class BusinessRegistrationComponent implements AfterViewInit {
 
   readonly submitted = signal(false);
   readonly registered = signal(false);
+
+  readonly registrationStatus = signal<'form' | 'pending' | 'success'>('form');
+  readonly summary = signal<RegisteredBusinessSummary | null>(null);
+  private registerTimer: ReturnType<typeof setTimeout> | null = null;
 
   /* ---------------- other state ---------------- */
 
@@ -626,9 +634,24 @@ export class BusinessRegistrationComponent implements AfterViewInit {
       return;
     }
 
-    // TODO: call the API with this payload once the business creation endpoint is available.
-    this.toBusinessPayload();
-    this.registered.set(true);
+    // build the summary shown on the confirmation screens
+    const payload = this.toBusinessPayload();
+    const v = this.form.getRawValue();
+    this.summary.set({
+      name: payload.name,
+      slug: payload.slug,
+      address: this.previewAddress(
+        this.transloco.translate('BUSINESS_REGISTRATION.CITIES.' + v.city),
+        this.transloco.translate('BUSINESS_REGISTRATION.COUNTRIES.' + v.country),
+      ),
+      coverUrl: payload.thumbnailUrl,
+    });
+    this.registrationStatus.set('pending');
+    window.scrollTo({ top: 0 });
+
+    // TODO: replace the mock delay with the real API call; on success set 'success',
+    // on error set 'form' again and show an error message.
+    this.registerTimer = setTimeout(() => this.registrationStatus.set('success'), 2000);
   }
 
   private toBusinessPayload(): Omit<Business, 'id' | 'ownerId' | 'createdAt'> {

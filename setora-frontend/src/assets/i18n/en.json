@@ -8,7 +8,8 @@
     "WORKING_HOURS": "Working hours",
     "SETTINGS": "Settings",
     "DISCOVER": "Discover",
-    "BOOKINGS": "My bookings"
+    "BOOKINGS": "My bookings",
+    "MY_BUSINESSES": "My Businesses"
   },
   "HINT": {
     "PHONE_BOOKINGS": "Phone bookings can be added directly to the calendar.",
@@ -302,7 +303,7 @@
     "REQUIRED_HINT": "Fields marked with",
     "REQUIRED_HINT_END": "are required.",
     "BACK": "Back",
-    "BACK_TO_AUTH": "Back to login",
+    "BACK_TO_BUSINESSES": "Back to my businesses",
     "JUMP_TO": "Jump to section",
     "SECTIONS": {
       "BUSINESS_PROFILE": "1. Business profile",
@@ -463,6 +464,21 @@
       "HINT": "The profile becomes public only after registration is complete.",
       "SUCCESS": "Everything is valid. The business was registered (demo)."
     },
-    "DEMO_NOTE": "Demo data, photos and map. Validation example: URL unavailable."
+    "DEMO_NOTE": "Demo data, photos and map. Validation example: URL unavailable.",
+    "STATUS": {
+      "PENDING_TITLE": "Registering your business…",
+      "PENDING_SUBTITLE": "We're checking your details and creating the public profile.",
+      "PENDING_NOTE": "This only takes a few seconds. You don't need to do anything.",
+      "PENDING_BUTTON": "Registering…",
+      "SUCCESS_TITLE": "Business registered!",
+      "SUCCESS_SUBTITLE": "The profile for {{name}} was created successfully.",
+      "VIEW_PROFILE": "View business profile",
+      "BACK_TO_DISCOVER": "Back to businesses list"
+    }
+  },
+  "MY_BUSINESSES": {
+    "REGISTER_TITLE": "Register a new business",
+    "REGISTER_TEXT": "Add your business to Setora and start accepting bookings.",
+    "REGISTER_BUTTON": "Register business"
   }
 }

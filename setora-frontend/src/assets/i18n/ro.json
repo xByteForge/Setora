@@ -8,7 +8,8 @@
     "WORKING_HOURS": "Program de lucru",
     "SETTINGS": "Setări",
     "DISCOVER": "Descoperă",
-    "BOOKINGS": "Rezervările mele"
+    "BOOKINGS": "Rezervările mele",
+    "MY_BUSINESSES": "Afacerile mele"
   },
   "HEADER": {
     "SEARCH": "Caută businessuri, servicii...",
@@ -302,7 +303,7 @@
     "REQUIRED_HINT": "Câmpurile marcate cu",
     "REQUIRED_HINT_END": "sunt obligatorii.",
     "BACK": "Înapoi",
-    "BACK_TO_AUTH": "Înapoi la autentificare",
+    "BACK_TO_BUSINESSES": "Înapoi la afacerile mele",
     "JUMP_TO": "Sari la secțiune",
     "SECTIONS": {
       "BUSINESS_PROFILE": "1. Profilul businessului",
@@ -463,6 +464,21 @@
       "HINT": "Profilul devine public doar după finalizarea înregistrării.",
       "SUCCESS": "Datele sunt valide. Businessul a fost înregistrat (demo)."
     },
-    "DEMO_NOTE": "Date, fotografii și hartă demonstrative. Exemplu de validare: URL indisponibil."
+    "DEMO_NOTE": "Date, fotografii și hartă demonstrative. Exemplu de validare: URL indisponibil.",
+    "STATUS": {
+      "PENDING_TITLE": "Înregistrăm businessul…",
+      "PENDING_SUBTITLE": "Verificăm datele și creăm profilul public al businessului.",
+      "PENDING_NOTE": "Durează doar câteva secunde. Nu e nevoie să faci nimic.",
+      "PENDING_BUTTON": "Se înregistrează…",
+      "SUCCESS_TITLE": "Business înregistrat!",
+      "SUCCESS_SUBTITLE": "Profilul {{name}} a fost creat cu succes.",
+      "VIEW_PROFILE": "Vezi profilul businessului",
+      "BACK_TO_DISCOVER": "Înapoi la lista de businessuri"
+    }
+  },
+  "MY_BUSINESSES": {
+    "REGISTER_TITLE": "Înregistrează o afacere nouă",
+    "REGISTER_TEXT": "Adaugă afacerea ta în Setora și începe să primești programări.",
+    "REGISTER_BUTTON": "Înregistrează afacerea"
   }
 }
