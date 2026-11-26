@@ -303,7 +303,7 @@
     "REQUIRED_HINT": "Fields marked with",
     "REQUIRED_HINT_END": "are required.",
     "BACK": "Back",
-    "BACK_TO_AUTH": "Back to login",
+    "BACK_TO_BUSINESSES": "Back to my businesses",
     "JUMP_TO": "Jump to section",
     "SECTIONS": {
       "BUSINESS_PROFILE": "1. Business profile",
