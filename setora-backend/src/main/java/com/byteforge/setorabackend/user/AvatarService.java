@@ -12,7 +12,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
@@ -105,13 +104,18 @@ class AvatarService {
     }
 
     private void writeAtomically(byte[] data, Path target) {
-        Path tmp = target.resolveSibling(target.getFileName() + ".tmp");
+        Path tmp = null;
         try {
             Files.createDirectories(uploadDir);
-            Files.write(tmp, data, StandardOpenOption.CREATE_NEW);
+
+            tmp = Files.createTempFile(target.getParent(), target.getFileName().toString(), ".tmp");
+
+            Files.write(tmp, data);
             Files.move(tmp, target, StandardCopyOption.ATOMIC_MOVE);
         } catch (IOException ex) {
-            deleteQuietly(tmp);
+            if (tmp != null) {
+                deleteQuietly(tmp);
+            }
             throw new AvatarStorageException("Could not store avatar", ex);
         }
     }
@@ -152,7 +156,17 @@ class AvatarService {
                 reader.setInput(iis, true, true);
                 long w = reader.getWidth(0);
                 long h = reader.getHeight(0);
-                if (w <= 0 || h <= 0 || w * h > MAX_PIXELS) {
+                if (w <= 0 || h <= 0) {
+                    throw new InvalidAvatarException("Invalid image dimensions");
+                }
+
+                long pixels;
+                try {
+                    pixels = Math.multiplyExact(w, h);
+                } catch (ArithmeticException ex) {
+                    throw new InvalidAvatarException("Image dimensions are too large");
+                }
+                if (pixels > MAX_PIXELS) {
                     throw new InvalidAvatarException("Image dimensions are too large");
                 }
 

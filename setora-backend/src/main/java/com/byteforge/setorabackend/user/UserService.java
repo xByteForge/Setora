@@ -68,7 +68,7 @@ public class UserService {
         user.setFirstName(firstName);
         user.setLastName(request.lastName().trim());
         user.setUsername(resolveUsername(request.username(), firstName));
-        user.setEmail(request.email());
+        user.setEmail(normalizeEmail(request.email()));
         user.setPhoneNumber(trimOrNull(request.phoneNumber()));
         user.setPasswordHash(passwordEncoder.encode(request.password()));
     }
@@ -99,7 +99,7 @@ public class UserService {
         user.setFirstName(request.firstName().trim());
         user.setLastName(request.lastName().trim());
         user.setUsername(request.username().trim());
-        user.setEmail(request.email());
+        user.setEmail(normalizeEmail(request.email()));
         user.setPhoneNumber(trimOrNull(request.phoneNumber()));
 
         return toResponseDto(saveOrConflict(user, "User information conflicts with database constraints"));
@@ -151,7 +151,7 @@ public class UserService {
         if (email != null) {
             if (email.isBlank()) throw new InvalidInputException("Email cannot be blank");
 
-            client.setEmail(email);
+            client.setEmail(normalizeEmail(email));
         }
 
         if (phoneNumber != null) client.setPhoneNumber(phoneNumber.trim());

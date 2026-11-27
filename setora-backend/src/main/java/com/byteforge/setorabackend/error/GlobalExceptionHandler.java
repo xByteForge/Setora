@@ -3,6 +3,7 @@ package com.byteforge.setorabackend.error;
 import com.byteforge.setorabackend.error.exceptions.*;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -15,6 +16,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.server.ResponseStatusException;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -49,7 +51,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AvatarStorageException.class)
     public ResponseEntity<ApiErrorResponse> handleAvatarStorage(AvatarStorageException ex) {
-        return error(HttpStatus.INTERNAL_SERVER_ERROR, "AVATAR_STORAGE_PROBLEM", ex.getMessage(), "");
+        log.error(ex.getMessage(), ex);
+        return error(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "AVATAR_STORAGE_PROBLEM",
+                "A problem occurred on the server when storing your avatar. ",
+                "");
     }
 
     @ExceptionHandler(InvalidInputException.class)
@@ -116,7 +123,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ApiErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
-        String message = String.format("Invalid value '%s' for parameter '%s'", ex.getValue(), ex.getName());
+        String message = String.format("Invalid value for parameter '%s'", ex.getName());
         return error(HttpStatus.BAD_REQUEST, "TYPE_MISMATCH", message, "");
     }
 
@@ -137,9 +144,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleUnexpected(Exception ex) {
-
-        // log.error("Unexpected server error", ex);
-
+        log.error(ex.getMessage(), ex);
         return error(HttpStatus.INTERNAL_SERVER_ERROR, "UNKNOWN", "An unexpected error occurred.", "");
     }
 }
