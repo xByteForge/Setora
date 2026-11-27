@@ -12,25 +12,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 class AvatarService {
 
-    private static final Path UPLOAD_DIR =
-            Paths.get("uploads", "user-avatars").toAbsolutePath().normalize();
     private static final long MAX_BYTES = 2L * 1024 * 1024;
     private static final long MAX_PIXELS = 4_000_000;
     private static final int OUTPUT_SIZE = 512;
@@ -41,6 +37,13 @@ class AvatarService {
     }
 
     private final UserService userService;
+    private final Path uploadDir;
+
+    AvatarService(
+            UserService userService, @Value("${setora.avatar.upload-dir:uploads/user-avatars}") String uploadDir) {
+        this.userService = userService;
+        this.uploadDir = Paths.get(uploadDir).toAbsolutePath().normalize();
+    }
 
     public void storeAvatar(MultipartFile file, int userId) {
         BufferedImage image = readAndValidate(file);
@@ -76,11 +79,16 @@ class AvatarService {
         return userService.getAvatarPathByUser(userId);
     }
 
+    // full path of a stored avatar, or null if the filename points outside the upload folder
+    public Path resolveAvatarFile(String filename) {
+        return tryResolve(filename);
+    }
+
     // ---------- file helpers ----------
 
     private Path resolveSafely(String filename) {
-        Path p = UPLOAD_DIR.resolve(filename).normalize();
-        if (!UPLOAD_DIR.equals(p.getParent())) {
+        Path p = uploadDir.resolve(filename).normalize();
+        if (!uploadDir.equals(p.getParent())) {
             throw new InvalidAvatarException("Invalid avatar path");
         }
         return p;
@@ -96,13 +104,18 @@ class AvatarService {
     }
 
     private void writeAtomically(byte[] data, Path target) {
-        Path tmp = target.resolveSibling(target.getFileName() + ".tmp");
+        Path tmp = null;
         try {
-            Files.createDirectories(UPLOAD_DIR);
-            Files.write(tmp, data, StandardOpenOption.CREATE_NEW);
+            Files.createDirectories(uploadDir);
+
+            tmp = Files.createTempFile(target.getParent(), target.getFileName().toString(), ".tmp");
+
+            Files.write(tmp, data);
             Files.move(tmp, target, StandardCopyOption.ATOMIC_MOVE);
         } catch (IOException ex) {
-            deleteQuietly(tmp);
+            if (tmp != null) {
+                deleteQuietly(tmp);
+            }
             throw new AvatarStorageException("Could not store avatar", ex);
         }
     }
@@ -143,7 +156,17 @@ class AvatarService {
                 reader.setInput(iis, true, true);
                 long w = reader.getWidth(0);
                 long h = reader.getHeight(0);
-                if (w <= 0 || h <= 0 || w * h > MAX_PIXELS) {
+                if (w <= 0 || h <= 0) {
+                    throw new InvalidAvatarException("Invalid image dimensions");
+                }
+
+                long pixels;
+                try {
+                    pixels = Math.multiplyExact(w, h);
+                } catch (ArithmeticException ex) {
+                    throw new InvalidAvatarException("Image dimensions are too large");
+                }
+                if (pixels > MAX_PIXELS) {
                     throw new InvalidAvatarException("Image dimensions are too large");
                 }
 

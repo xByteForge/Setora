@@ -1,6 +1,7 @@
 package com.byteforge.setorabackend.user.dtos;
 
 import jakarta.validation.constraints.*;
+import java.util.Locale;
 
 // for POST /api/users and POST /api/auth/register
 public record CreateUserRequestDto(
@@ -8,8 +9,16 @@ public record CreateUserRequestDto(
 
         @NotBlank @Size(max = 100) String lastName,
 
+        // optional, the first name is used when missing
+        @Size(max = 100) String username,
+
         @NotBlank @Email @Size(max = 255) String email,
 
         @Size(max = 30) String phoneNumber,
 
-        @NotBlank @Size(min = 8, max = 64) String password) {}
+        @NotBlank @Size(min = 8, max = 64) String password) {
+    @Override
+    public String email() {
+        return email.trim().toLowerCase(Locale.ROOT);
+    }
+}

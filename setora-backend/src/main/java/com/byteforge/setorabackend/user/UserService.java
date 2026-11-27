@@ -1,18 +1,21 @@
 package com.byteforge.setorabackend.user;
 
 import com.byteforge.setorabackend.auth.refresh_tokens.RefreshTokenRepository;
+import com.byteforge.setorabackend.error.exceptions.DataConflictException;
+import com.byteforge.setorabackend.error.exceptions.InvalidInputException;
+import com.byteforge.setorabackend.error.exceptions.InvalidPasswordException;
 import com.byteforge.setorabackend.user.dtos.CreateUserRequestDto;
 import com.byteforge.setorabackend.user.dtos.UpdateUserRequestDto;
 import com.byteforge.setorabackend.user.dtos.UserResponseDto;
+import jakarta.persistence.EntityNotFoundException;
 import java.time.Instant;
 import java.util.List;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -22,9 +25,7 @@ public class UserService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     public User findByEmail(String email) {
-        return userRepository
-                .findByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        return userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
     public UserResponseDto toResponseDto(User user) {
@@ -39,58 +40,69 @@ public class UserService {
                 user.isDeleted());
     }
 
+    public static String normalizeEmail(String email) {
+        return email.trim().toLowerCase(Locale.ROOT);
+    }
+
+    public static void validatePassword(String password) {
+        if (password == null || password.isBlank() || password.length() < 8)
+            throw new InvalidPasswordException("Password must contain at least 8 characters");
+        if (!(password.matches(".*[a-z].*") && password.matches(".*[A-Z].*") && password.matches(".*[^a-zA-Z0-9].*")))
+            throw new InvalidPasswordException(
+                    "Password must contain at least a small letter, a capital one and a special symbol.");
+    }
+
+    // if no username was given, the first name is used instead
+    private static String resolveUsername(String username, String firstName) {
+        return username == null || username.isBlank() ? firstName : username.trim();
+    }
+
+    private static String trimOrNull(String value) {
+        return value == null ? null : value.trim();
+    }
+
+    // copies the data of a create/register request onto the user (password is hashed here)
+    public void applyCreateData(User user, CreateUserRequestDto request) {
+        String firstName = request.firstName().trim();
+
+        user.setFirstName(firstName);
+        user.setLastName(request.lastName().trim());
+        user.setUsername(resolveUsername(request.username(), firstName));
+        user.setEmail(normalizeEmail(request.email()));
+        user.setPhoneNumber(trimOrNull(request.phoneNumber()));
+        user.setPasswordHash(passwordEncoder.encode(request.password()));
+    }
+
+    public User saveOrConflict(User user, String conflictMessage) {
+        try {
+            return userRepository.saveAndFlush(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataConflictException(conflictMessage, e);
+        }
+    }
+
     @Transactional
     public UserResponseDto createUser(CreateUserRequestDto request) {
-        if (request.password().length() > 72) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password too long");
-        }
+        validatePassword(request.password());
 
         User user = new User();
-
-        user.setFirstName(request.firstName().trim());
-        user.setLastName(request.lastName().trim());
-        user.setUsername(request.firstName().trim());
-        user.setEmail(request.email());
-        user.setPhoneNumber(
-                request.phoneNumber() == null ? null : request.phoneNumber().trim());
-
-        user.setPasswordHash(passwordEncoder.encode(request.password()));
-
         user.setRole(UserRole.EMPLOYEE);
-        user.setDeleted(false);
+        applyCreateData(user, request);
 
-        try {
-            User savedUser = userRepository.saveAndFlush(user);
-            return toResponseDto(savedUser);
-
-        } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "User information conflicts with database constraints", e);
-        }
+        return toResponseDto(saveOrConflict(user, "User information conflicts with database constraints"));
     }
 
     @Transactional
     public UserResponseDto updateUser(int id, UpdateUserRequestDto request) {
         User user = findActiveUserById(id);
 
-        if ("ghost@gmail.com".equalsIgnoreCase(user.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "The guest account cannot be modified");
-        }
-
         user.setFirstName(request.firstName().trim());
         user.setLastName(request.lastName().trim());
         user.setUsername(request.username().trim());
-        user.setEmail(request.email());
-        user.setPhoneNumber(
-                request.phoneNumber() == null ? null : request.phoneNumber().trim());
+        user.setEmail(normalizeEmail(request.email()));
+        user.setPhoneNumber(trimOrNull(request.phoneNumber()));
 
-        try {
-            User savedUser = userRepository.saveAndFlush(user);
-            return toResponseDto(savedUser);
-        } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "User information conflicts with database constraints", e);
-        }
+        return toResponseDto(saveOrConflict(user, "User information conflicts with database constraints"));
     }
 
     @Transactional(readOnly = true)
@@ -103,7 +115,7 @@ public class UserService {
         return userRepository
                 .findById(id)
                 .filter(user -> !user.isDeleted())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
     @Transactional(readOnly = true)
@@ -116,14 +128,6 @@ public class UserService {
     public void deleteUser(int id) {
         User user = findActiveUserById(id);
 
-        if ("ghost@gmail.com".equalsIgnoreCase(user.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "The guest account cannot be deleted");
-        }
-
-        if (user.getRole() == UserRole.ADMIN && userRepository.countActiveByRole(UserRole.ADMIN) <= 1) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot delete the last existing administrator");
-        }
-
         user.setDeleted(true);
         user.setTokenVersion(user.getTokenVersion() + 1);
         userRepository.saveAndFlush(user);
@@ -133,32 +137,26 @@ public class UserService {
 
     public void updateClientDetails(User client, String lastName, String firstName, String email, String phoneNumber) {
         if (lastName != null) {
-            if (lastName.isBlank())
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "lastName cannot be blank");
+            if (lastName.isBlank()) throw new InvalidInputException("lastName cannot be blank");
 
             client.setLastName(lastName.trim());
         }
 
         if (firstName != null) {
-            if (firstName.isBlank())
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "firstName cannot be blank");
+            if (firstName.isBlank()) throw new InvalidInputException("firstName cannot be blank");
 
             client.setFirstName(firstName.trim());
         }
 
         if (email != null) {
-            if (email.isBlank()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email cannot be blank");
+            if (email.isBlank()) throw new InvalidInputException("Email cannot be blank");
 
-            client.setEmail(email);
+            client.setEmail(normalizeEmail(email));
         }
 
         if (phoneNumber != null) client.setPhoneNumber(phoneNumber.trim());
 
-        try {
-            userRepository.saveAndFlush(client);
-        } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Client details violate a database constraint", e);
-        }
+        saveOrConflict(client, "Client details violate a database constraint");
     }
 
     @Transactional

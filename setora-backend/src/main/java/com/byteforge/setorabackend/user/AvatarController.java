@@ -3,7 +3,6 @@ package com.byteforge.setorabackend.user;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
@@ -22,7 +21,7 @@ public class AvatarController {
     @PostMapping("/upload")
     public ResponseEntity<@NonNull String> uploadAvatar(
             @RequestParam("file") MultipartFile file, @AuthenticationPrincipal Jwt jwt) {
-        int userId = Integer.parseInt(jwt.getSubject()); // TODO When this is setup change accordingly
+        int userId = Integer.parseInt(jwt.getSubject());
         avatarService.storeAvatar(file, userId);
         return ResponseEntity.ok("Upload successful");
     }
@@ -33,9 +32,9 @@ public class AvatarController {
         if (avatarFilename == null) {
             return ResponseEntity.notFound().build();
         }
-        Path path = Paths.get("uploads/user-avatars", avatarFilename);
+        Path path = avatarService.resolveAvatarFile(avatarFilename);
 
-        if (!Files.exists(path)) {
+        if (path == null || !Files.exists(path)) {
             return ResponseEntity.notFound().build();
         }
 

@@ -1,6 +1,7 @@
 package com.byteforge.setorabackend.user.dtos;
 
 import jakarta.validation.constraints.*;
+import java.util.Locale;
 
 // for PUT /api/users/{id}
 public record UpdateUserRequestDto(
@@ -12,4 +13,9 @@ public record UpdateUserRequestDto(
 
         @NotBlank @Email @Size(max = 255) String email,
 
-        @Size(max = 30) String phoneNumber) {}
+        @Size(max = 30) String phoneNumber) {
+    @Override
+    public String email() {
+        return email.trim().toLowerCase(Locale.ROOT);
+    }
+}

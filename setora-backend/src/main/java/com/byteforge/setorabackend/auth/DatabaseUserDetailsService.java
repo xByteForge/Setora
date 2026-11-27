@@ -28,9 +28,7 @@ public class DatabaseUserDetailsService
 
         if (user.getRole() == null) throw new UsernameNotFoundException("Invalid account");
 
-        // guest must not log in, we can change this by deleting here
-        if ("ghost@gmail.com".equalsIgnoreCase(user.getEmail()) || user.isDeleted())
-            throw new UsernameNotFoundException("Invalid credentials");
+        if (user.isDeleted()) throw new UsernameNotFoundException("Invalid credentials");
 
         return org.springframework.security.core.userdetails.User.withUsername(user.getEmail())
                 .password(user.getPasswordHash())
